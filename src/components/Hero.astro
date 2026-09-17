@@ -25,6 +25,19 @@ import { directoryTotals } from './directory-taxonomy';
  *
  * The mark takes the slot the old illustration had. That drawing explained the
  * previous logo's idea, and the logo it explained is gone.
+ *
+ * The section's background is the same mark at ~1000px, cropped by the section
+ * box so only its top-left corner sweep is in frame, sitting under a cool
+ * paper-to-tint gradient and one soft cobalt glow. Same component, same
+ * geometry — no second drawing of the brand to keep in sync. The readable mark
+ * is then placed inside that giant counter rather than centred on it: the small
+ * one reads as the answer sitting inside the larger shape, and it is doing
+ * something in the layout instead of hovering in blank space.
+ *
+ * Mobile is composed rather than inherited. The crisp mark steps aside (the nav
+ * already carries one at that width), the ghost is re-anchored so its corner
+ * sweep crops into the top-right behind the headline, and the disclosure note
+ * that sits beside the mark on desktop becomes the block that closes the hero.
  */
 
 /* Both drawn from the real index below, so neither can drift into fiction. */
@@ -36,16 +49,28 @@ const suggestions = [
 ---
 
 <section class="hero">
+  <!-- Background only. The mark is the site's own geometry, so the texture
+       behind the headline is that shape at scale rather than an invented
+       pattern; the section box does the cropping. -->
+  <div class="hero-bg" aria-hidden="true">
+    <!-- The inner frame is the same max-width as `.wrap`, so the ghost is
+         placed against the layout's right edge rather than the viewport's and
+         stays locked to the mark beside it at every width. -->
+    <div class="hero-bg-frame">
+      <div class="hero-ghost"><Mark size={1000} /></div>
+    </div>
+  </div>
+
   <div class="wrap hero-inner">
     <div class="hero-copy">
       <h1 class="hero-h">
-        Five categories.<br />
-        A short list in each.
+        Where you find<br />
+        the right software.
       </h1>
 
       <p class="hero-sub">
-        The big directories carry 1,600+ tools under CRM alone. We carry four, we say which
-        one we would choose, and we show you the pricing page we read to get there.
+        Five categories. A real shortlist in each, with the pricing page and the reasoning
+        behind every pick.
       </p>
 
       <form class="hero-search" id="hero-search" role="search">
@@ -92,15 +117,73 @@ const suggestions = [
     <!-- Wrapped rather than class-passed: a class handed to Mark lands on the
          same element Mark styles itself, at the same specificity, so which one
          wins comes down to bundle order. -->
-    <div class="hero-mark">
-      <Mark size={240} />
+    <div class="hero-aside">
+      <div class="hero-mark">
+        <Mark size={232} />
+      </div>
+
+      <!-- The differentiator, above the fold, in one sentence. Marked with the
+           amber rule this site uses for the thing it wants read — the same
+           device as the full disclosure note on the category pages. -->
+      <p class="hero-note">
+        Some links here pay us a commission. We say which ones.
+        <a href="/disclosure" class="tlink">The disclosure</a>
+      </p>
     </div>
   </div>
 </section>
 
 <style>
   .hero {
-    padding-block: clamp(3.5rem, 9vw, 7rem) clamp(3rem, 6vw, 5rem);
+    position: relative;
+    isolation: isolate;
+    padding-block: clamp(3.25rem, 8vw, 6rem) clamp(3.25rem, 6vw, 5.25rem);
+
+    /* Two layers: one cool wash that lifts the top of the page off the flat
+       paper below it, and one soft cobalt glow sitting behind the mark so the
+       right half of the section has somewhere for the eye to land. */
+    background:
+      radial-gradient(
+        46% 40% at 96% 2%,
+        color-mix(in oklab, var(--color-brand-primary) 10%, transparent),
+        transparent 74%
+      ),
+      linear-gradient(180deg, var(--surface-alt) 0%, var(--color-brand-bg) 38%);
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .hero-bg-frame {
+    position: relative;
+    height: 100%;
+    max-width: var(--wrap);
+    margin-inline: auto;
+  }
+
+  /* Cropped hard by .hero-bg, and the mask is the point: unmasked, a 190px
+     stroke at low opacity still has a hard edge, and a hard edge behind body
+     copy reads as a stray panel rather than as ground.
+     Narrow frames crop the mark's top-right corner — the one place the 45°
+     colour seam actually shows — into the top-right of the frame, fading down
+     and to the left out of the reading column. The two-column desktop layout
+     below has the room for the other corner, and takes it. */
+  .hero-ghost {
+    position: absolute;
+    right: -11.9rem;
+    top: -12rem;
+    opacity: 0.1;
+    mask-image: radial-gradient(
+      44% 62% at 100% 4%,
+      black 0%,
+      color-mix(in oklab, black 55%, transparent) 42%,
+      transparent 82%
+    );
   }
 
   .hero-inner {
@@ -111,19 +194,20 @@ const suggestions = [
   }
 
   .hero-h {
-    font-size: clamp(2.5rem, 7.4vw, 4.75rem);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 1.02;
+    font-size: clamp(2.45rem, 6.5vw, 5rem);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.042em;
+    line-height: 1.01;
     max-width: 22ch;
   }
 
   .hero-sub {
     margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
-    max-width: 52ch;
-    font-size: clamp(1.02rem, 1.35vw, 1.18rem);
-    line-height: 1.6;
-    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+    max-width: 46ch;
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    font-weight: var(--fw-light);
+    color: color-mix(in oklab, var(--color-brand-text) 78%, transparent);
   }
 
   /* --- the search field ------------------------------------------------- */
@@ -141,6 +225,7 @@ const suggestions = [
     background: white;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
+    box-shadow: var(--shadow-sm);
     transition:
       border-color 0.18s var(--ease),
       box-shadow 0.18s var(--ease);
@@ -189,29 +274,86 @@ const suggestions = [
     flex-wrap: wrap;
     gap: 0.6rem 1.75rem;
     margin-top: 1.4rem;
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
   }
 
   .hero-links a {
     text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 55%, transparent);
   }
 
-  /* The mark at illustration scale. Only once the wrap is at full width and
-     there is real clearance beside the copy — below that the hero carries
-     itself on type, which beats a graphic crowding the headline. */
+  /* --- the right-hand column -------------------------------------------- */
+
+  .hero-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  .hero-note {
+    max-width: 30ch;
+    padding: 0.15rem 0 0.2rem 0.9rem;
+    border-left: 3px solid var(--color-brand-accent);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  .hero-note a {
+    margin-left: 0.2rem;
+    font-weight: var(--fw-medium);
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 55%, transparent);
+  }
+
+  /* Mobile composition: no crisp mark (the nav has one four lines above),
+     and the note carries the right-hand column's job down here instead. */
   .hero-mark {
     display: none;
   }
 
   @media (min-width: 72rem) {
+    /* Desktop: the giant mark is anchored into the hero's bottom-right corner
+       so its own corner radius lands where the readable mark sits. The small
+       one is then nested at the big one's corner — the same shape at two
+       scales, offset rather than concentric, which is the one relationship
+       between them that reads as a decision. */
+    .hero-ghost {
+      /* Measured off the frame's right edge: the aside column is 17rem wide
+         inside the gutter, so this lands the giant mark's corner just outside
+         the readable mark's own top-left corner. */
+      right: calc(var(--gutter) - 39rem);
+      top: auto;
+      bottom: -29rem;
+      opacity: 0.18;
+      mask-image: radial-gradient(
+        21% 21% at 13% 13%,
+        black 0%,
+        color-mix(in oklab, black 44%, transparent) 46%,
+        transparent 88%
+      );
+    }
+
     .hero-inner {
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
+      align-items: end;
+    }
+
+    .hero-copy {
+      padding-bottom: 0.5rem;
     }
 
     .hero-mark {
       display: block;
+    }
+
+    /* Pulled up and left so the readable mark lands inside the ghost's
+       counter rather than beside it — the two are one lockup, offset, not
+       a small copy centred on a big one. */
+    .hero-aside {
       justify-self: end;
+      align-items: start;
+      gap: 2.4rem;
+      transform: translate(-0.5rem, -1.5rem);
     }
   }
 
@@ -231,6 +373,11 @@ const suggestions = [
     .hero-search-go {
       padding: 0.68rem 1.05rem;
       font-size: 0.9rem;
+    }
+
+    .hero-note {
+      max-width: 40ch;
+      margin-top: 0.4rem;
     }
   }
 </style>

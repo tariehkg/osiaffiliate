@@ -42,7 +42,7 @@ const lead = tone === 'light' ? 'var(--color-brand-accent)' : 'var(--color-brand
 const trail = tone === 'light' ? '#FFFFFF' : 'var(--color-brand-text)';
 ---
 
-<span class:list={['mark', cls]} data-tone={tone}>
+<span class:list={['mark', cls]} data-tone={tone} style={`--mark-size:${size}px`}>
   <svg
     width={size}
     height={size}
@@ -76,23 +76,36 @@ const trail = tone === 'light' ? '#FFFFFF' : 'var(--color-brand-text)';
 </span>
 
 <style>
+  /* The lockup is proportional to the glyph rather than fixed, so a caller
+     that asks for a larger mark gets a larger wordmark with it and the two
+     keep the same relationship at every size they are used at. */
   .mark {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: calc(var(--mark-size, 26px) * 0.34);
+  }
+
+  /* The base sheet sets `svg { max-width: 100% }`, which is right for content
+     images and wrong here: this glyph has a `size` and a square viewBox, and
+     a width cap with no matching height cap stretches it. Callers asking for
+     a mark larger than its slot — the hero and stance backgrounds — want it
+     cropped by the container, not distorted to fit. */
+  .mark svg {
+    flex: none;
+    max-width: none;
   }
 
   .mark-word {
     font-family: var(--font-heading);
-    font-size: 1.075rem;
-    font-weight: 500;
+    font-size: calc(var(--mark-size, 26px) * 0.66);
+    font-weight: var(--fw-medium);
     letter-spacing: -0.022em;
     white-space: nowrap;
     color: var(--color-brand-text);
   }
 
   .mark-word b {
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     letter-spacing: -0.03em;
   }
 

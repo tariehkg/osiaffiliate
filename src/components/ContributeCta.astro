@@ -1,23 +1,40 @@
 ---
 /**
- * The one closing CTA, merged from what used to be two adjacent sections
- * ("Know a tool we're missing?" and the email-alerts panel).
+ * The closing strip.
  *
- * Both of those resolved to the same working destination — /contact — and one
- * of them was the largest cobalt-tinted panel on the page despite every
- * control inside it being disabled. They are now two cells of one lattice, on
- * paper rather than a cobalt wash.
+ * This used to be a full section — heading, description, then a bordered
+ * two-cell lattice — which was the third appearance of that exact shape on
+ * one page. It is now deliberately the page's lightest section rather than
+ * one matching Stance or the methodology band for weight: it is a colophon
+ * line before the footer, not a destination.
  *
- * The email field stays disabled and stays labelled as disabled. There is no
- * mailing list, so the field does nothing, the button says so, and the note
- * under it explains why in plain words. The dashed border is the visual
- * signal that it is not a live control.
+ * What changed and why:
+ *
+ * 1. Slim full-bleed band on --color-brand-surface. The page now steps down
+ *    in tone on the way out: warm paper (directory) -> warm grey (here) ->
+ *    navy (footer). No box is drawn inside it.
+ *
+ * 2. The heading and its description run side by side as one masthead line
+ *    instead of stacking into a full section header, which is most of the
+ *    height saving.
+ *
+ * 3. The two asks are two genuinely different objects, not two cells of one
+ *    container: unequal widths, one shared hairline above them, and the only
+ *    live control on the strip — "Suggest a tool" — is the solid cobalt pill,
+ *    while the provisional half is set off by a dashed rule and muted
+ *    controls. Nothing is boxed.
+ *
+ * 4. The email field is still genuinely `disabled`, its button still says
+ *    "Not open yet", and the note under it still explains in plain words that
+ *    there is no mailing list. The dashed borders are the signal that neither
+ *    control is live; the styling deliberately makes the field look less
+ *    functional than the cobalt pill beside it, not more.
  */
 ---
 
-<section class="contrib">
+<section class="close">
   <div class="wrap">
-    <header class="contrib-head" data-rise>
+    <header class="close-head" data-rise>
       <h2>Nothing here is final</h2>
       <p>
         Picks come out when they stop earning the slot, and a category goes in when there is
@@ -26,39 +43,37 @@
       </p>
     </header>
 
-    <div class="contrib-lattice" data-rise>
-      <div class="contrib-cell">
+    <div class="close-asks" data-rise>
+      <div class="ask ask-live">
         <h3>Tell us what we’re missing</h3>
-        <p class="contrib-lede">
+        <p class="ask-lede">
           Say what you use and what it replaced. We read every one, and the ones that change
           a shortlist get added with the reasoning shown.
         </p>
-        <p class="contrib-act">
-          <a href="/contact" class="pill pill-line">Suggest a tool</a>
-        </p>
+        <a href="/contact" class="pill pill-solid ask-go">Suggest a tool</a>
       </div>
 
-      <div class="contrib-cell">
+      <div class="ask ask-wait">
         <h3>Hear when a pick changes</h3>
-        <p class="contrib-lede">
+        <p class="ask-lede">
           We add a category or swap a pick every few weeks. One short note when that happens
           — what changed, and why it changed.
         </p>
 
-        <div class="contrib-form">
-          <label class="contrib-field">
+        <div class="ask-form">
+          <label class="ask-field">
             <span class="sr">Email address</span>
             <input
               type="email"
               placeholder="you@yourcompany.com"
               disabled
-              aria-describedby="contrib-note"
+              aria-describedby="close-note"
             />
           </label>
-          <button type="button" class="pill contrib-btn" disabled>Not open yet</button>
+          <button type="button" class="pill ask-btn" disabled>Not open yet</button>
         </div>
 
-        <p class="contrib-note" id="contrib-note">
+        <p class="ask-note" id="close-note">
           There is no mailing list running yet, so this field does nothing on purpose — we
           would rather show you the plan than collect an address we cannot mail. <a
             href="/contact"
@@ -71,114 +86,140 @@
 </section>
 
 <style>
-  .contrib {
-    padding-block: 0 clamp(3.5rem, 7vw, 6rem);
+  /* Deliberately the shortest section on the page. */
+  .close {
+    background: var(--color-brand-surface);
+    border-top: 1px solid var(--line);
+    padding-block: clamp(2.25rem, 5vw, 3.25rem) clamp(2.5rem, 5.5vw, 3.75rem);
   }
 
-  .contrib-head h2 {
-    font-size: clamp(1.6rem, 3.2vw, 2.35rem);
-    font-weight: 650;
+  .close-head {
+    display: grid;
+    gap: 0.6rem;
   }
 
-  .contrib-head p {
-    margin-top: 0.9rem;
-    max-width: 58ch;
+  .close-head h2 {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.03em;
+    text-wrap: pretty;
+  }
+
+  .close-head p {
+    font-size: var(--fs-small);
+    line-height: 1.62;
+    max-width: 62ch;
     color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
   }
 
-  /* The shared-hairline lattice again, at two cells. */
-  .contrib-lattice {
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  /* One hairline over both asks, and none between or around them. */
+  .close-asks {
+    margin-top: clamp(1.4rem, 3vw, 2rem);
+    padding-top: clamp(1.4rem, 3vw, 2rem);
+    border-top: 1px solid var(--line-strong);
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
+    gap: clamp(1.5rem, 3.5vw, 2.5rem);
   }
 
-  .contrib-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background: var(--color-brand-bg);
-    padding: clamp(1.25rem, 2.75vw, 2rem);
+  .ask h3 {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.022em;
   }
 
-  .contrib-cell h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-  }
-
-  .contrib-lede {
-    margin-top: 0.55rem;
-    max-width: 44ch;
-    font-size: 0.925rem;
-    line-height: 1.55;
+  .ask-lede {
+    margin-top: 0.5rem;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    max-width: 46ch;
     color: color-mix(in oklab, var(--color-brand-text) 68%, transparent);
   }
 
-  /* Sits directly under its own copy rather than being pushed to a shared
-     bottom rail: the two cells carry quite different amounts of text, and
-     bottom-aligning left a hole in the middle of the shorter one. */
-  .contrib-act {
-    margin-top: 1.35rem;
+  .ask-go {
+    margin-top: 1.1rem;
   }
 
-  .contrib-form {
+  /* The provisional half: dashed rule, not a box. Becomes a top rule when the
+     two asks stack. */
+  .ask-wait {
+    border-top: 1px dashed var(--line-strong);
+    padding-top: clamp(1.25rem, 3.5vw, 1.75rem);
+  }
+
+  .ask-form {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 1.25rem;
+    margin-top: 1.1rem;
     width: 100%;
     max-width: 27rem;
   }
 
-  /* Dashed, not solid: the border is the signal that this control is not
-     live. */
-  .contrib-field {
-    flex: 1 1 12rem;
+  /* Dashed: this control is not live. */
+  .ask-field {
+    /* 14rem basis rather than 11rem: on a 375px screen the field and the
+       button together cannot fit without clipping the placeholder, so this
+       basis forces the button onto its own line there and keeps them
+       side by side everywhere it actually fits. */
+    flex: 1 1 14rem;
     display: flex;
     align-items: center;
-    min-height: 3rem;
-    padding-inline: 0.95rem;
-    background: color-mix(in oklab, white 70%, transparent);
+    min-height: 2.9rem;
+    padding-inline: 0.9rem;
+    background: var(--color-brand-bg);
     border: 1px dashed var(--line-strong);
     border-radius: 10px;
   }
 
-  .contrib-field input {
+  .ask-field input {
     width: 100%;
     min-width: 0;
     border: 0;
     background: none;
     outline: none;
-    font-size: 0.95rem;
+    font-size: var(--fs-small);
     color: var(--color-brand-muted);
     cursor: not-allowed;
   }
 
-  .contrib-btn {
+  .ask-btn {
     flex: none;
-    min-height: 3rem;
+    min-height: 2.9rem;
     border-radius: 10px;
-    background: var(--color-brand-surface);
+    background: transparent;
     border-color: var(--line-strong);
     color: var(--color-brand-muted);
-    font-weight: 500;
+    font-weight: var(--fw-medium);
     cursor: not-allowed;
   }
 
-  .contrib-note {
-    margin-top: 0.85rem;
-    max-width: 50ch;
-    font-size: 0.85rem;
-    line-height: 1.55;
+  .ask-note {
+    margin-top: 0.8rem;
+    max-width: 52ch;
+    font-size: var(--fs-caption);
+    line-height: 1.58;
     color: var(--color-brand-muted);
   }
 
-  @media (min-width: 54rem) {
-    .contrib-lattice {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  @media (min-width: 60rem) {
+    /* Heading and description as one line, not a stacked section header. */
+    .close-head {
+      grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.42fr);
+      align-items: baseline;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+
+    /* Unequal on purpose — two objects, not two cells. */
+    .close-asks {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      align-items: start;
+    }
+
+    .ask-wait {
+      border-top: 0;
+      padding-top: 0;
+      border-left: 1px dashed var(--line-strong);
+      padding-left: clamp(1.5rem, 3.5vw, 2.5rem);
     }
   }
 </style>

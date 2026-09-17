@@ -53,7 +53,12 @@ const year = new Date().getFullYear();
         pays us a commission at no extra cost to you. No vendor pays for placement or for a
         higher position. <a href="/disclosure">Read the full disclosure</a>.
       </p>
-      <p class="foot-copy">&copy; {year} OSI Affiliate</p>
+      <!-- The sign-off says something rather than only holding a date: what
+           it says is the promise the shortlists are actually run on. -->
+      <div class="foot-sign">
+        <p class="foot-sign-line">New shortlists go up when they are finished, not when they are due.</p>
+        <p class="foot-copy">&copy; {year} OSI Affiliate</p>
+      </div>
     </div>
   </div>
 </footer>
@@ -113,23 +118,35 @@ const year = new Date().getFullYear();
   }
 
   .foot-bottom {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: end;
-    gap: 1rem 2.5rem;
+    gap: 1.5rem 2.5rem;
     margin-top: clamp(2.25rem, 4vw, 3.25rem);
-    padding-top: 1.5rem;
+    padding-top: 1.75rem;
     border-top: 1px solid var(--line-invert);
+  }
+
+  /* The amber lead segment the site uses to mark the line it wants read —
+     here it starts the rule the disclosure sits under. */
+  .foot-bottom::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 4.5rem;
+    border-top: 2px solid var(--color-brand-accent);
   }
 
   /* The disclosure is set at real body size on a readable contrast — it is
      the site's headline promise, not fine print. */
   .foot-disclose {
-    max-width: 66ch;
-    font-size: 0.9rem;
+    max-width: 62ch;
+    font-size: var(--fs-small);
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.76);
+    color: rgba(255, 255, 255, 0.78);
   }
 
   .foot-disclose a {
@@ -140,10 +157,34 @@ const year = new Date().getFullYear();
     text-decoration-thickness: 1.5px;
   }
 
+  .foot-sign {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.45rem;
+  }
+
+  .foot-sign-line {
+    max-width: 26ch;
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    line-height: 1.35;
+    letter-spacing: -0.016em;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
   .foot-copy {
-    font-size: 0.855rem;
+    font-size: var(--fs-caption);
     color: rgba(255, 255, 255, 0.5);
     white-space: nowrap;
+  }
+
+  @media (min-width: 60rem) {
+    .foot-sign {
+      align-items: end;
+      text-align: right;
+    }
   }
 
   @media (min-width: 60rem) {

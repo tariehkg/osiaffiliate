@@ -76,6 +76,61 @@
 
   --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
   --ease: cubic-bezier(0.32, 0.72, 0.28, 1);
+
+  /* ---------------------------------------------------------------------
+     Type scale. Deliberate, dramatic jumps between tiers — a foundations
+     audit found nearly everything on the page clustered between 13-18px
+     with no real hierarchy below the H1. Each tier below should look
+     obviously, not subtly, different in scale from its neighbours.
+     ------------------------------------------------------------------- */
+  --fs-caption: 0.8125rem;                                  /* 13px  — micro labels, meta */
+  --fs-small: 0.9375rem;                                     /* 15px  — nav, small UI text */
+  --fs-body: 1.0625rem;                                      /* 17px  — the real reading size */
+  --fs-lede: clamp(1.1875rem, 0.9vw + 1rem, 1.375rem);       /* 19-22px — intro/lede paragraphs */
+  --fs-h4: 1.25rem;                                          /* 20px  — smallest heading tier */
+  --fs-h3: clamp(1.5rem, 1vw + 1.25rem, 1.75rem);            /* 24-28px — card/subsection headings */
+  --fs-h2: clamp(2.25rem, 3vw + 1rem, 3.25rem);              /* 36-52px — section headings */
+  --fs-display: clamp(2.5rem, 2vw + 2rem, 3.5rem);           /* 40-56px — large statements, pull-quotes */
+  --fs-h1: clamp(3.5rem, 5vw + 2rem, 6.5rem);                /* 56-104px — hero only */
+
+  /* Variable-font weight axis — both Outfit and Inter support the full
+     range, so use it. A page with only 400/500/600/700 in play has no real
+     weight contrast; light text needs to look genuinely light. */
+  --fw-light: 340;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 820;
+
+  /* ---------------------------------------------------------------------
+     Color depth. The base palette (theme.css) is a set of hues; these are
+     the tonal variations needed to actually build with them — hover/depth
+     shades of the primary, a real second-and-third section background so
+     the page can alternate rhythm beyond "white, then one navy island",
+     and shadow tokens with actual personality instead of no shadow system
+     at all.
+     ------------------------------------------------------------------- */
+  --color-primary-dark: color-mix(in oklab, var(--color-brand-primary) 82%, black);
+  --color-primary-deep: color-mix(in oklab, var(--color-brand-primary) 58%, black);
+
+  /* A cool-tinted alternate to --color-brand-surface, for sections that
+     need to read as "a different room" from the ones beside them without
+     going all the way to the navy inversion. */
+  --surface-alt: color-mix(in oklab, var(--color-brand-secondary) 5%, var(--color-brand-bg));
+
+  /* Amber used as a real background wash, not just a 2px underline —
+     --amber-deep is the text-safe version (raw --color-brand-accent fails
+     contrast for body text on paper). */
+  --amber-wash: color-mix(in oklab, var(--color-brand-accent) 13%, var(--color-brand-bg));
+  --amber-line: color-mix(in oklab, var(--color-brand-accent) 55%, transparent);
+  --amber-deep: color-mix(in oklab, var(--color-brand-accent) 62%, var(--color-brand-text));
+
+  --shadow-sm: 0 1px 2px color-mix(in oklab, var(--color-brand-text) 7%, transparent);
+  --shadow-md: 0 10px 28px -14px color-mix(in oklab, var(--color-brand-text) 32%, transparent);
+  /* A shadow tinted by the brand color reads as considered; a grey shadow
+     under everything is the single most common "AI-generated" tell. */
+  --shadow-brand: 0 16px 36px -18px color-mix(in oklab, var(--color-brand-primary) 48%, transparent);
 }
 
 /* Anchor targets clear the sticky nav. */

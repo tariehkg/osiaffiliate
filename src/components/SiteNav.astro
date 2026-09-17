@@ -6,7 +6,7 @@ import { categories } from './data';
 <header class="nav" id="site-nav">
   <div class="nav-bar wrap">
     <a href="/" class="nav-brand" aria-label="OSI Affiliate — home">
-      <Mark size={26} wordmark />
+      <Mark size={30} wordmark />
     </a>
 
     <nav class="nav-cats" aria-label="Software categories">
@@ -33,19 +33,24 @@ import { categories } from './data';
     position: sticky;
     top: 0;
     z-index: 60;
-    background: color-mix(in oklab, var(--color-brand-bg) 88%, transparent);
+    background: color-mix(in oklab, var(--color-brand-bg) 82%, transparent);
     backdrop-filter: saturate(1.4) blur(10px);
     border-bottom: 1px solid transparent;
     transition:
-      border-color 0.25s var(--ease),
-      box-shadow 0.25s var(--ease),
-      background-color 0.25s var(--ease);
+      border-color 0.28s var(--ease),
+      box-shadow 0.28s var(--ease),
+      background-color 0.28s var(--ease),
+      backdrop-filter 0.28s var(--ease);
   }
 
+  /* Scrolled: one hairline and a real, soft lift off the page. The old state
+     drew a 1px border and then a second 1px shadow directly under it, which
+     is two lines pretending to be depth. */
   .nav.is-scrolled {
-    background: color-mix(in oklab, var(--color-brand-bg) 96%, transparent);
+    background: color-mix(in oklab, var(--color-brand-bg) 94%, transparent);
+    backdrop-filter: saturate(1.5) blur(16px);
     border-bottom-color: var(--line);
-    box-shadow: 0 1px 0 0 var(--line);
+    box-shadow: var(--shadow-sm);
   }
 
   .nav-bar {
@@ -73,8 +78,8 @@ import { categories } from './data';
   }
 
   .nav-cats a {
-    font-size: 0.9rem;
-    font-weight: 450;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-regular);
     color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
     text-decoration: none;
     white-space: nowrap;
@@ -127,9 +132,13 @@ import { categories } from './data';
     gap: 0.4rem;
     overflow-x: auto;
     scrollbar-width: none;
-    padding: 0 var(--gutter) 0.7rem;
+    padding: 0.7rem var(--gutter);
     border-top: 1px solid var(--line);
-    padding-top: 0.7rem;
+    transition: padding-block 0.28s var(--ease);
+  }
+
+  .nav.is-scrolled .nav-cats-mobile {
+    padding-block: 0.5rem;
   }
 
   .nav-cats-mobile::-webkit-scrollbar {

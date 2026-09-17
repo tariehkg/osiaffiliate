@@ -1,8 +1,32 @@
 ---
 import Mark from './Mark.astro';
+
+/**
+ * The page's one inverted block.
+ *
+ * Deliberately off-centre. The quote is indented into the frame from the left
+ * and set ragged-right, with an amber lead-in rule running out of the left
+ * gutter to meet its first line — so the eye is walked in rather than dropped
+ * into the middle of a symmetrical slab. The space that asymmetry opens on the
+ * right is where the ghosted mark sits.
+ *
+ * Amber does three jobs here and stops: the lead-in rule, the underline under
+ * the clause the section exists to say out loud, and the leading half of the
+ * mark (both the small one in the byline and the large one behind). Everything
+ * else stays navy and white — this is the page's quietest section by design,
+ * and a wash of amber would make it the loudest.
+ *
+ * The background mark is the real component at 980px, cropped by the section
+ * box and masked to fade, same as the hero's. One shape, two sections, no
+ * second drawing of the brand to keep in step.
+ */
 ---
 
 <section class="stance">
+  <div class="stance-bg" aria-hidden="true">
+    <div class="stance-ghost"><Mark size={980} tone="light" /></div>
+  </div>
+
   <div class="wrap stance-inner">
     <blockquote class="stance-quote" data-rise>
       <p>
@@ -10,46 +34,77 @@ import Mark from './Mark.astro';
         that we tell you <em>which links pay us</em>, and the tool we would actually choose
         still comes first.
       </p>
-      <footer class="stance-by">
-        <Mark size={22} tone="light" />
-        <span>The OSI Affiliate team</span>
+
+      <footer class="stance-foot">
+        <span class="stance-by">
+          <Mark size={22} tone="light" />
+          <span>The OSI Affiliate team</span>
+        </span>
+
+        <a href="/how-we-pick" class="pill pill-invert stance-go">Read the methodology</a>
       </footer>
     </blockquote>
-
-    <a href="/how-we-pick" class="pill pill-invert stance-go" data-rise>Read the methodology</a>
   </div>
 </section>
 
 <style>
-  /* The page's one inverted block. It carries itself on type alone — the
-     concentric rings that used to sit behind it were decoration with nothing
-     to say, and the navy is stronger without them. */
   .stance {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: var(--color-brand-secondary);
     color: white;
     padding-block: clamp(3.75rem, 9vw, 7rem);
   }
 
+  .stance-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* Bottom-right, cropped to its top-left corner sweep and faded out before
+     it reaches any edge — the same device as the hero, mirrored onto navy,
+     where the mark's light tone puts amber on the leading half.
+     It exists to fill the void the off-centre quote opens on the right, so it
+     is shown only at the widths where there is a void: below that the quote
+     takes the full column and there is nothing for it to fill. */
+  .stance-ghost {
+    display: none;
+    position: absolute;
+    right: -26rem;
+    bottom: -25rem;
+    opacity: 0.16;
+    mask-image: radial-gradient(
+      22% 22% at 13% 13%,
+      black 0%,
+      color-mix(in oklab, black 44%, transparent) 46%,
+      transparent 88%
+    );
+  }
+
   .stance-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: clamp(1.75rem, 3.5vw, 2.6rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .stance-quote {
+    position: relative;
     margin: 0;
-    max-width: 47rem;
+    max-width: 48rem;
   }
 
   .stance-quote p {
     font-family: var(--font-heading);
-    font-size: clamp(1.55rem, 4.4vw, 2.85rem);
-    font-weight: 500;
-    line-height: 1.16;
+    /* Tops out at --fs-display. It does not start there: the token's floor is
+       40px, which puts four words on a line in a 335px column. */
+    font-size: clamp(1.75rem, 5.2vw, 3.5rem);
+    font-weight: var(--fw-medium);
+    line-height: 1.14;
     letter-spacing: -0.032em;
-    text-wrap: balance;
+    text-wrap: pretty;
   }
 
   /* Emphasis by rule, not by recolouring the words. Underlines are already
@@ -63,18 +118,60 @@ import Mark from './Mark.astro';
     text-underline-offset: 0.16em;
   }
 
-  .stance-by {
+  .stance-foot {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
+    gap: 1.25rem 2.25rem;
+    margin-top: clamp(1.9rem, 4vw, 2.9rem);
+  }
+
+  .stance-by {
+    display: inline-flex;
+    align-items: center;
     gap: 0.6rem;
-    margin-top: clamp(1.4rem, 3vw, 2.1rem);
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
     color: rgba(255, 255, 255, 0.66);
   }
 
   .stance-go {
     flex: none;
+  }
+
+  /* Off-centre only once there is room to be off-centre. Below this the quote
+     takes the full column and the lead-in rule would have nowhere to lead
+     from, so it sits above the first line instead of beside it. */
+  @media (min-width: 60rem) {
+    .stance-ghost {
+      display: block;
+    }
+
+    .stance-inner {
+      grid-template-columns: minmax(0, 1fr);
+      padding-left: clamp(3.5rem, 11vw, 9.5rem);
+    }
+
+    /* The lead-in: an amber rule out of the left gutter, stopping at the
+       quote's first line. Sized off the first line's own height so it stays
+       optically on that line as the type scales. */
+    .stance-quote::before {
+      content: '';
+      position: absolute;
+      top: clamp(1.1rem, 2.1vw, 2rem);
+      right: calc(100% + 1.4rem);
+      width: clamp(1.75rem, 5vw, 5rem);
+      border-top: 2px solid var(--color-brand-accent);
+    }
+  }
+
+  @media (max-width: 59.9375rem) {
+    .stance-quote::before {
+      content: '';
+      display: block;
+      width: 3.5rem;
+      margin-bottom: clamp(1.2rem, 3vw, 1.6rem);
+      border-top: 2px solid var(--color-brand-accent);
+    }
   }
 </style>
