@@ -1,0 +1,10 @@
+/* Self-hosted variable fonts for the locked-in design.
+   Outfit  — headings, wordmark, monograms, figures
+   Inter   — body copy and UI
+   The six concept-phase families are no longer imported. */
+@import '@fontsource-variable/outfit';
+@import '@fontsource-variable/inter';
+
+@import "tailwindcss";
+@import "./theme.css";
+@import "./base.css";

@@ -1,0 +1,67 @@
+---
+/**
+ * The on-page affiliate disclosure.
+ *
+ * One component so the wording is identical on every page that carries
+ * outbound vendor links, and so it can never quietly shrink into fine print:
+ * it is set at body size, sits directly under the h1, and is marked by the
+ * amber rule the brand uses for the thing it wants read.
+ *
+ * `links` adds the sentence about what the buttons on this page actually do
+ * today — the site has not finished joining vendor programmes, so some of
+ * these links carry no affiliate tag at all, and saying so is cheaper than
+ * being caught implying otherwise.
+ */
+interface Props {
+  /** Adds the line about the state of the outbound links on this page. */
+  links?: boolean;
+  class?: string;
+}
+
+const { links = false, class: cls = '' } = Astro.props;
+---
+
+<aside class:list={['disc', cls]} aria-label="Affiliate disclosure">
+  <p>
+    <b>Some links on this page can pay us.</b> If you sign up with a vendor through a link
+    here, they may pay us a commission, at no extra cost to you. No vendor pays to appear on
+    this list or to sit higher on it, and a commission has never moved a pick.
+    {
+      links && (
+        <>
+          {' '}
+          The vendor buttons below go straight to that vendor&#8217;s own site; where we have
+          not joined a programme yet, there is no tag on the link and nobody pays us for the
+          click.
+        </>
+      )
+    }
+    <a href="/disclosure" class="tlink">Read the full disclosure</a>.
+  </p>
+</aside>
+
+<style>
+  .disc {
+    margin-top: clamp(1.4rem, 3vw, 2rem);
+    max-width: 68ch;
+    padding: 0.9rem 0 0.9rem 1.1rem;
+    border-left: 3px solid var(--color-brand-accent);
+    background: color-mix(in oklab, var(--color-brand-accent) 8%, transparent);
+  }
+
+  .disc p {
+    font-size: 0.945rem;
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 84%, transparent);
+  }
+
+  .disc b {
+    font-weight: 600;
+  }
+
+  .disc a {
+    margin-left: 0.15rem;
+    font-weight: 500;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 55%, transparent);
+  }
+</style>

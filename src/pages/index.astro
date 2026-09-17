@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import Hero from '../components/Hero.astro';
+import CategoryBrowser from '../components/CategoryBrowser.astro';
+import TrustPanel from '../components/TrustPanel.astro';
+import Stance from '../components/Stance.astro';
+import CategoryDirectory from '../components/CategoryDirectory.astro';
+import ContributeCta from '../components/ContributeCta.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+
+<Layout
+  title="OSI Affiliate — a short list of business software, not a 1,600-tool wall"
+  description="Five categories of business software, two to four real picks in each, with current pricing and the reasoning shown. We say plainly which links pay us."
+>
+  <SiteNav />
+  <main>
+    <Hero />
+    <CategoryBrowser />
+    <TrustPanel />
+    <Stance />
+    <CategoryDirectory />
+    <ContributeCta />
+  </main>
+  <SiteFooter />
+</Layout>
+
+<script>
+  /**
+   * Scroll reveal, deliberately fail-safe.
+   *
+   * [data-rise] elements are visible in CSS. This script's first act is to
+   * measure each one and hide ONLY the ones already below the fold — so even
+   * if the script is slow, blocked or broken, nothing a visitor can see is
+   * ever transparent. Observation starts after that measurement pass.
+   */
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-rise]'));
+  const fold = window.innerHeight;
+  const belowFold = items.filter((el) => el.getBoundingClientRect().top > fold * 0.92);
+
+  for (const el of belowFold) el.classList.add('rise-pending');
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (belowFold.length) {
+    if (reduce || !('IntersectionObserver' in window)) {
+      for (const el of belowFold) el.classList.remove('rise-pending');
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const el = entry.target as HTMLElement;
+            el.classList.add('rise-in');
+            el.classList.remove('rise-pending');
+            io.unobserve(el);
+          }
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
+      );
+
+      for (const el of belowFold) io.observe(el);
+    }
+  }
+</script>

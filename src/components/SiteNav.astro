@@ -1,0 +1,178 @@
+---
+import Mark from './Mark.astro';
+import { categories } from './data';
+---
+
+<header class="nav" id="site-nav">
+  <div class="nav-bar wrap">
+    <a href="/" class="nav-brand" aria-label="OSI Affiliate — home">
+      <Mark size={26} wordmark />
+    </a>
+
+    <nav class="nav-cats" aria-label="Software categories">
+      {categories.map((c) => <a href={c.hub}>{c.short}</a>)}
+    </nav>
+
+    <!-- One action only. The five category links to the left already reach
+         every shortlist on the site, so a filled button pointing at the same
+         place was duplication; the methodology is the thing worth keeping
+         permanently in reach, and it is what the big directories do not
+         put in their nav at all. -->
+    <div class="nav-actions">
+      <a href="/how-we-pick" class="nav-secondary">How we pick</a>
+    </div>
+  </div>
+
+  <nav class="nav-cats-mobile" aria-label="Software categories">
+    {categories.map((c) => <a href={c.hub}>{c.short}</a>)}
+  </nav>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: color-mix(in oklab, var(--color-brand-bg) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid transparent;
+    transition:
+      border-color 0.25s var(--ease),
+      box-shadow 0.25s var(--ease),
+      background-color 0.25s var(--ease);
+  }
+
+  .nav.is-scrolled {
+    background: color-mix(in oklab, var(--color-brand-bg) 96%, transparent);
+    border-bottom-color: var(--line);
+    box-shadow: 0 1px 0 0 var(--line);
+  }
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding-block: 1.15rem;
+    transition: padding-block 0.25s var(--ease);
+  }
+
+  .nav.is-scrolled .nav-bar {
+    padding-block: 0.7rem;
+  }
+
+  .nav-brand {
+    text-decoration: none;
+    flex: none;
+  }
+
+  .nav-cats {
+    display: none;
+    align-items: center;
+    gap: clamp(0.85rem, 1.7vw, 1.65rem);
+    margin-right: auto;
+  }
+
+  .nav-cats a {
+    font-size: 0.9rem;
+    font-weight: 450;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+    text-decoration: none;
+    white-space: nowrap;
+    padding-block: 0.3rem;
+    border-bottom: 2px solid transparent;
+    transition:
+      color 0.16s var(--ease),
+      border-color 0.16s var(--ease);
+  }
+
+  .nav-cats a:hover {
+    color: var(--color-brand-text);
+    border-bottom-color: var(--color-brand-primary);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+  }
+
+  /* Shown at every width: it is the site's trust promise and should never be
+     the thing that falls off a small screen. */
+  .nav-secondary {
+    display: flex;
+    font-family: var(--font-heading);
+    font-size: 0.925rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    color: var(--color-brand-text);
+    border: 1px solid var(--line-strong);
+    transition:
+      border-color 0.16s var(--ease),
+      color 0.16s var(--ease);
+  }
+
+  .nav-secondary:hover {
+    border-color: var(--color-brand-primary);
+    color: var(--color-brand-primary);
+  }
+
+  /* Mobile: the five categories become one scrollable strip under the bar,
+     so nothing is hidden behind a hamburger. */
+  .nav-cats-mobile {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 var(--gutter) 0.7rem;
+    border-top: 1px solid var(--line);
+    padding-top: 0.7rem;
+  }
+
+  .nav-cats-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-cats-mobile a {
+    flex: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: color-mix(in oklab, var(--color-brand-text) 80%, transparent);
+    white-space: nowrap;
+  }
+
+  /* The full category row only appears once all five links and both actions
+     fit on one line. Below that, the scrollable chip strip does the job. */
+  @media (min-width: 70rem) {
+    .nav-cats {
+      display: flex;
+    }
+
+    .nav-cats-mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .nav-secondary {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  if (nav) {
+    const sync = () => nav.classList.toggle('is-scrolled', window.scrollY > 12);
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+  }
+</script>

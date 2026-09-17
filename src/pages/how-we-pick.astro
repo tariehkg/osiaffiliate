@@ -1,0 +1,217 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import PageHead from '../components/PageHead.astro';
+import Doc from '../components/Doc.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { categories, method } from '../components/data';
+
+/**
+ * The site's core trust page.
+ *
+ * The four rules are the same four in `data.ts` that the homepage shows as
+ * one-liners — same titles, same lede, verbatim — with the detail that will
+ * not fit in a homepage panel. Nothing here may contradict that array; when a
+ * rule changes it changes there first.
+ */
+const detail: string[][] = [
+  [
+    'Where an entry on this site says “Free plan available” or “Free trial, then paid per seat”, that came from the vendor’s own pricing page. Not from another roundup, not from a comparison site, and not from a sales email. We describe the shape of the pricing rather than quoting a figure, because figures go stale within weeks and a confidently wrong price is worse than no price at all.',
+    'Three things get checked on every pick: whether there is a genuinely free tier or only a trial, whether you are billed per seat, per contact or per site, and which of the features we praise sit behind a higher tier than the one you would start on. That last one is where most software comparisons mislead — not by lying, but by omission.',
+    'When a vendor repackages, the line here changes. If you find one that no longer matches what their pricing page says today, that is a defect on our side and we would rather hear about it than have you find out after signing up.',
+  ],
+  [
+    'What this site is: close reading of the products, their documentation, their pricing pages and their published limits, plus real familiarity with each category. What it is not: a lab with fifteen paid accounts running side by side for a year.',
+    'So we have deliberately restricted the claims to the kind that reading supports — what a tool is shaped like, who it suits, where its ceiling sits, what it costs you in setup effort. You will not find us asserting the kind that reading cannot support: inbox placement rates, uptime figures, support response times, or benchmark scores lifted from a vendor’s own marketing.',
+    'The same rule is why there are no star ratings, no review counts and no testimonials anywhere on this site. We do not have real ones. Borrowed ones are how directories end up recommending whichever tool is most reviewed rather than whichever tool fits the person reading.',
+  ],
+  [
+    'The order of picks on a page is an editorial decision. There is no sponsored slot, no promoted listing, no paid inclusion, and no way for a vendor to buy a position or to be added on request. If a vendor asks, the answer is no, and the asking does not change what their entry says.',
+    'We do earn a commission from some of these vendors and not others, and we join programmes one vendor at a time as the site grows. That difference is not a tiebreak. Where a tool we rate has no programme we can join, it stays on the list anyway, because the list is the only thing on this site with any value.',
+    'This is the specific practice the big directories are vague about, so it is worth being blunt: a commission has never moved a pick up a page, and if that ever changes, this page changes with it.',
+  ],
+  [
+    'Two to four picks per category. Not ten, not a top twenty-five, and not one per affiliate programme we happen to have joined. A list you can read in one sitting is the entire product here.',
+    'That means adding a tool is a real decision. It either replaces something already on the list, or it covers a need the existing picks genuinely cannot — and the entry has to say which, out loud, in the paragraph where we explain why it is there.',
+    'It also means removal is normal. A pick comes off when repackaging breaks the thing that made it a pick, when its pricing moves out of line with what it does, or when something else simply does the job better. Keeping a weak pick around for the extra outbound link is the failure mode this whole page exists to prevent.',
+  ],
+];
+
+const rules = method.map((m, i) => ({ ...m, detail: detail[i] ?? [] }));
+
+const catCount = categories.length;
+const pickCount = categories.reduce((n, c) => n + c.picks.length, 0);
+const compareCount = categories.filter((c) => c.comparison).length;
+---
+
+<Layout
+  title="How we pick — OSI Affiliate"
+  description="The four rules behind every pick on this site, the claims we deliberately do not make, and an honest account of what this site has not done yet."
+>
+  <SiteNav />
+  <main>
+    <PageHead
+      title="How we pick"
+      lede="Four rules decide what goes on a shortlist here. They are the same four summarised on the homepage, written out in full, including the parts that are not flattering."
+      note="If a page on this site ever contradicts something on this page, this page is the one that is right — and the other one is a mistake worth telling us about."
+    />
+
+    <section class="rules" aria-label="The four rules">
+      <div class="wrap">
+        <div class="rule-stack">
+          {
+            rules.map((r) => (
+              <article class="rule">
+                <div class="rule-head">
+                  <h2>{r.title}</h2>
+                  <p class="rule-lede">{r.body}</p>
+                </div>
+                <div class="rule-body">
+                  {r.detail.map((para) => (
+                    <p>{para}</p>
+                  ))}
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <Doc>
+      <section>
+        <h2>What we deliberately do not do</h2>
+        <ul>
+          <li>
+            <b>No ratings or scores.</b> Not a five-star average, not a ten-point score, not a
+            composite pulled from other people’s reviews.
+          </li>
+          <li>
+            <b>No review counts or testimonials.</b> This site is new and has none that are
+            real. Inventing them, or borrowing someone else’s, is the line we will not cross.
+          </li>
+          <li>
+            <b>No sponsored or promoted entries.</b> Nothing on this site is here because
+            somebody paid, and nothing is ranked because somebody paid.
+          </li>
+          <li>
+            <b>No padding.</b> A category gets the picks it has earned. If that is two, the
+            page says two.
+          </li>
+          <li>
+            <b>No invented specifics.</b> If we are not confident in a number, it is not on the
+            page — which is why the plan lines describe a pricing shape instead of quoting a
+            figure.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Where this site is today</h2>
+        <p>
+          The honest version, because a methodology page that only lists strengths is a sales
+          page.
+        </p>
+
+        <div class="doc-inset">
+          <ul>
+            <li>
+              <b>It is new.</b> {catCount} categories, {pickCount} picks and {compareCount} head-to-head
+              comparisons. There is no archive of past recommendations to judge us on yet.
+            </li>
+            <li>
+              <b>Researched, not hands-on tested.</b> No claim on this site depends on us having
+              run the tool in a live business, and where a pick rests on documented features
+              rather than daily use, the entry says so.
+            </li>
+            <li>
+              <b>Pricing is a snapshot.</b> Each plan line was read on the day the page was
+              written. Vendors repackage; verify on their page before you pay.
+            </li>
+            <li>
+              <b>Affiliate programmes are still being joined.</b> They go one vendor at a time,
+              so some links on this site currently carry no affiliate tag at all and earn us
+              nothing. The <a href="/disclosure">disclosure</a> is published anyway, so the
+              policy is on record before the first commission arrives.
+            </li>
+            <li>
+              <b>Two things on the homepage are not wired up.</b> The search field does not
+              search, and the email field does not sign you up to anything. Both say so on the
+              page rather than quietly dropping what you type.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>If you think a pick is wrong</h2>
+        <p>
+          Tell us, specifically. A pricing line that no longer matches the vendor’s page, a
+          caveat that is unfair, a tool that should be on a shortlist and is not — those are the
+          messages that actually change this site, and we would rather have the correction than
+          the traffic.
+        </p>
+        <p>
+          <a href="/contact" class="pill pill-line">Send a correction</a>
+        </p>
+      </section>
+    </Doc>
+  </main>
+  <SiteFooter />
+</Layout>
+
+<style>
+  .rules {
+    padding-block: clamp(0.5rem, 1.5vw, 1rem) clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* One stack sharing hairlines, like the picks on a hub page — four rules,
+     not four floating cards. */
+  .rule-stack {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .rule {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(0.9rem, 2vw, 1.5rem);
+    background: var(--color-brand-bg);
+    padding: clamp(1.35rem, 3vw, 2.25rem);
+  }
+
+  .rule h2 {
+    font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+    font-weight: 650;
+    max-width: 24ch;
+  }
+
+  /* The homepage's one-liner, kept verbatim as the lede for its own rule. */
+  .rule-lede {
+    margin-top: 0.7rem;
+    max-width: 40ch;
+    font-size: 0.945rem;
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  .rule-body p {
+    max-width: 68ch;
+    font-size: 1rem;
+    line-height: 1.68;
+    color: color-mix(in oklab, var(--color-brand-text) 88%, transparent);
+  }
+
+  .rule-body p + p {
+    margin-top: 0.9rem;
+  }
+
+  @media (min-width: 64rem) {
+    .rule {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: clamp(1.75rem, 4vw, 3.25rem);
+    }
+  }
+</style>

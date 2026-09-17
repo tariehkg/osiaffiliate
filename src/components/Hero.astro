@@ -1,0 +1,394 @@
+---
+import Mark from './Mark.astro';
+import { categories } from './data';
+import { directoryTotals } from './directory-taxonomy';
+
+/**
+ * Hero.
+ *
+ * No entrance animation and no [data-rise] attribute anywhere in here: this
+ * block is above the fold on every viewport, so it is painted by CSS alone
+ * and cannot be blanked by a slow script.
+ *
+ * The search field is back, and this time it works. It matches what you type
+ * against the real category and product names in `data.ts` (plus the standard
+ * category names in `directory-taxonomy.ts` for the five that are live) and
+ * sends you to that category's hub, or straight to a single product's own
+ * section on it. Nothing matched goes to the category wall further down the
+ * page, which is the honest answer: here is everything there is.
+ *
+ * It degrades in the right order. The <datalist> is real, server-rendered
+ * autocomplete from the same names the matcher uses, so the field suggests
+ * only queries that resolve. With no JS the form falls back to a plain GET of
+ * `/?q=…`, and the script re-reads that parameter on load, so a search URL is
+ * shareable and still resolves.
+ *
+ * The mark takes the slot the old illustration had. That drawing explained the
+ * previous logo's idea, and the logo it explained is gone.
+ */
+
+/* Both drawn from the real index below, so neither can drift into fiction. */
+const placeholder = 'Search HubSpot, CRM, email marketing…';
+const suggestions = [
+  ...categories.map((c) => c.name),
+  ...categories.flatMap((c) => c.picks.map((p) => p.name)),
+];
+---
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <h1 class="hero-h">
+        Five categories.<br />
+        A short list in each.
+      </h1>
+
+      <p class="hero-sub">
+        The big directories carry 1,600+ tools under CRM alone. We carry four, we say which
+        one we would choose, and we show you the pricing page we read to get there.
+      </p>
+
+      <form class="hero-search" id="hero-search" role="search">
+        <label class="sr" for="hero-q">Search categories and tools</label>
+
+        <svg
+          class="hero-search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.1"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="10.5" cy="10.5" r="6.75"></circle>
+          <path d="M15.6 15.6 L20.5 20.5"></path>
+        </svg>
+
+        <input
+          class="hero-q"
+          id="hero-q"
+          name="q"
+          type="search"
+          list="hero-suggest"
+          placeholder={placeholder}
+          autocomplete="off"
+          enterkeyhint="search"
+        />
+
+        <button type="submit" class="pill pill-solid hero-search-go">Search</button>
+      </form>
+
+      <datalist id="hero-suggest">
+        {suggestions.map((s) => <option value={s} />)}
+      </datalist>
+
+      <p class="hero-links">
+        <a href="/how-we-pick" class="tlink">How we pick</a>
+        <a href="#directory" class="tlink">All {directoryTotals.entries} categories</a>
+      </p>
+    </div>
+
+    <!-- Wrapped rather than class-passed: a class handed to Mark lands on the
+         same element Mark styles itself, at the same specificity, so which one
+         wins comes down to bundle order. -->
+    <div class="hero-mark">
+      <Mark size={240} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(3.5rem, 9vw, 7rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .hero-h {
+    font-size: clamp(2.5rem, 7.4vw, 4.75rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    max-width: 22ch;
+  }
+
+  .hero-sub {
+    margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
+    max-width: 52ch;
+    font-size: clamp(1.02rem, 1.35vw, 1.18rem);
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+  }
+
+  /* --- the search field ------------------------------------------------- */
+
+  /* Solid border, not the dashed one the site uses to mark a dead control:
+     this one submits. */
+  .hero-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 34rem;
+    margin-top: clamp(1.6rem, 3.2vw, 2.25rem);
+    padding: 0.4rem 0.45rem 0.4rem 1.05rem;
+    background: white;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    transition:
+      border-color 0.18s var(--ease),
+      box-shadow 0.18s var(--ease);
+  }
+
+  /* Focus lives on the whole field rather than the bare input inside it, so
+     the ring surrounds the control a keyboard user is actually in. */
+  .hero-search:focus-within {
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand-primary) 20%, transparent);
+  }
+
+  .hero-search-icon {
+    flex: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: color-mix(in oklab, var(--color-brand-text) 46%, transparent);
+  }
+
+  .hero-q {
+    flex: 1 1 auto;
+    min-width: 0;
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 0.8rem 0;
+    font-size: 1.01rem;
+  }
+
+  .hero-q:focus,
+  .hero-q:focus-visible {
+    outline: none;
+  }
+
+  .hero-q::placeholder {
+    color: color-mix(in oklab, var(--color-brand-text) 50%, transparent);
+  }
+
+  .hero-search-go {
+    flex: none;
+    padding: 0.7rem 1.4rem;
+  }
+
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.75rem;
+    margin-top: 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .hero-links a {
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 55%, transparent);
+  }
+
+  /* The mark at illustration scale. Only once the wrap is at full width and
+     there is real clearance beside the copy — below that the hero carries
+     itself on type, which beats a graphic crowding the headline. */
+  .hero-mark {
+    display: none;
+  }
+
+  @media (min-width: 72rem) {
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .hero-mark {
+      display: block;
+      justify-self: end;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .hero-links {
+      gap: 0.7rem 1.25rem;
+    }
+
+    .hero-search {
+      padding-left: 0.85rem;
+    }
+
+    .hero-q {
+      font-size: 0.97rem;
+    }
+
+    .hero-search-go {
+      padding: 0.68rem 1.05rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<script>
+  import { categories } from './data';
+  import { directoryGroups } from './directory-taxonomy';
+
+  /**
+   * The search index, built at bundle time from the same two data files the
+   * page renders from. Every entry resolves to a page that exists: a category
+   * hub, or one pick's anchored section on its hub.
+   */
+  type Target = { url: string; kind: 'category' | 'pick'; terms: string[] };
+
+  const targets: Target[] = [];
+  const hubs = new Map<string, Target>();
+
+  for (const c of categories) {
+    const hub: Target = { url: c.hub, kind: 'category', terms: [c.name, c.short] };
+    targets.push(hub);
+    hubs.set(c.hub, hub);
+
+    for (const p of c.picks) {
+      targets.push({ url: `${c.hub}#${p.slug}`, kind: 'pick', terms: [p.name] });
+    }
+  }
+
+  /* The five live entries in the wall carry the standard industry name for the
+     same category ("SEO Software" for "SEO & Marketing Tools"). Those are what
+     people actually type, so they are terms on the hub they already point at. */
+  for (const group of directoryGroups) {
+    for (const entry of group.entries) {
+      const hub = entry.href ? hubs.get(entry.href) : undefined;
+      if (hub) hub.terms.push(entry.name);
+    }
+  }
+
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+  /** How well one name answers the query. 0 means it does not. */
+  function score(term: string, q: string): number {
+    const t = norm(term);
+    if (!t) return 0;
+    if (t === q) return 5;
+    if (t.startsWith(q)) return 4;
+    if (t.split(' ').some((w) => w.startsWith(q))) return 3;
+    if (t.includes(q)) return 2;
+
+    const words = q.split(' ').filter(Boolean);
+    if (words.length > 1 && words.every((w) => t.includes(w))) return 1;
+    return 0;
+  }
+
+  /** The best real destination for a query, or null if nothing matches. */
+  function resolve(raw: string): string | null {
+    const q = norm(raw);
+    if (q.length < 2) return null;
+
+    let bestUrl: string | null = null;
+    let bestScore = 0;
+    let bestKind = 0;
+    let bestLength = Infinity;
+
+    for (const target of targets) {
+      let s = 0;
+      let length = Infinity;
+
+      for (const term of target.terms) {
+        const termScore = score(term, q);
+        if (termScore > s || (termScore === s && termScore > 0 && term.length < length)) {
+          s = termScore;
+          length = term.length;
+        }
+      }
+
+      if (s === 0) continue;
+
+      /* A tie goes to the category over one of its picks — "crm" wants the
+         shortlist, not whichever pick happens to have CRM in its name — and
+         then to the shorter, more exact name. */
+      const kind = target.kind === 'category' ? 1 : 0;
+      const better =
+        s > bestScore ||
+        (s === bestScore && kind > bestKind) ||
+        (s === bestScore && kind === bestKind && length < bestLength);
+
+      if (better) {
+        bestUrl = target.url;
+        bestScore = s;
+        bestKind = kind;
+        bestLength = length;
+      }
+    }
+
+    return bestUrl;
+  }
+
+  /** Nothing matched: the wall of every category is the useful dead end. */
+  const FALLBACK = '#directory';
+
+  function go(url: string, replace: boolean) {
+    if (url.startsWith('#')) {
+      const el = document.querySelector(url);
+      if (!el) {
+        window.location.replace(`/${url}`);
+        return;
+      }
+
+      history.replaceState(null, '', url);
+
+      /* A scroll asked for while the document is still loading gets undone by
+         the browser's own scroll restoration, which is exactly the case when a
+         /?q=… URL resolves to this section. Wait for the load in that case. */
+      const jump = () => el.scrollIntoView({ block: 'start' });
+      if (document.readyState === 'complete') jump();
+      else window.addEventListener('load', () => requestAnimationFrame(jump), { once: true });
+      return;
+    }
+
+    if (replace) window.location.replace(url);
+    else window.location.assign(url);
+  }
+
+  const form = document.getElementById('hero-search') as HTMLFormElement | null;
+  const input = document.getElementById('hero-q') as HTMLInputElement | null;
+
+  if (form && input) {
+    function run() {
+      const raw = input!.value.trim();
+      if (!raw) {
+        input!.focus();
+        return;
+      }
+      go(resolve(raw) ?? FALLBACK, false);
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      run();
+    });
+
+    /* Enter is handled here as well as through the form's own implicit
+       submission: with the suggestion list open, a browser can spend the first
+       Enter on closing the dropdown rather than submitting the form, and the
+       key that obviously means "search" should never need pressing twice. */
+    input.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      run();
+    });
+
+    /* A shared /?q=… URL resolves the same way. Replaced, not pushed, so the
+       back button does not land on a page that redirects forward again. */
+    const queried = new URLSearchParams(window.location.search).get('q');
+    if (queried && queried.trim()) {
+      input.value = queried;
+      go(resolve(queried) ?? FALLBACK, true);
+    }
+  }
+</script>

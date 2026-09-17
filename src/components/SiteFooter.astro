@@ -1,0 +1,154 @@
+---
+import Mark from './Mark.astro';
+import { categories } from './data';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <Mark size={28} tone="light" wordmark />
+        <p>
+          A short, opinionated shortlist for five kinds of business software — with the
+          business model stated on the page instead of buried in it.
+        </p>
+      </div>
+
+      <nav class="foot-cols" aria-label="Footer">
+        <div class="foot-col">
+          <h2>OSI Affiliate</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/how-we-pick">How we pick</a></li>
+            <li><a href="/disclosure">Affiliate disclosure</a></li>
+          </ul>
+        </div>
+
+        <div class="foot-col">
+          <h2>Categories</h2>
+          <ul>
+            {categories.map((c) => (
+              <li>
+                <a href={c.hub}>{c.name}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="foot-col">
+          <h2>Company</h2>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="foot-bottom">
+      <p class="foot-disclose">
+        Some links on this site are affiliate links: if you sign up through one, the vendor
+        pays us a commission at no extra cost to you. No vendor pays for placement or for a
+        higher position. <a href="/disclosure">Read the full disclosure</a>.
+      </p>
+      <p class="foot-copy">&copy; {year} OSI Affiliate</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    background: var(--color-brand-secondary);
+    color: rgba(255, 255, 255, 0.78);
+    padding-block: clamp(2.75rem, 5vw, 4rem) 1.75rem;
+  }
+
+  .foot-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .foot-brand p {
+    margin-top: 1rem;
+    max-width: 40ch;
+    font-size: 0.915rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .foot-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1.75rem 2rem;
+  }
+
+  .foot-col h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.015em;
+  }
+
+  .foot-col ul {
+    margin: 0.85rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .foot-col a {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.16s var(--ease);
+  }
+
+  .foot-col a:hover {
+    color: var(--color-brand-accent);
+  }
+
+  .foot-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem 2.5rem;
+    margin-top: clamp(2.25rem, 4vw, 3.25rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-invert);
+  }
+
+  /* The disclosure is set at real body size on a readable contrast — it is
+     the site's headline promise, not fine print. */
+  .foot-disclose {
+    max-width: 66ch;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .foot-disclose a {
+    color: var(--color-brand-accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .foot-copy {
+    font-size: 0.855rem;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 60rem) {
+    .foot-top {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr);
+    }
+  }
+</style>

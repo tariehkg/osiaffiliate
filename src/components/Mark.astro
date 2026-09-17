@@ -1,0 +1,102 @@
+---
+/**
+ * The OSI Affiliate mark — "the split O".
+ *
+ * One squared, heavy O cut once, cleanly, along a 45° line: the top-left half
+ * in cobalt, the bottom-right half in ink. Two equal pieces that still close
+ * into a single letterform — which is the product in one shape (two candidates
+ * weighed against each other, one answer) and, read plainly, just the O of OSI.
+ *
+ * Why this and not the old "narrowing": that mark was three thin strokes and
+ * an idea you had to be told. This one has mass, it is a letter, and it holds
+ * at 24px in the nav bar, which is the only size that really matters.
+ *
+ * Built as two butt-capped strokes that each trace half of the same rounded
+ * rectangle. The cuts land exactly on the two corner arcs' 45° points, where
+ * the stroke's flat end is already parallel to the diagonal — so the seam is a
+ * true 45° colour joint with no clip path, no mask and no generated ids that
+ * could collide between the several instances on a page.
+ *
+ * Geometry (viewBox 32): outer edge 2.5→29.5, stroke 6, so the counter is a
+ * 15×15 almost-square aperture inside a 26%-radius outer corner. Square enough
+ * that it is never mistaken for a circle badge — deliberately a different
+ * shape family from G2's red circle — and open enough to read as a letter
+ * rather than a blob with a hole in it.
+ */
+interface Props {
+  /** Glyph size in px (square). */
+  size?: number;
+  /** 'dark' for light backgrounds, 'light' for the navy sections. */
+  tone?: 'dark' | 'light';
+  /** Render the wordmark next to the glyph. */
+  wordmark?: boolean;
+  class?: string;
+}
+
+const { size = 26, tone = 'dark', wordmark = false, class: cls = '' } = Astro.props;
+
+/* The leading half takes the brand colour on paper, amber on navy — the two
+   places this palette already puts its emphasis. Two colours only: a third
+   would turn to mush at nav size. */
+const lead = tone === 'light' ? 'var(--color-brand-accent)' : 'var(--color-brand-primary)';
+const trail = tone === 'light' ? '#FFFFFF' : 'var(--color-brand-text)';
+---
+
+<span class:list={['mark', cls]} data-tone={tone}>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 32 32"
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <!-- Top-left half: from the bottom-left corner's 45° point, up the left
+         side, across the top, to the top-right corner's 45° point. -->
+    <path
+      d="M6.672 25.328 A4 4 0 0 1 5.5 22.5 V9.5 A4 4 0 0 1 9.5 5.5 H22.5 A4 4 0 0 1 25.328 6.672"
+      stroke={lead}
+      stroke-width="6"
+    />
+    <!-- Bottom-right half: the same outline, continued. -->
+    <path
+      d="M25.328 6.672 A4 4 0 0 1 26.5 9.5 V22.5 A4 4 0 0 1 22.5 26.5 H9.5 A4 4 0 0 1 6.672 25.328"
+      stroke={trail}
+      stroke-width="6"
+    />
+  </svg>
+
+  {
+    wordmark && (
+      <span class="mark-word">
+        <b>OSI</b> Affiliate
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .mark-word {
+    font-family: var(--font-heading);
+    font-size: 1.075rem;
+    font-weight: 500;
+    letter-spacing: -0.022em;
+    white-space: nowrap;
+    color: var(--color-brand-text);
+  }
+
+  .mark-word b {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .mark[data-tone='light'] .mark-word {
+    color: white;
+  }
+</style>

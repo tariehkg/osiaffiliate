@@ -1,0 +1,459 @@
+---
+import PageHead from './PageHead.astro';
+import DisclosureNote from './DisclosureNote.astro';
+import PageTrust from './PageTrust.astro';
+import { categories, type Category } from './data';
+import { pickDetail, hubSummary, hubNote, comparePicks } from './picks-detail';
+
+/**
+ * A category hub page, whole.
+ *
+ * Every one of the five hubs is this component with a different category id,
+ * so the five pages cannot drift apart, and — the part other pages depend on
+ * — every pick's section is guaranteed to carry `id={pick.slug}` exactly as
+ * `data.ts` spells it. The homepage links in as `${hub}#${slug}`.
+ *
+ * Layout follows the homepage's lattice: the shortlist is a row of cells
+ * sharing one hairline, and the long entries below are a single stack whose
+ * rows share their edges, rather than a column of detached cards.
+ */
+interface Props {
+  id: Category['id'];
+}
+
+const { id } = Astro.props;
+
+const category = categories.find((c) => c.id === id);
+if (!category) throw new Error(`CategoryHub: no category with id "${id}"`);
+
+const compared = new Set(comparePicks[id] ?? []);
+const others = categories.filter((c) => c.id !== id);
+const count = category.picks.length;
+const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] ?? String(count);
+---
+
+<PageHead
+  trail={[{ label: 'All categories', href: '/' }]}
+  title={category.question}
+  lede={hubSummary[id]}
+  note={hubNote[id]}
+  scale="question"
+>
+  <DisclosureNote links />
+</PageHead>
+
+<!-- id="browse" as well as its own anchor: the nav's "See today's picks" CTA
+     points at #browse, which is the homepage's browser section. On a hub, the
+     shortlist is that same thing, so the CTA lands somewhere sensible instead
+     of doing nothing. -->
+<section class="short" id="browse" aria-labelledby="shortlist">
+  <div class="wrap">
+    <h2 id="shortlist">
+      {category.name}: {countWord} picks
+    </h2>
+
+    <div class="lattice" data-count={count}>
+      {
+        category.picks.map((p) => (
+          <div class="cell">
+            <div class="cell-top">
+              <span class="mono" aria-hidden="true">
+                {p.monogram}
+              </span>
+              <h3 class="cell-name">{p.name}</h3>
+            </div>
+            <p class="cell-role">{p.role}</p>
+            <p class="cell-plan">{p.plan}</p>
+            <a href={`#${p.slug}`} class="tlink cell-jump">The reasoning</a>
+          </div>
+        ))
+      }
+    </div>
+
+    {
+      category.comparison && (
+        <div class="vs">
+          <div class="vs-copy">
+            <h3>Two of these get compared constantly</h3>
+            <p>
+              If you have already narrowed it to those two, skip the list and read the
+              head-to-head: the dimensions that actually separate them, and a straight answer
+              about which one to pick.
+            </p>
+          </div>
+          <a href={category.comparison.href} class="pill pill-solid vs-go">
+            {category.comparison.label}
+          </a>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<section class="picks" aria-labelledby="reasoning">
+  <div class="wrap">
+    <h2 id="reasoning">Every pick, and why it is on the list</h2>
+
+    <div class="stack">
+      {
+        category.picks.map((p) => {
+          const d = pickDetail[p.slug];
+          return (
+            <article class="entry" id={p.slug}>
+              <div class="entry-id">
+                <span class="mono mono-lg" aria-hidden="true">
+                  {p.monogram}
+                </span>
+                <h3 class="entry-name">{p.name}</h3>
+                <p class="entry-role">{p.role}</p>
+                <p class="entry-plan">{p.plan}</p>
+
+                <a href={d.url} class="pill pill-solid entry-go" rel="nofollow noopener">
+                  {d.urlLabel}
+                </a>
+
+                {category.comparison && compared.has(p.slug) ? (
+                  <a href={category.comparison.href} class="tlink entry-alt">
+                    Compared: {category.comparison.label}
+                  </a>
+                ) : (
+                  <a href="/how-we-pick" class="tlink entry-alt">
+                    How this was judged
+                  </a>
+                )}
+              </div>
+
+              <div class="entry-body">
+                {d.body.map((para) => (
+                  <p>{para}</p>
+                ))}
+
+                <p class="entry-skip">
+                  <b>Skip it if</b> {d.skip}
+                </p>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<PageTrust />
+
+<section class="next" aria-labelledby="next-cats">
+  <div class="wrap">
+    <h2 id="next-cats">The other four categories</h2>
+    <ul class="next-list">
+      {
+        others.map((c) => (
+          <li>
+            <a href={c.hub}>{c.name}</a>
+            <span>{c.question}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* ---------------------------------------------------------- shortlist */
+  .short {
+    padding-block: clamp(1rem, 2vw, 1.75rem) clamp(2rem, 4vw, 3rem);
+  }
+
+  .short h2,
+  .picks h2,
+  .next h2 {
+    font-size: clamp(1.4rem, 2.8vw, 1.95rem);
+    font-weight: 650;
+  }
+
+  /* The lattice: cells share one hairline edge rather than floating as cards,
+     matching the homepage browser exactly. */
+  .lattice {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .lattice[data-count='2'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lattice[data-count='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lattice[data-count='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .cell {
+    background: var(--color-brand-bg);
+    padding: 1.1rem 1.15rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition: background-color 0.16s var(--ease);
+  }
+
+  .cell:hover {
+    background: var(--tint);
+  }
+
+  .cell-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .mono {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 6px;
+    background: var(--color-brand-secondary);
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .cell-name {
+    font-size: 1.01rem;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.2;
+  }
+
+  .cell-role {
+    font-size: 0.855rem;
+    line-height: 1.45;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  .cell-plan {
+    margin-top: auto;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-brand-primary);
+  }
+
+  .cell-jump {
+    font-size: 0.855rem;
+    font-weight: 500;
+  }
+
+  /* ------------------------------------------------- comparison band */
+  .vs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.1rem 2.5rem;
+    margin-top: clamp(1.25rem, 2.5vw, 2rem);
+    padding: clamp(1.15rem, 2.5vw, 1.75rem);
+    background: var(--tint);
+    border: 1px solid color-mix(in oklab, var(--color-brand-primary) 22%, transparent);
+    border-radius: 3px;
+  }
+
+  .vs-copy h3 {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    font-weight: 600;
+  }
+
+  .vs-copy p {
+    margin-top: 0.45rem;
+    max-width: 58ch;
+    font-size: 0.925rem;
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
+  }
+
+  .vs-go {
+    flex: none;
+  }
+
+  /* ------------------------------------------------------- long entries */
+  .picks {
+    padding-block: clamp(1.5rem, 3vw, 2.5rem) 0;
+  }
+
+  .stack {
+    margin-top: clamp(1.1rem, 2.5vw, 1.75rem);
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.1rem, 2.5vw, 1.75rem);
+    background: var(--color-brand-bg);
+    padding: clamp(1.35rem, 3vw, 2.25rem);
+  }
+
+  .entry-id {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .mono-lg {
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 8px;
+    font-size: 1.12rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .entry-name {
+    font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+
+  .entry-role {
+    font-size: 0.945rem;
+    line-height: 1.5;
+    max-width: 34ch;
+    color: color-mix(in oklab, var(--color-brand-text) 68%, transparent);
+  }
+
+  .entry-plan {
+    margin-top: 0.15rem;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-brand-primary);
+  }
+
+  .entry-go {
+    margin-top: 0.85rem;
+  }
+
+  .entry-alt {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-brand-muted);
+  }
+
+  .entry-body p {
+    max-width: 68ch;
+    font-size: 1rem;
+    line-height: 1.68;
+    color: color-mix(in oklab, var(--color-brand-text) 88%, transparent);
+  }
+
+  .entry-body p + p {
+    margin-top: 0.9rem;
+  }
+
+  /* The caveat is separated by a rule and a bold lead-in rather than a label
+     above it, so it reads as a sentence you finish rather than a badge. */
+  .entry-skip {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .entry-skip b {
+    font-weight: 650;
+  }
+
+  /* -------------------------------------------------------- other cats */
+  .next {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .next-list {
+    margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .next-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 1.25rem;
+    background: var(--color-brand-bg);
+    padding: 0.95rem 1.15rem;
+    transition: background-color 0.16s var(--ease);
+  }
+
+  .next-list li:hover {
+    background: var(--tint);
+  }
+
+  .next-list a {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 550;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    flex: none;
+  }
+
+  .next-list a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .next-list span {
+    font-size: 0.875rem;
+    color: color-mix(in oklab, var(--color-brand-text) 58%, transparent);
+  }
+
+  @media (max-width: 76rem) {
+    .lattice[data-count='3'],
+    .lattice[data-count='4'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lattice[data-count='3'] .cell:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .entry {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+      gap: clamp(1.75rem, 4vw, 3.25rem);
+    }
+  }
+
+  @media (max-width: 54rem) {
+    .lattice[data-count='2'],
+    .lattice[data-count='3'],
+    .lattice[data-count='4'] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lattice[data-count='3'] .cell:last-child {
+      grid-column: auto;
+    }
+
+    .next-list span {
+      width: 100%;
+    }
+  }
+</style>

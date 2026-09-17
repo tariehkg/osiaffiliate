@@ -1,0 +1,407 @@
+---
+import { categories } from './data';
+
+/**
+ * The category browser.
+ *
+ * Switching categories is pure CSS: five radio inputs sit as siblings ahead
+ * of the grid, and `#id:checked ~ .browse-grid .pane-id` reveals the matching
+ * pane. No JavaScript, so it works on first paint. The radios keep real
+ * keyboard behaviour (tab in, arrow keys between categories).
+ */
+---
+
+<section class="browse" id="browse">
+  <div class="wrap">
+    <header class="browse-head" data-rise>
+      <h2>Start with what you’re replacing</h2>
+      <p>
+        Five categories, two to four picks in each. Pick a category and you get the whole
+        shortlist — not page one of forty.
+      </p>
+    </header>
+  </div>
+
+  <div class="wrap">
+    <div class="browse-shell" data-rise>
+      {
+        categories.map((c, i) => (
+          <input
+            class="cat-radio"
+            type="radio"
+            name="osi-category"
+            id={`cat-${c.id}`}
+            checked={i === 0}
+          />
+        ))
+      }
+
+      <div class="browse-grid">
+        <div class="rail">
+          {
+            categories.map((c) => (
+              <label for={`cat-${c.id}`} class="rail-item">
+                <span class="rail-name">{c.name}</span>
+                <span class="rail-count">
+                  {c.picks.length} {c.picks.length === 1 ? 'pick' : 'picks'}
+                </span>
+              </label>
+            ))
+          }
+        </div>
+
+        <div class="panes">
+          {
+            categories.map((c) => (
+              <div class:list={['pane', `pane-${c.id}`]}>
+                <p class="pane-q">{c.question}</p>
+
+                <div class="lattice" data-count={c.picks.length}>
+                  {c.picks.map((p) => (
+                    <article class="cell">
+                      <div class="cell-top">
+                        <span class="mono" aria-hidden="true">
+                          {p.monogram}
+                        </span>
+                        <h3 class="cell-name">
+                          <a href={`${c.hub}#${p.slug}`}>{p.name}</a>
+                        </h3>
+                      </div>
+                      <p class="cell-role">{p.role}</p>
+                      <p class="cell-plan">{p.plan}</p>
+                    </article>
+                  ))}
+                </div>
+
+                <div class="pane-foot">
+                  <a href={c.hub} class="tlink">See all {c.name}</a>
+                  {c.comparison && (
+                    <a href={c.comparison.href} class="tlink pane-compare">
+                      {c.comparison.label}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .browse {
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5.5rem);
+  }
+
+  .browse-head h2 {
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    font-weight: 650;
+    max-width: 26ch;
+  }
+
+  .browse-head p {
+    margin-top: 0.85rem;
+    max-width: 52ch;
+    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
+  }
+
+  .browse-shell {
+    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  /* Radios are the state machine. Kept in flow but invisible, with real
+     focus routed onto the labels below. */
+  .cat-radio {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .browse-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 15.5rem) minmax(0, 1fr);
+    gap: 0;
+    border: 1px solid var(--line);
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  /* --- left rail --- */
+  .rail {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-brand-surface);
+    padding: 0.5rem;
+    gap: 1px;
+  }
+
+  .rail-item {
+    display: block;
+    cursor: pointer;
+    padding: 0.85rem 0.9rem 0.85rem 1rem;
+    border-left: 3px solid transparent;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+    transition:
+      background-color 0.16s var(--ease),
+      color 0.16s var(--ease),
+      border-color 0.16s var(--ease);
+  }
+
+  .rail-item:hover {
+    background: color-mix(in oklab, white 55%, transparent);
+    color: var(--color-brand-text);
+  }
+
+  .rail-name {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 550;
+    letter-spacing: -0.018em;
+    line-height: 1.25;
+  }
+
+  .rail-count {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    color: var(--color-brand-muted);
+  }
+
+  /* --- panes --- */
+  .panes {
+    background: var(--color-brand-bg);
+    padding: clamp(1.25rem, 2.5vw, 1.9rem);
+  }
+
+  .pane {
+    display: none;
+  }
+
+  .pane-q {
+    font-family: var(--font-heading);
+    font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    max-width: 44ch;
+    color: color-mix(in oklab, var(--color-brand-text) 84%, transparent);
+  }
+
+  /* The lattice: cells share one hairline edge rather than floating as
+     separate cards. The 1px grid gap over a line-coloured backdrop is the
+     rule; the cells are the paper. */
+  /* Column count is pinned to the number of picks so a row is never ragged
+     and the shared-edge grid never shows an empty cell. */
+  .lattice {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .lattice[data-count='2'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lattice[data-count='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lattice[data-count='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .cell {
+    background: var(--color-brand-bg);
+    padding: 1.05rem 1.1rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition: background-color 0.16s var(--ease);
+  }
+
+  .cell:hover {
+    background: var(--tint);
+  }
+
+  .cell-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .mono {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 6px;
+    background: var(--color-brand-secondary);
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .cell-name {
+    font-size: 1.01rem;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.2;
+  }
+
+  /* Each pick name goes straight to that pick's own section on its hub. The
+     faint underline is the same affordance `.tlink` uses — without it the
+     name would only read as a link on hover, which is no use on a touch
+     screen. */
+  .cell-name a {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, currentColor 26%, transparent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.22em;
+    transition:
+      color 0.16s var(--ease),
+      text-decoration-color 0.16s var(--ease);
+  }
+
+  .cell-name a:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .cell-role {
+    font-size: 0.855rem;
+    line-height: 1.45;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  .cell-plan {
+    margin-top: auto;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-brand-primary);
+  }
+
+  .pane-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    margin-top: 1.15rem;
+    font-size: 0.925rem;
+    font-weight: 500;
+  }
+
+  .pane-compare {
+    color: var(--color-brand-muted);
+  }
+
+  /* --- the zero-JS state machine --------------------------------------- */
+  #cat-crm:checked ~ .browse-grid .pane-crm,
+  #cat-email:checked ~ .browse-grid .pane-email,
+  #cat-sites:checked ~ .browse-grid .pane-sites,
+  #cat-pm:checked ~ .browse-grid .pane-pm,
+  #cat-seo:checked ~ .browse-grid .pane-seo {
+    display: block;
+  }
+
+  #cat-crm:checked ~ .browse-grid .rail-item[for='cat-crm'],
+  #cat-email:checked ~ .browse-grid .rail-item[for='cat-email'],
+  #cat-sites:checked ~ .browse-grid .rail-item[for='cat-sites'],
+  #cat-pm:checked ~ .browse-grid .rail-item[for='cat-pm'],
+  #cat-seo:checked ~ .browse-grid .rail-item[for='cat-seo'] {
+    background: var(--color-brand-bg);
+    border-left-color: var(--color-brand-primary);
+    color: var(--color-brand-text);
+  }
+
+  #cat-crm:focus-visible ~ .browse-grid .rail-item[for='cat-crm'],
+  #cat-email:focus-visible ~ .browse-grid .rail-item[for='cat-email'],
+  #cat-sites:focus-visible ~ .browse-grid .rail-item[for='cat-sites'],
+  #cat-pm:focus-visible ~ .browse-grid .rail-item[for='cat-pm'],
+  #cat-seo:focus-visible ~ .browse-grid .rail-item[for='cat-seo'] {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: -2px;
+  }
+
+  /* Mid widths drop to two columns. An odd count puts its last entry across
+     the full row rather than leaving a gap in the grid. */
+  @media (max-width: 76rem) {
+    .lattice[data-count='3'],
+    .lattice[data-count='4'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lattice[data-count='3'] .cell:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* --- mobile: the rail becomes a scrollable strip of chips ------------- */
+  @media (max-width: 54rem) {
+    .browse-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .rail {
+      flex-direction: row;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 0.4rem;
+      padding: 0.6rem;
+    }
+
+    .rail::-webkit-scrollbar {
+      display: none;
+    }
+
+    .rail-item {
+      flex: none;
+      padding: 0.45rem 0.8rem;
+      border-left: 0;
+      border-bottom: 2px solid transparent;
+      border-radius: 999px;
+      background: white;
+      white-space: nowrap;
+    }
+
+    .rail-name {
+      font-size: 0.86rem;
+    }
+
+    .rail-count {
+      display: none;
+    }
+
+    #cat-crm:checked ~ .browse-grid .rail-item[for='cat-crm'],
+    #cat-email:checked ~ .browse-grid .rail-item[for='cat-email'],
+    #cat-sites:checked ~ .browse-grid .rail-item[for='cat-sites'],
+    #cat-pm:checked ~ .browse-grid .rail-item[for='cat-pm'],
+    #cat-seo:checked ~ .browse-grid .rail-item[for='cat-seo'] {
+      background: var(--color-brand-primary);
+      border-bottom-color: transparent;
+      color: white;
+    }
+
+    .lattice[data-count='2'],
+    .lattice[data-count='3'],
+    .lattice[data-count='4'] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lattice[data-count='3'] .cell:last-child {
+      grid-column: auto;
+    }
+  }
+</style>

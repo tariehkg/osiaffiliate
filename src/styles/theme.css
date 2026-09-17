@@ -1,0 +1,33 @@
+/*
+  OSI Affiliate — final design tokens.
+
+  @theme static (not @theme): the direction is locked in. There is no longer
+  a per-concept :root override, so these values are the site's real palette
+  and typefaces, emitted unconditionally.
+
+  Token → utility mapping:
+    --color-brand-*  → bg-brand-*, text-brand-*, border-brand-*, ring-brand-*
+    --font-*         → font-heading, font-body
+*/
+@theme static {
+  /* Cobalt. Used structurally — selected states, filled CTAs, link
+     underlines — never as a full-bleed wash or gradient. */
+  --color-brand-primary:   #2451E8;
+
+  /* Deep navy for the two inverted sections (stance block, footer). */
+  --color-brand-secondary: #0F1B33;
+
+  /* Warm amber: decorative geometry, the vertex of the mark, the
+     emphasised words in the stance pull-quote. */
+  --color-brand-accent:    #F2A93B;
+
+  /* Warm neutral paper, not cream and not pink. */
+  --color-brand-bg:        #FAFAF8;
+  --color-brand-surface:   #F1F0EC;
+
+  --color-brand-text:      #14181F;
+  --color-brand-muted:     #6B7280;
+
+  --font-heading: 'Outfit Variable', system-ui, -apple-system, sans-serif;
+  --font-body:    'Inter Variable', system-ui, -apple-system, sans-serif;
+}

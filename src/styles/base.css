@@ -1,0 +1,219 @@
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-bg text-brand-text font-body;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Layout + motion constants. Unlayered on purpose so component <style> blocks
+   read them without specificity games.
+   --------------------------------------------------------------------------- */
+:root {
+  --wrap: 78rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+
+  /* One hairline colour, used for every shared cell edge in the lattice
+     motif that runs through the category browser, trust panel and directory. */
+  --line: color-mix(in oklab, var(--color-brand-text) 13%, transparent);
+  --line-strong: color-mix(in oklab, var(--color-brand-text) 22%, transparent);
+  --line-invert: color-mix(in oklab, white 16%, transparent);
+
+  --tint: color-mix(in oklab, var(--color-brand-primary) 7%, white);
+  --tint-strong: color-mix(in oklab, var(--color-brand-primary) 13%, white);
+
+  --ease-out: cubic-bezier(0.16, 0.84, 0.28, 1);
+  --ease: cubic-bezier(0.32, 0.72, 0.28, 1);
+}
+
+/* Anchor targets clear the sticky nav. */
+section[id],
+[id] {
+  scroll-margin-top: 5.75rem;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal.
+
+   Deliberately inverted from the usual pattern: [data-rise] elements are
+   VISIBLE in CSS by default, so a slow or failed script can never leave a
+   blank page. The hiding class is applied by JS, synchronously, and only to
+   elements that measure as below the fold at that moment — anything already
+   in the first viewport is never hidden at all.
+   --------------------------------------------------------------------------- */
+[data-rise] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-rise].rise-pending {
+  opacity: 0;
+  transform: translate3d(0, 1.1rem, 0);
+}
+
+[data-rise].rise-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.62s var(--ease-out),
+    transform 0.62s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-rise],
+  [data-rise].rise-pending,
+  [data-rise].rise-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Shared controls
+   --------------------------------------------------------------------------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    color 0.18s var(--ease);
+}
+
+.pill-solid {
+  background: var(--color-brand-primary);
+  color: white;
+}
+
+.pill-solid:hover {
+  background: color-mix(in oklab, var(--color-brand-primary) 84%, black);
+}
+
+.pill-line {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--color-brand-text);
+}
+
+.pill-line:hover {
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+}
+
+.pill-invert {
+  background: white;
+  color: var(--color-brand-secondary);
+}
+
+.pill-invert:hover {
+  background: var(--color-brand-accent);
+  color: var(--color-brand-text);
+}
+
+/* Text link with a real underline that thickens on hover — used instead of
+   arrow glyphs. */
+.tlink {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 38%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.28em;
+  transition:
+    text-decoration-color 0.18s var(--ease),
+    color 0.18s var(--ease);
+}
+
+.tlink:hover {
+  color: var(--color-brand-primary);
+  text-decoration-color: currentColor;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}

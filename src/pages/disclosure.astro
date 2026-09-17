@@ -1,0 +1,186 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import PageHead from '../components/PageHead.astro';
+import Doc from '../components/Doc.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+/**
+ * Compliance page, written as compliance and not as marketing.
+ *
+ * Plain language, short sentences, the material fact first: links can pay us,
+ * it costs the reader nothing, and it does not affect what we recommend or in
+ * what order. The statement of where the site actually stands today — that
+ * programmes are still being joined and some links carry no tag — is part of
+ * the disclosure, not a footnote to it.
+ */
+---
+
+<Layout
+  title="Affiliate disclosure — OSI Affiliate"
+  description="Plain-language affiliate disclosure: some links on this site can earn us a commission, it costs you nothing, and no vendor can pay for placement or a higher ranking."
+>
+  <SiteNav />
+  <main>
+    <PageHead
+      title="Affiliate disclosure"
+      lede="The whole disclosure is on this page, in plain words, and the part that matters is the first paragraph. Nothing important has been moved further down."
+    />
+
+    <section class="core">
+      <div class="wrap">
+        <div class="core-col">
+          <p class="core-p">
+            Some links on this site are affiliate links. If you follow one and sign up with
+            that vendor, they may pay us a commission. It costs you nothing extra, and it
+            never decides which tool we recommend or what order the picks appear in.
+          </p>
+          <p class="core-sub">
+            No vendor can pay to be on a shortlist here, pay to rank higher on one, or pay to
+            change a word of what an entry says.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <Doc>
+      <section>
+        <h2>What an affiliate link is</h2>
+        <p>
+          An affiliate link is an ordinary link with a tag on it that tells the vendor we sent
+          you. If you then sign up for a paid plan, the vendor pays us a share of that — either
+          once, or as a percentage of what you pay them for a set period. It is the standard way
+          software directories and comparison sites make money, including the very large ones.
+        </p>
+        <p>
+          We use it because the alternative is worse. A site funded by vendors paying for
+          placement has to rank its advertisers well; a site funded by commission after you
+          choose does not, as long as it refuses the first arrangement outright. We refuse it.
+        </p>
+      </section>
+
+      <section>
+        <h2>What it costs you</h2>
+        <p>
+          Nothing. You pay the vendor’s normal price, on the vendor’s normal terms, exactly as
+          if you had typed their address into your browser. An affiliate link does not add a
+          fee, remove a discount, or change which plans you are offered. If a vendor ever gives
+          us a genuine reader discount, the page will say so plainly next to the link.
+        </p>
+      </section>
+
+      <section>
+        <h2>What it does not change</h2>
+        <ul>
+          <li>
+            <b>Which tools make a shortlist.</b> Two to four per category, chosen on the rules
+            set out in <a href="/how-we-pick">how we pick</a>.
+          </li>
+          <li>
+            <b>The order they appear in.</b> Ordering is editorial. It is not sold, and it is not
+            sorted by what pays best.
+          </li>
+          <li>
+            <b>What an entry says.</b> Every pick on this site carries a written reason to skip
+            it. Vendors do not see entries before publication and cannot request changes to them.
+          </li>
+          <li>
+            <b>Whether a tool with no programme can be recommended.</b> It can, and where that is
+            the case it stays on the list on its merits.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Where this site stands right now</h2>
+        <p>
+          Being exact about this matters more than looking established. OSI Affiliate is new, and
+          affiliate programmes are joined one vendor at a time as each category goes up. So today
+          some outbound links here carry an affiliate tag and some are plain links that earn us
+          nothing at all.
+        </p>
+        <p>
+          We are not yet labelling individual links one by one. Instead, every page that carries
+          outbound vendor links shows this disclosure near the top, before the picks, so you can
+          assume any vendor link on this site may pay us and read the page in that light. That is
+          the more conservative assumption, and it is the one we would rather you make.
+        </p>
+      </section>
+
+      <section>
+        <h2>What we do not take money for</h2>
+        <ul>
+          <li>Sponsored entries, promoted listings or paid inclusion on any shortlist.</li>
+          <li>Paid reviews, paid rewrites, or vendor approval of copy before it is published.</li>
+          <li>Selling your email address or contact details to a vendor.</li>
+          <li>Advertising placed inside a shortlist so that it reads as a pick.</li>
+        </ul>
+        <p>
+          If any of that ever changes, it will be written on this page before it happens anywhere
+          else on the site, and it will be labelled where it appears.
+        </p>
+      </section>
+
+      <section>
+        <h2>Why this page exists</h2>
+        <p>
+          Partly because it is required: the US Federal Trade Commission’s endorsement guidance
+          expects a clear, conspicuous disclosure of a material connection between a publisher
+          and the products it recommends, and affiliate commission is exactly that kind of
+          connection. Similar rules apply in the UK, the EU and elsewhere.
+        </p>
+        <p>
+          Mostly, though, because the disclosure is the argument. Every directory you have used
+          makes money in a way that could bend its recommendations. Stating ours in full, on its
+          own page, in ordinary words, is the thing that makes the shortlists worth reading.
+        </p>
+      </section>
+
+      <section>
+        <h2>Questions about any of this</h2>
+        <p>
+          If something on this page is unclear, or you want to know whether a specific link pays
+          us, ask and we will tell you straight.
+        </p>
+        <p>
+          <a href="/contact" class="pill pill-line">Ask about a link</a>
+        </p>
+      </section>
+    </Doc>
+  </main>
+  <SiteFooter />
+</Layout>
+
+<style>
+  /* The material fact, set at the size the site would use for a headline.
+     This is the one place on the site where the disclosure is the design. */
+  .core {
+    background: var(--color-brand-secondary);
+    color: white;
+    padding-block: clamp(2.25rem, 5vw, 3.75rem);
+    margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
+  }
+
+  .core-col {
+    max-width: 52rem;
+  }
+
+  .core-p {
+    font-family: var(--font-heading);
+    font-size: clamp(1.3rem, 3.2vw, 2.05rem);
+    font-weight: 500;
+    line-height: 1.24;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+  }
+
+  .core-sub {
+    margin-top: clamp(1rem, 2vw, 1.4rem);
+    max-width: 58ch;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.78);
+    border-top: 1px solid var(--line-invert);
+    padding-top: clamp(1rem, 2vw, 1.4rem);
+  }
+</style>

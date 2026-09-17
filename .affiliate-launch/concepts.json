@@ -1,0 +1,95 @@
+{
+  "concepts": [
+    {
+      "id": 1,
+      "slug": "the-short-list",
+      "name": "The Short List",
+      "description": "Restrained, editorial layout that makes the curation itself the selling point — never more than 5-6 picks per category, presented as a ranked list rather than a grid. A serif display headline gives it the authority of a considered buying guide rather than a software marketplace. The How-We-Pick methodology sits high on every page, and the disclosure reads as a confident statement, not a legal footnote.",
+      "rationale": "Directly answers the niche scan's Gap: Capterra and G2 read as open marketplaces with disclosure as an afterthought. This concept is the opposite of both on purpose.",
+      "palette": {
+        "primary": "#1B2430",
+        "secondary": "#B08D57",
+        "accent": "#3F6C51",
+        "bg": "#F7F5F1",
+        "surface": "#EDE9E1",
+        "text": "#221F1A",
+        "muted": "#7A7468"
+      },
+      "fonts": {
+        "heading": { "family": "Lora", "package": "lora", "fallback": "Georgia, serif" },
+        "body": { "family": "Work Sans", "package": "work-sans", "fallback": "system-ui, sans-serif" }
+      },
+      "contrast_axes": {
+        "pick_presentation": "ranked-list",
+        "proof_style": "editorial-voice-forward",
+        "category_navigation": "simple-top-nav",
+        "density": "spacious",
+        "typographic_voice": "restrained-editorial",
+        "trust_placement": "methodology-surfaced-high",
+        "hero": "typographic-no-product-image",
+        "disclosure_integration": "woven-into-methodology-narrative"
+      }
+    },
+    {
+      "id": 2,
+      "slug": "the-comparison-engine",
+      "name": "The Comparison Engine",
+      "description": "Leans into the comparison-table format buyers already trust from using G2 and Capterra, but denser and cleaner — a real side-by-side matrix sits above the fold on category pages instead of a generic hero image, with a mega-menu across all 5 categories. Deep indigo and amber mark price, rating-equivalent, and CTA columns as visual anchors.",
+      "rationale": "Buyers researching B2B software are already trained on this comparison-table pattern — matching it (with real curation instead of 1,600 listings) lowers the trust barrier for a brand-new site rather than fighting an established mental model.",
+      "palette": {
+        "primary": "#2D2A6E",
+        "secondary": "#23262B",
+        "accent": "#E8871E",
+        "bg": "#F7F8FA",
+        "surface": "#ECEEF2",
+        "text": "#1A1B23",
+        "muted": "#6B6E78"
+      },
+      "fonts": {
+        "heading": { "family": "Sora", "package": "sora", "fallback": "system-ui, sans-serif" },
+        "body": { "family": "IBM Plex Sans", "package": "ibm-plex-sans", "fallback": "system-ui, sans-serif" }
+      },
+      "contrast_axes": {
+        "pick_presentation": "comparison-matrix",
+        "proof_style": "data-table-forward",
+        "category_navigation": "mega-menu-with-previews",
+        "density": "dense",
+        "typographic_voice": "numeric-data-forward",
+        "trust_placement": "trust-signals-woven-throughout",
+        "hero": "typographic-with-matrix",
+        "disclosure_integration": "disclosure-surfaced-near-top"
+      }
+    },
+    {
+      "id": 3,
+      "slug": "the-toolkit",
+      "name": "The Toolkit",
+      "description": "Frames the whole site around building a business 'stack' rather than browsing reviews — the homepage hero is an interactive picker ('what are you trying to solve today?') that routes into categories framed as toolkit slots (CRM slot, Email slot, Website slot...). Warmer, more human palette and rounded, friendly type aimed squarely at solopreneurs rather than enterprise IT buyers.",
+      "rationale": "The profile's real buyer is a solopreneur or small business owner, not an enterprise procurement team — this concept is the one built specifically for that persona's tone and mental model, in contrast to Capterra/G2's enterprise-neutral register.",
+      "palette": {
+        "primary": "#1F5C56",
+        "secondary": "#D9A441",
+        "accent": "#E8637A",
+        "bg": "#FBF8F3",
+        "surface": "#F1EBDF",
+        "text": "#23201C",
+        "muted": "#8A8378"
+      },
+      "fonts": {
+        "heading": { "family": "Plus Jakarta Sans", "package": "plus-jakarta-sans", "fallback": "system-ui, sans-serif" },
+        "body": { "family": "Karla", "package": "karla", "fallback": "system-ui, sans-serif" }
+      },
+      "contrast_axes": {
+        "pick_presentation": "single-hero-pick-plus-cards",
+        "proof_style": "editorial-voice-forward",
+        "category_navigation": "homepage-as-directory",
+        "density": "balanced",
+        "typographic_voice": "big-confident-display",
+        "trust_placement": "trust-module-near-cta",
+        "hero": "interactive-picker",
+        "disclosure_integration": "quiet-footer-plus-methodology-page"
+      }
+    }
+  ],
+  "total": 3
+}

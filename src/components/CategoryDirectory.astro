@@ -1,0 +1,167 @@
+---
+import { directoryGroups, directoryTotals } from './directory-taxonomy';
+
+/**
+ * The category wall — the site's whole intended scope, in one object.
+ *
+ * Breadth, not depth: the browser higher up the page shows real picks inside
+ * five categories, and this shows every category the site is being built to
+ * cover. Nine groups, the standard industry names in each.
+ *
+ * The live/planned split is the whole point, so it is carried three ways at
+ * once rather than by colour alone: a live category is a real <a> with a
+ * cobalt square in the margin and an underline, a planned one is plain muted
+ * text in a <span> with no marker, no underline and no hover. A screen reader
+ * gets the same distinction for free, because only one of the two is a link.
+ * There is nothing here to click that lands nowhere.
+ *
+ * Counts in the heading are computed from the data, so the claim cannot drift
+ * away from the wall underneath it. Flipping one category live is a one-line
+ * change in `directory-taxonomy.ts` and this section updates itself.
+ *
+ * Layout: auto-fit columns down to 13rem, hairlines drawn as cell borders
+ * rather than as a gap over a coloured backdrop — a wrapped last row then just
+ * ends, instead of exposing an empty coloured cell.
+ */
+---
+
+<section class="dir" id="directory">
+  <div class="wrap">
+    <header class="dir-head" data-rise>
+      <h2>{directoryTotals.entries} categories. {directoryTotals.live} live today.</h2>
+      <p>
+        This is the whole map, including the parts we have not built. A name you can click
+        goes to a real shortlist. The rest are plain grey text on purpose — named because
+        they are planned, not linked because the page does not exist yet. More go live as
+        the shortlists get written.
+      </p>
+    </header>
+
+    <div class="dir-wall" data-rise>
+      {
+        directoryGroups.map((g) => (
+          <section class="dir-grp">
+            <h3 class="dir-grp-name">{g.group}</h3>
+
+            <ul class="dir-items">
+              {g.entries.map((e) => (
+                <li class:list={['dir-item', { 'is-live': Boolean(e.href) }]}>
+                  {e.href ? <a href={e.href}>{e.name}</a> : <span>{e.name}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .dir {
+    padding-block: clamp(3rem, 6vw, 5rem) clamp(3.5rem, 7vw, 6rem);
+  }
+
+  /* Set larger than the other section headings on purpose: this block is the
+     site's index, and it should announce itself as one. */
+  .dir-head h2 {
+    font-size: clamp(1.95rem, 4.2vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    max-width: 24ch;
+  }
+
+  .dir-head p {
+    margin-top: 1rem;
+    max-width: 62ch;
+    font-size: clamp(0.985rem, 1.2vw, 1.075rem);
+    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
+  }
+
+  .dir-wall {
+    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+
+    /* Implicit rows come in pairs — group name, then list — so every group in
+       a wrapped row starts its list on the same line however many lines its
+       own name runs to. Same subgrid band the rest of the site uses. */
+    grid-auto-rows: auto 1fr;
+
+    /* Cobalt used structurally: one rule binds the columns into a single
+       object instead of nine loose lists. */
+    border-top: 2px solid var(--color-brand-primary);
+  }
+
+  .dir-grp {
+    grid-row: span 2;
+    display: grid;
+    grid-template-rows: subgrid;
+    border-left: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 1.4rem 1.25rem 1.55rem;
+  }
+
+  .dir-grp-name {
+    font-size: 0.985rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+    color: var(--color-brand-primary);
+    text-wrap: pretty;
+  }
+
+  .dir-items {
+    margin: 0.95rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 0.925rem;
+    line-height: 1.35;
+  }
+
+  /* The marker column is reserved on every row so live and planned names sit
+     on one left edge — only the live rows put anything in it. */
+  .dir-item {
+    position: relative;
+    padding-left: 0.95rem;
+  }
+
+  .dir-item.is-live::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 6px;
+    height: 6px;
+    background: var(--color-brand-primary);
+  }
+
+  .dir-item span {
+    color: color-mix(in oklab, var(--color-brand-text) 46%, transparent);
+  }
+
+  .dir-item a {
+    color: color-mix(in oklab, var(--color-brand-text) 88%, transparent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 50%, transparent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.22em;
+    transition:
+      color 0.16s var(--ease),
+      text-decoration-color 0.16s var(--ease);
+  }
+
+  .dir-item a:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  @media (max-width: 34rem) {
+    .dir-grp {
+      padding-block: 1.15rem 1.3rem;
+    }
+  }
+</style>

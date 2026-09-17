@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import PageHead from '../components/PageHead.astro';
+import Doc from '../components/Doc.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+/**
+ * Contact.
+ *
+ * Email only, on purpose. This site is static — there is no server behind it
+ * that could receive a form submission — so a form here would either be
+ * decorative or would quietly hand your message to a third party. A mailto is
+ * honest about where the message goes.
+ *
+ * SETUP NOTE FOR THE SITE OWNER: `inbox` below is the only place the address
+ * appears. Point it at the real mailbox once the domain's email is live.
+ */
+const inbox = 'hello@osiaffiliate.com';
+---
+
+<Layout
+  title="Contact — OSI Affiliate"
+  description="Email OSI Affiliate with a tool suggestion, a correction to a pricing line, or a question about whether a link on the site earns us anything."
+>
+  <SiteNav />
+  <main>
+    <PageHead
+      title="Contact"
+      lede="One address, read by a person. There is no contact form on this page because there is no server behind this site to receive one — a form here would be decoration."
+    >
+      <p class="mail">
+        <a href={`mailto:${inbox}`} class="pill pill-solid">Email {inbox}</a>
+      </p>
+    </PageHead>
+
+    <Doc>
+      <section>
+        <h2>What is worth writing about</h2>
+        <ul>
+          <li>
+            <b>A pricing line that has gone stale.</b> The most useful message we get. Vendors
+            repackage constantly and we would rather hear it from you than leave it wrong.
+          </li>
+          <li>
+            <b>A tool we have left off a shortlist.</b> Tell us what you use and what it
+            replaced. That second half is the part that changes our mind.
+          </li>
+          <li>
+            <b>A caveat you think is unfair.</b> Every pick carries a reason to skip it. If one
+            of those is wrong about your experience, say so and we will look again.
+          </li>
+          <li>
+            <b>Whether a specific link pays us.</b> Ask about any link on the site and we will
+            answer it straight.
+          </li>
+          <li>
+            <b>A comparison you wanted and could not find.</b> New head-to-head pages get
+            written where real demand shows up, and asking counts as demand.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>If you work for one of these vendors</h2>
+        <p>
+          Corrections about your own product are genuinely welcome, and we will fix a factual
+          error quickly. What is not available at any price is placement: you cannot buy a slot
+          on a shortlist, a higher position on one, or a change to the caveat in your entry. That
+          is set out in full on the <a href="/disclosure">disclosure page</a>, and it does not
+          move.
+        </p>
+      </section>
+
+      <section>
+        <h2>What we cannot do</h2>
+        <p>
+          We are not consultants, so we cannot run a bespoke evaluation of your business or sit
+          on a procurement call. What we can do is tell you which of our picks we would choose in
+          your situation and why — which is the same thing the pages do, with your specifics
+          attached.
+        </p>
+        <p>
+          We also cannot help with a vendor’s billing, account access or support queue. Those go
+          to the vendor, who can actually see your account.
+        </p>
+      </section>
+
+      <section>
+        <h2>Before you write about a pick</h2>
+        <p>
+          The reasoning behind every shortlist is on <a href="/how-we-pick">how we pick</a>, and
+          the money side is on the <a href="/disclosure">disclosure page</a>. If your question is
+          “why is this tool here and not that one”, the answer may already be written down.
+        </p>
+      </section>
+    </Doc>
+  </main>
+  <SiteFooter />
+</Layout>
+
+<style>
+  .mail {
+    margin-top: clamp(1.4rem, 3vw, 2rem);
+  }
+</style>
