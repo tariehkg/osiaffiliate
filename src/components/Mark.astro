@@ -39,7 +39,7 @@ const { size = 26, tone = 'dark', wordmark = false, class: cls = '' } = Astro.pr
    places this palette already puts its emphasis. Two colours only: a third
    would turn to mush at nav size. */
 const lead = tone === 'light' ? 'var(--color-brand-accent)' : 'var(--color-brand-primary)';
-const trail = tone === 'light' ? '#FFFFFF' : 'var(--color-brand-text)';
+const trail = tone === 'light' ? 'white' : 'var(--color-brand-text)';
 ---
 
 <span class:list={['mark', cls]} data-tone={tone} style={`--mark-size:${size}px`}>

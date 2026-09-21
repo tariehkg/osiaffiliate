@@ -1,6 +1,15 @@
 ---
 import Mark from './Mark.astro';
-import { categories } from './data';
+import { categories as allCategories } from './data';
+
+interface Props {
+  categories?: typeof allCategories;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const { categories = allCategories, secondaryLabel = 'How we pick', secondaryHref = '/how-we-pick' } =
+  Astro.props;
 ---
 
 <header class="nav" id="site-nav">
@@ -19,7 +28,7 @@ import { categories } from './data';
          permanently in reach, and it is what the big directories do not
          put in their nav at all. -->
     <div class="nav-actions">
-      <a href="/how-we-pick" class="nav-secondary">How we pick</a>
+      <a href={secondaryHref} class="nav-secondary">{secondaryLabel}</a>
     </div>
   </div>
 

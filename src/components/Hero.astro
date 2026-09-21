@@ -1,5 +1,6 @@
 ---
 import Mark from './Mark.astro';
+import Button from './Button.astro';
 import { categories } from './data';
 import { directoryTotals } from './directory-taxonomy';
 
@@ -40,8 +41,33 @@ import { directoryTotals } from './directory-taxonomy';
  * that sits beside the mark on desktop becomes the block that closes the hero.
  */
 
+interface Props {
+  headlineTop?: string;
+  headlineBottom?: string;
+  subheadline?: string;
+  searchPlaceholder?: string;
+  searchLabel?: string;
+  howWePickLabel?: string;
+  howWePickHref?: string;
+  noteText?: string;
+  noteLinkLabel?: string;
+  noteLinkHref?: string;
+}
+
+const {
+  headlineTop = 'Where you find',
+  headlineBottom = 'the right software.',
+  subheadline = 'Five categories. A real shortlist in each, with the pricing page and the reasoning behind every pick.',
+  searchPlaceholder = 'Search HubSpot, CRM, email marketing…',
+  searchLabel = 'Search',
+  howWePickLabel = 'How we pick',
+  howWePickHref = '/how-we-pick',
+  noteText = 'Some links here pay us a commission. We say which ones.',
+  noteLinkLabel = 'The disclosure',
+  noteLinkHref = '/disclosure',
+} = Astro.props;
+
 /* Both drawn from the real index below, so neither can drift into fiction. */
-const placeholder = 'Search HubSpot, CRM, email marketing…';
 const suggestions = [
   ...categories.map((c) => c.name),
   ...categories.flatMap((c) => c.picks.map((p) => p.name)),
@@ -64,14 +90,11 @@ const suggestions = [
   <div class="wrap hero-inner">
     <div class="hero-copy">
       <h1 class="hero-h">
-        Where you find<br />
-        the right software.
+        {headlineTop}<br />
+        {headlineBottom}
       </h1>
 
-      <p class="hero-sub">
-        Five categories. A real shortlist in each, with the pricing page and the reasoning
-        behind every pick.
-      </p>
+      <p class="hero-sub">{subheadline}</p>
 
       <form class="hero-search" id="hero-search" role="search">
         <label class="sr" for="hero-q">Search categories and tools</label>
@@ -96,12 +119,12 @@ const suggestions = [
           name="q"
           type="search"
           list="hero-suggest"
-          placeholder={placeholder}
+          placeholder={searchPlaceholder}
           autocomplete="off"
           enterkeyhint="search"
         />
 
-        <button type="submit" class="pill pill-solid hero-search-go">Search</button>
+        <Button type="submit" variant="solid" class="hero-search-go">{searchLabel}</Button>
       </form>
 
       <datalist id="hero-suggest">
@@ -109,7 +132,7 @@ const suggestions = [
       </datalist>
 
       <p class="hero-links">
-        <a href="/how-we-pick" class="tlink">How we pick</a>
+        <a href={howWePickHref} class="tlink">{howWePickLabel}</a>
         <a href="#directory" class="tlink">All {directoryTotals.entries} categories</a>
       </p>
     </div>
@@ -126,8 +149,8 @@ const suggestions = [
            amber rule this site uses for the thing it wants read — the same
            device as the full disclosure note on the category pages. -->
       <p class="hero-note">
-        Some links here pay us a commission. We say which ones.
-        <a href="/disclosure" class="tlink">The disclosure</a>
+        {noteText}
+        <a href={noteLinkHref} class="tlink">{noteLinkLabel}</a>
       </p>
     </div>
   </div>

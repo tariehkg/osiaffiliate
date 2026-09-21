@@ -1,4 +1,6 @@
 ---
+import Button from './Button.astro';
+
 /**
  * The closing strip.
  *
@@ -30,55 +32,73 @@
  *    control is live; the styling deliberately makes the field look less
  *    functional than the cobalt pill beside it, not more.
  */
+interface Props {
+  heading?: string;
+  description?: string;
+  askTitle?: string;
+  askLede?: string;
+  askCtaLabel?: string;
+  askCtaHref?: string;
+  waitTitle?: string;
+  waitLede?: string;
+  emailPlaceholder?: string;
+  waitBtnLabel?: string;
+  waitNote?: string;
+  waitNoteLinkLabel?: string;
+  waitNoteLinkHref?: string;
+}
+
+const {
+  heading = 'Nothing here is final',
+  description = 'Picks come out when they stop earning the slot, and a category goes in when there is a real shortlist to show. Tell us what to look at, or ask to hear when something moves.',
+  askTitle = 'Tell us what we’re missing',
+  askLede = 'Say what you use and what it replaced. We read every one, and the ones that change a shortlist get added with the reasoning shown.',
+  askCtaLabel = 'Suggest a tool',
+  askCtaHref = '/contact',
+  waitTitle = 'Hear when a pick changes',
+  waitLede = 'We add a category or swap a pick every few weeks. One short note when that happens — what changed, and why it changed.',
+  emailPlaceholder = 'you@yourcompany.com',
+  waitBtnLabel = 'Not open yet',
+  waitNote = 'There is no mailing list running yet, so this field does nothing on purpose — we would rather show you the plan than collect an address we cannot mail.',
+  waitNoteLinkLabel = 'Ask us directly',
+  waitNoteLinkHref = '/contact',
+} = Astro.props;
 ---
 
 <section class="close">
   <div class="wrap">
     <header class="close-head" data-rise>
-      <h2>Nothing here is final</h2>
-      <p>
-        Picks come out when they stop earning the slot, and a category goes in when there is
-        a real shortlist to show. Tell us what to look at, or ask to hear when something
-        moves.
-      </p>
+      <h2>{heading}</h2>
+      <p>{description}</p>
     </header>
 
     <div class="close-asks" data-rise>
       <div class="ask ask-live">
-        <h3>Tell us what we’re missing</h3>
-        <p class="ask-lede">
-          Say what you use and what it replaced. We read every one, and the ones that change
-          a shortlist get added with the reasoning shown.
-        </p>
-        <a href="/contact" class="pill pill-solid ask-go">Suggest a tool</a>
+        <h3>{askTitle}</h3>
+        <p class="ask-lede">{askLede}</p>
+        <Button href={askCtaHref} variant="solid" class="ask-go">{askCtaLabel}</Button>
       </div>
 
       <div class="ask ask-wait">
-        <h3>Hear when a pick changes</h3>
-        <p class="ask-lede">
-          We add a category or swap a pick every few weeks. One short note when that happens
-          — what changed, and why it changed.
-        </p>
+        <h3>{waitTitle}</h3>
+        <p class="ask-lede">{waitLede}</p>
 
         <div class="ask-form">
           <label class="ask-field">
             <span class="sr">Email address</span>
             <input
               type="email"
-              placeholder="you@yourcompany.com"
+              placeholder={emailPlaceholder}
               disabled
               aria-describedby="close-note"
             />
           </label>
-          <button type="button" class="pill ask-btn" disabled>Not open yet</button>
+          <Button class="ask-btn" disabled>{waitBtnLabel}</Button>
         </div>
 
         <p class="ask-note" id="close-note">
-          There is no mailing list running yet, so this field does nothing on purpose — we
-          would rather show you the plan than collect an address we cannot mail. <a
-            href="/contact"
-            class="tlink">Ask us directly</a
-          > and we will add you by hand.
+          {waitNote} <a href={waitNoteLinkHref} class="tlink">{waitNoteLinkLabel}</a> and we will
+          add you by hand.
         </p>
       </div>
     </div>

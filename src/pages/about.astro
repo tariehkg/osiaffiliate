@@ -4,6 +4,7 @@ import SiteNav from '../components/SiteNav.astro';
 import PageHead from '../components/PageHead.astro';
 import Doc from '../components/Doc.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import Button from '../components/Button.astro';
 import { categories } from '../components/data';
 
 /**
@@ -135,7 +136,7 @@ const facts = [
           have left the obvious tool off this list”. Both change the site.
         </p>
         <p>
-          <a href="/contact" class="pill pill-line">Get in touch</a>
+          <Button href="/contact" variant="line">Get in touch</Button>
         </p>
       </section>
     </Doc>

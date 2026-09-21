@@ -1,5 +1,5 @@
 ---
-import { directoryGroups } from './directory-taxonomy';
+import { directoryGroups as allDirectoryGroups } from './directory-taxonomy';
 
 /**
  * The category wall — the site's whole intended scope, in one object.
@@ -25,6 +25,17 @@ import { directoryGroups } from './directory-taxonomy';
  * following the same two states — a subtle, purely visual cue, not a stated
  * count.
  */
+interface Props {
+  heading?: string;
+  lede?: string;
+  directoryGroups?: typeof allDirectoryGroups;
+}
+
+const {
+  heading = 'Browse by category.',
+  lede = "Organized the way you'd actually go looking for software — not an alphabetical wall, and never sorted by who paid to be listed.",
+  directoryGroups = allDirectoryGroups,
+} = Astro.props;
 
 const groups = directoryGroups.map((g) => ({
   ...g,
@@ -36,11 +47,8 @@ const groups = directoryGroups.map((g) => ({
   <div class="wrap">
     <header class="dir-head" data-rise>
       <div class="dir-head-copy">
-        <h2>Browse by category.</h2>
-        <p>
-          Organized the way you'd actually go looking for software — not an alphabetical
-          wall, and never sorted by who paid to be listed.
-        </p>
+        <h2>{heading}</h2>
+        <p>{lede}</p>
       </div>
     </header>
 

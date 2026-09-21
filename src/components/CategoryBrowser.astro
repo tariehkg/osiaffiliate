@@ -1,5 +1,5 @@
 ---
-import { categories } from './data';
+import { categories as allCategories } from './data';
 
 /**
  * The category browser.
@@ -24,17 +24,31 @@ import { categories } from './data';
  *
  * Every pick's wrapper carries `id={pick.slug}` — the same anchor ids the
  * category hubs use — so `#hubspot-crm` resolves on this page too.
+ *
+ * `categories` defaults to the site's real shortlist data. The zero-JS
+ * state machine's CSS selectors are keyed to the five known category ids
+ * (`cat-crm`, `cat-email`, `cat-sites`, `cat-pm`, `cat-seo`), so a caller
+ * swapping in different data still needs those same ids to keep the
+ * pane-switching and hue-tinting working.
  */
+interface Props {
+  heading?: string;
+  lede?: string;
+  categories?: typeof allCategories;
+}
+
+const {
+  heading = 'Start with what you’re replacing',
+  lede = 'Five categories, two to four picks in each. Pick a category and you get the whole shortlist — not page one of forty.',
+  categories = allCategories,
+} = Astro.props;
 ---
 
 <section class="browse" id="browse">
   <div class="wrap">
     <header class="browse-head" data-rise>
-      <h2 class="browse-h">Start with what you’re replacing</h2>
-      <p class="browse-lede">
-        Five categories, two to four picks in each. Pick a category and you get the whole
-        shortlist — not page one of forty.
-      </p>
+      <h2 class="browse-h">{heading}</h2>
+      <p class="browse-lede">{lede}</p>
     </header>
 
     <div class="browse-shell" data-rise>

@@ -1,5 +1,6 @@
 ---
 import Mark from './Mark.astro';
+import Button from './Button.astro';
 
 /**
  * The page's one inverted block.
@@ -20,6 +21,14 @@ import Mark from './Mark.astro';
  * box and masked to fade, same as the hero's. One shape, two sections, no
  * second drawing of the brand to keep in step.
  */
+interface Props {
+  byline?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const { byline = 'The OSI Affiliate team', ctaLabel = 'Read the methodology', ctaHref = '/how-we-pick' } =
+  Astro.props;
 ---
 
 <section class="stance">
@@ -30,18 +39,20 @@ import Mark from './Mark.astro';
   <div class="wrap stance-inner">
     <blockquote class="stance-quote" data-rise>
       <p>
-        Every directory you have ever used makes money the same way we do. The difference is
-        that we tell you <em>which links pay us</em>, and the tool we would actually choose
-        still comes first.
+        <slot>
+          Every directory you have ever used makes money the same way we do. The difference is
+          that we tell you <em>which links pay us</em>, and the tool we would actually choose
+          still comes first.
+        </slot>
       </p>
 
       <footer class="stance-foot">
         <span class="stance-by">
           <Mark size={22} tone="light" />
-          <span>The OSI Affiliate team</span>
+          <span>{byline}</span>
         </span>
 
-        <a href="/how-we-pick" class="pill pill-invert stance-go">Read the methodology</a>
+        <Button href={ctaHref} variant="invert" class="stance-go">{ctaLabel}</Button>
       </footer>
     </blockquote>
   </div>

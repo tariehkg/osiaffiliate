@@ -1,6 +1,7 @@
 ---
 import { categories } from './data';
 import { pickDetail } from './picks-detail';
+import Button from './Button.astro';
 
 /**
  * The two contenders, stated plainly before the table.
@@ -45,9 +46,9 @@ const sides = slugs.map((slug) => {
             <p class="cs-plan">{pick.plan}</p>
 
             <div class="cs-acts">
-              <a href={detail.url} class="pill pill-line cs-go" rel="nofollow noopener">
+              <Button href={detail.url} variant="line" class="cs-go" rel="nofollow noopener">
                 {detail.urlLabel}
-              </a>
+              </Button>
               <a href={`${category.hub}#${pick.slug}`} class="tlink cs-more">
                 Full entry on the shortlist
               </a>

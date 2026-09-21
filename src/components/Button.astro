@@ -1,0 +1,34 @@
+---
+/**
+ * The pill button/link — every filled, outlined or inverted call-to-action
+ * on the site is one of these. Renders an <a> when `href` is set, a
+ * <button> otherwise; visual variant and layout styling stay on the shared
+ * `.pill` / `.pill-*` classes in base.css so this component doesn't fork the
+ * design, it just gives the repeated markup one place to live.
+ */
+interface Props {
+  /** Visual treatment. Omit for the bare `.pill` shell (e.g. a disabled control with its own colours). */
+  variant?: 'solid' | 'line' | 'invert';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  rel?: string;
+  class?: string;
+}
+
+const { variant, href, type = 'button', disabled = false, rel, class: cls = '' } = Astro.props;
+
+const classes = ['pill', variant && `pill-${variant}`, cls].filter(Boolean).join(' ');
+---
+
+{
+  href ? (
+    <a href={href} class={classes} rel={rel}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} disabled={disabled}>
+      <slot />
+    </button>
+  )
+}

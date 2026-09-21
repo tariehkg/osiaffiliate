@@ -2,6 +2,7 @@
 import PageHead from './PageHead.astro';
 import DisclosureNote from './DisclosureNote.astro';
 import PageTrust from './PageTrust.astro';
+import Button from './Button.astro';
 import { categories, type Category } from './data';
 import { pickDetail, hubSummary, hubNote, comparePicks } from './picks-detail';
 
@@ -81,9 +82,9 @@ const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] 
               about which one to pick.
             </p>
           </div>
-          <a href={category.comparison.href} class="pill pill-solid vs-go">
+          <Button href={category.comparison.href} variant="solid" class="vs-go">
             {category.comparison.label}
-          </a>
+          </Button>
         </div>
       )
     }
@@ -108,9 +109,9 @@ const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] 
                 <p class="entry-role">{p.role}</p>
                 <p class="entry-plan">{p.plan}</p>
 
-                <a href={d.url} class="pill pill-solid entry-go" rel="nofollow noopener">
+                <Button href={d.url} variant="solid" class="entry-go" rel="nofollow noopener">
                   {d.urlLabel}
-                </a>
+                </Button>
 
                 {category.comparison && compared.has(p.slug) ? (
                   <a href={category.comparison.href} class="tlink entry-alt">

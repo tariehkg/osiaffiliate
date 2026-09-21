@@ -1,0 +1,468 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Atoms
+import Button from '../components/Button.astro';
+import Mark from '../components/Mark.astro';
+import DisclosureNote from '../components/DisclosureNote.astro';
+
+// Sections
+import Hero from '../components/Hero.astro';
+import CategoryBrowser from '../components/CategoryBrowser.astro';
+import Stance from '../components/Stance.astro';
+import CategoryDirectory from '../components/CategoryDirectory.astro';
+import ContributeCta from '../components/ContributeCta.astro';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import CategoryHub from '../components/CategoryHub.astro';
+import PageHead from '../components/PageHead.astro';
+import PageTrust from '../components/PageTrust.astro';
+import Verdict from '../components/Verdict.astro';
+import CompareTable from '../components/CompareTable.astro';
+import CompareSides from '../components/CompareSides.astro';
+import CompareFoot from '../components/CompareFoot.astro';
+
+/**
+ * The design system inventory.
+ *
+ * Every entry here is the real component from `src/components/`, rendered
+ * with either its own defaults or representative placeholder content — never
+ * markup re-created inline. If it's on this page, it's safe to import and
+ * reuse; if a new component is built, it gets added here in the same change
+ * (see the "Component rules" in CLAUDE.md).
+ *
+ * `Doc.astro` is intentionally not listed: it's a slot-only prose wrapper
+ * with no visual identity of its own to show in isolation.
+ */
+
+const colors = [
+  {
+    name: 'Cobalt',
+    token: 'brand-primary',
+    hex: '#2451E8',
+    usage: 'Structural signal — selected states, filled CTAs, link underlines. Never a wash.',
+  },
+  {
+    name: 'Deep navy',
+    token: 'brand-secondary',
+    hex: '#0F1B33',
+    usage: 'The two inverted, full-bleed sections only: Stance and the footer.',
+  },
+  {
+    name: 'Warm amber',
+    token: 'brand-accent',
+    hex: '#F2A93B',
+    usage: 'A marker, not a fill — mark glyph, pull-quote rule, disclosure border.',
+  },
+  {
+    name: 'Paper',
+    token: 'brand-bg',
+    hex: '#FAFAF8',
+    usage: 'Base page background.',
+  },
+  {
+    name: 'Surface',
+    token: 'brand-surface',
+    hex: '#F1F0EC',
+    usage: 'One step darker than paper — trust panels, closing strip, table heads.',
+  },
+  {
+    name: 'Ink',
+    token: 'brand-text',
+    hex: '#14181F',
+    usage: 'Primary text color, almost always used via color-mix() for tone.',
+  },
+  {
+    name: 'Muted',
+    token: 'brand-muted',
+    hex: '#6B7280',
+    usage: 'Secondary/disabled text — breadcrumbs, disabled controls, captions.',
+  },
+];
+
+const compareA = { name: 'HubSpot CRM', monogram: 'Hs' };
+const compareB = { name: 'Pipedrive', monogram: 'Pd' };
+const compareRows = [
+  {
+    dim: 'Free tier',
+    a: 'A genuinely usable free CRM: contacts, companies, deals, and forms.',
+    b: 'No lasting free plan. A trial, then paid from the first month.',
+  },
+  {
+    dim: 'Best for',
+    a: 'A business that wants one record of the customer marketing and support can work from too.',
+    b: 'A team that lives in the pipeline and wants the tool to keep asking what happens next.',
+  },
+];
+---
+
+<Layout
+  title="Design System — OSI Affiliate"
+  description="Component inventory and brand reference for OSI Affiliate."
+  noindex
+>
+  <main class="ds">
+    <header class="ds-intro wrap">
+      <h1>Design System</h1>
+      <p>Component inventory and brand reference</p>
+      <p class="ds-note">
+        Every element below is the real component imported from <code>src/components/</code>. See
+        <code>docs/brand-guide.md</code> for the reasoning behind these choices, and
+        <code>CLAUDE.md</code> for the rule that keeps this page in sync with the codebase.
+      </p>
+    </header>
+
+    <section class="ds-block wrap" aria-labelledby="ds-colors">
+      <h2 id="ds-colors">Colors</h2>
+      <p class="ds-block-lede">Every color token in <code>@theme</code>, from <code>src/styles/theme.css</code>.</p>
+
+      <div class="ds-swatches">
+        {
+          colors.map((c) => (
+            <div class="ds-swatch">
+              <div class={`ds-swatch-fill bg-${c.token}`} />
+              <p class="ds-swatch-name">{c.name}</p>
+              <p class="ds-swatch-meta">
+                <code>bg-{c.token}</code>
+              </p>
+              <p class="ds-swatch-meta">{c.hex}</p>
+              <p class="ds-swatch-usage">{c.usage}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="ds-block wrap" aria-labelledby="ds-type">
+      <h2 id="ds-type">Typography</h2>
+      <p class="ds-block-lede">
+        Families from <code>@theme</code>; sizes from the fluid type scale in
+        <code>src/styles/base.css</code>.
+      </p>
+
+      <div class="ds-type-rows">
+        <div class="ds-type-row">
+          <p class="ds-type-label">h1 · --fs-h1 · font-heading · 700</p>
+          <p style="font-family: var(--font-heading); font-size: var(--fs-h1); font-weight: var(--fw-bold); line-height: 1.02; letter-spacing: -0.04em;">
+            Where you find
+          </p>
+        </div>
+
+        <div class="ds-type-row">
+          <p class="ds-type-label">h2 · --fs-h2 · font-heading · 600</p>
+          <p style="font-family: var(--font-heading); font-size: var(--fs-h2); font-weight: var(--fw-semibold); line-height: 1.08; letter-spacing: -0.035em;">
+            Start with what you're replacing
+          </p>
+        </div>
+
+        <div class="ds-type-row">
+          <p class="ds-type-label">h3 · --fs-h3 · font-heading · 600</p>
+          <p style="font-family: var(--font-heading); font-size: var(--fs-h3); font-weight: var(--fw-semibold); line-height: 1.1;">
+            HubSpot CRM
+          </p>
+        </div>
+
+        <div class="ds-type-row">
+          <p class="ds-type-label">h4 · --fs-h4 · font-heading · 500</p>
+          <p style="font-family: var(--font-heading); font-size: var(--fs-h4); font-weight: var(--fw-medium);">
+            Pipedrive
+          </p>
+        </div>
+
+        <div class="ds-type-row">
+          <p class="ds-type-label">Body · --fs-body · font-body · 400</p>
+          <p style="font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.6;">
+            Five categories. A real shortlist in each, with the pricing page and the reasoning
+            behind every pick.
+          </p>
+        </div>
+
+        <div class="ds-type-row">
+          <p class="ds-type-label">Small · --fs-small · font-body · 400</p>
+          <p style="font-family: var(--font-body); font-size: var(--fs-small);">How we pick</p>
+        </div>
+
+        <div class="ds-type-row">
+          <p class="ds-type-label">Caption · --fs-caption · font-body · 400</p>
+          <p style="font-family: var(--font-body); font-size: var(--fs-caption); color: var(--color-brand-muted);">
+            3 picks
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ds-block wrap" aria-labelledby="ds-components">
+      <h2 id="ds-components">Components</h2>
+
+      <h3 class="ds-group-h">Atoms</h3>
+
+      <div class="ds-frame ds-frame-pad">
+        <div class="ds-atom-row">
+          <Button variant="solid">Solid</Button>
+          <Button variant="line">Line</Button>
+          <Button disabled>Disabled</Button>
+        </div>
+        <div class="ds-atom-row ds-atom-row-dark">
+          <Button variant="invert">Invert (on navy)</Button>
+        </div>
+      </div>
+      <p class="ds-label"><code>Button</code> · <code>src/components/Button.astro</code></p>
+
+      <div class="ds-frame ds-frame-pad">
+        <div class="ds-atom-row">
+          <Mark size={40} />
+          <Mark size={40} wordmark />
+        </div>
+        <div class="ds-atom-row ds-atom-row-dark">
+          <Mark size={40} tone="light" wordmark />
+        </div>
+      </div>
+      <p class="ds-label"><code>Mark</code> · <code>src/components/Mark.astro</code></p>
+
+      <div class="ds-frame ds-frame-pad">
+        <DisclosureNote />
+        <div style="margin-top: 1rem;">
+          <DisclosureNote links />
+        </div>
+      </div>
+      <p class="ds-label"><code>DisclosureNote</code> · <code>src/components/DisclosureNote.astro</code></p>
+
+      <h3 class="ds-group-h">Sections</h3>
+
+      <div class="ds-frame">
+        <SiteNav />
+      </div>
+      <p class="ds-label"><code>SiteNav</code> · <code>src/components/SiteNav.astro</code></p>
+
+      <div class="ds-frame">
+        <Hero />
+      </div>
+      <p class="ds-label"><code>Hero</code> · <code>src/components/Hero.astro</code></p>
+
+      <div class="ds-frame">
+        <CategoryBrowser />
+      </div>
+      <p class="ds-label"><code>CategoryBrowser</code> · <code>src/components/CategoryBrowser.astro</code></p>
+
+      <div class="ds-frame">
+        <Stance />
+      </div>
+      <p class="ds-label"><code>Stance</code> · <code>src/components/Stance.astro</code></p>
+
+      <div class="ds-frame">
+        <CategoryDirectory />
+      </div>
+      <p class="ds-label"><code>CategoryDirectory</code> · <code>src/components/CategoryDirectory.astro</code></p>
+
+      <div class="ds-frame">
+        <ContributeCta />
+      </div>
+      <p class="ds-label"><code>ContributeCta</code> · <code>src/components/ContributeCta.astro</code></p>
+
+      <div class="ds-frame">
+        <SiteFooter />
+      </div>
+      <p class="ds-label"><code>SiteFooter</code> · <code>src/components/SiteFooter.astro</code></p>
+
+      <div class="ds-frame">
+        <PageHead
+          trail={[
+            { label: 'All categories', href: '/' },
+            { label: 'CRM & Sales', href: '/crm-software' },
+          ]}
+          title="Where do leads live, and what makes sure nobody gets dropped?"
+          lede="Four CRMs made the list. One is free to start, one is built for people who live in a pipeline."
+          note="Some links on this page can pay us. We say which ones."
+          scale="question"
+        />
+      </div>
+      <p class="ds-label"><code>PageHead</code> · <code>src/components/PageHead.astro</code></p>
+
+      <div class="ds-frame">
+        <CompareSides category="crm" slugs={['hubspot-crm', 'pipedrive']} />
+      </div>
+      <p class="ds-label"><code>CompareSides</code> · <code>src/components/CompareSides.astro</code></p>
+
+      <div class="ds-frame">
+        <CompareTable
+          a={compareA}
+          b={compareB}
+          rows={compareRows}
+          caption="Example comparison table"
+          title="Where they differ"
+          lede="Representative rows for the design system — the real page draws these from picks-detail.ts."
+        />
+      </div>
+      <p class="ds-label"><code>CompareTable</code> · <code>src/components/CompareTable.astro</code></p>
+
+      <div class="ds-frame">
+        <Verdict
+          calls={[
+            { name: 'HubSpot', who: 'you want the broadest free tier and room to grow into marketing.' },
+            { name: 'Pipedrive', who: 'you want a pipeline-first tool that stays out of your way.' },
+          ]}
+        >
+          <p>
+            Placeholder verdict copy showing the <em>emphasis treatment</em> this section uses for
+            its recommended pick.
+          </p>
+        </Verdict>
+      </div>
+      <p class="ds-label"><code>Verdict</code> · <code>src/components/Verdict.astro</code></p>
+
+      <div class="ds-frame">
+        <PageTrust />
+      </div>
+      <p class="ds-label"><code>PageTrust</code> · <code>src/components/PageTrust.astro</code></p>
+
+      <div class="ds-frame">
+        <CompareFoot category="crm" slugs={['hubspot-crm', 'pipedrive']} />
+      </div>
+      <p class="ds-label"><code>CompareFoot</code> · <code>src/components/CompareFoot.astro</code></p>
+
+      <div class="ds-frame">
+        <CategoryHub id="crm" />
+      </div>
+      <p class="ds-label"><code>CategoryHub</code> · <code>src/components/CategoryHub.astro</code></p>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .ds {
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .ds-intro {
+    padding-block: clamp(2.5rem, 5vw, 3.75rem) clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .ds-intro h1 {
+    font-size: var(--fs-display);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.038em;
+  }
+
+  .ds-intro > p:nth-of-type(1) {
+    margin-top: 0.6rem;
+    font-size: var(--fs-lede);
+    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
+  }
+
+  .ds-note {
+    margin-top: 1.25rem;
+    max-width: 60ch;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--color-brand-muted);
+  }
+
+  .ds-block {
+    padding-block: clamp(1.75rem, 3.5vw, 2.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .ds-block h2 {
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.03em;
+  }
+
+  .ds-block-lede {
+    margin-top: 0.5rem;
+    font-size: var(--fs-small);
+    color: var(--color-brand-muted);
+  }
+
+  .ds-group-h {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+  }
+
+  /* --- colors --- */
+  .ds-swatches {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 1.25rem;
+  }
+
+  .ds-swatch-fill {
+    height: 5rem;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+
+  .ds-swatch-name {
+    margin-top: 0.6rem;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+  }
+
+  .ds-swatch-meta {
+    margin-top: 0.15rem;
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .ds-swatch-usage {
+    margin-top: 0.35rem;
+    font-size: var(--fs-caption);
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  /* --- typography --- */
+  .ds-type-rows {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .ds-type-label {
+    font-size: var(--fs-caption);
+    font-family: var(--font-body);
+    color: var(--color-brand-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  /* --- components --- */
+  .ds-frame {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--color-brand-bg);
+  }
+
+  .ds-frame-pad {
+    padding: 1.5rem;
+  }
+
+  .ds-atom-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .ds-atom-row-dark {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    background: var(--color-brand-secondary);
+    border-radius: 4px;
+  }
+
+  .ds-label {
+    margin-top: 0.5rem;
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .ds-label code {
+    color: var(--color-brand-text);
+  }
+</style>

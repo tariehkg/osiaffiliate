@@ -1,6 +1,24 @@
 ---
 import Mark from './Mark.astro';
-import { categories } from './data';
+import { categories as allCategories } from './data';
+
+interface Props {
+  categories?: typeof allCategories;
+  brandDescription?: string;
+  disclosureText?: string;
+  disclosureLinkLabel?: string;
+  signOffLine?: string;
+  siteName?: string;
+}
+
+const {
+  categories = allCategories,
+  brandDescription = 'A short, opinionated shortlist for five kinds of business software — with the business model stated on the page instead of buried in it.',
+  disclosureText = 'Some links on this site are affiliate links: if you sign up through one, the vendor pays us a commission at no extra cost to you. No vendor pays for placement or for a higher position.',
+  disclosureLinkLabel = 'Read the full disclosure',
+  signOffLine = 'New shortlists go up when they are finished, not when they are due.',
+  siteName = 'OSI Affiliate',
+} = Astro.props;
 
 const year = new Date().getFullYear();
 ---
@@ -10,15 +28,12 @@ const year = new Date().getFullYear();
     <div class="foot-top">
       <div class="foot-brand">
         <Mark size={28} tone="light" wordmark />
-        <p>
-          A short, opinionated shortlist for five kinds of business software — with the
-          business model stated on the page instead of buried in it.
-        </p>
+        <p>{brandDescription}</p>
       </div>
 
       <nav class="foot-cols" aria-label="Footer">
         <div class="foot-col">
-          <h2>OSI Affiliate</h2>
+          <h2>{siteName}</h2>
           <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/how-we-pick">How we pick</a></li>
@@ -49,15 +64,13 @@ const year = new Date().getFullYear();
 
     <div class="foot-bottom">
       <p class="foot-disclose">
-        Some links on this site are affiliate links: if you sign up through one, the vendor
-        pays us a commission at no extra cost to you. No vendor pays for placement or for a
-        higher position. <a href="/disclosure">Read the full disclosure</a>.
+        {disclosureText} <a href="/disclosure">{disclosureLinkLabel}</a>.
       </p>
       <!-- The sign-off says something rather than only holding a date: what
            it says is the promise the shortlists are actually run on. -->
       <div class="foot-sign">
-        <p class="foot-sign-line">New shortlists go up when they are finished, not when they are due.</p>
-        <p class="foot-copy">&copy; {year} OSI Affiliate</p>
+        <p class="foot-sign-line">{signOffLine}</p>
+        <p class="foot-copy">&copy; {year} {siteName}</p>
       </div>
     </div>
   </div>

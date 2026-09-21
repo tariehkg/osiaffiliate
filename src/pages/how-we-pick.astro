@@ -4,6 +4,7 @@ import SiteNav from '../components/SiteNav.astro';
 import PageHead from '../components/PageHead.astro';
 import Doc from '../components/Doc.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import Button from '../components/Button.astro';
 import { categories, method } from '../components/data';
 
 /**
@@ -152,7 +153,7 @@ const compareCount = categories.filter((c) => c.comparison).length;
           the traffic.
         </p>
         <p>
-          <a href="/contact" class="pill pill-line">Send a correction</a>
+          <Button href="/contact" variant="line">Send a correction</Button>
         </p>
       </section>
     </Doc>
