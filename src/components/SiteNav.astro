@@ -8,7 +8,7 @@ interface Props {
   secondaryHref?: string;
 }
 
-const { categories = allCategories, secondaryLabel = 'How we pick', secondaryHref = '/how-we-pick' } =
+const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHref = '/rate' } =
   Astro.props;
 ---
 
@@ -22,12 +22,12 @@ const { categories = allCategories, secondaryLabel = 'How we pick', secondaryHre
       {categories.map((c) => <a href={c.hub}>{c.short}</a>)}
     </nav>
 
-    <!-- One action only. The five category links to the left already reach
-         every shortlist on the site, so a filled button pointing at the same
-         place was duplication; the methodology is the thing worth keeping
-         permanently in reach, and it is what the big directories do not
-         put in their nav at all. -->
+    <!-- One outlined action: rating a tool is the one thing a reader can do
+         here that they cannot do by reading, so it is the control that stays
+         in reach at every width. The methodology and the blog are text links
+         beside it. -->
     <div class="nav-actions">
+      <a href="/how-we-pick" class="nav-link">How we pick</a>
       <a href="/blog" class="nav-link">Blog</a>
       <a href={secondaryHref} class="nav-secondary">{secondaryLabel}</a>
     </div>
@@ -196,6 +196,12 @@ const { categories = allCategories, secondaryLabel = 'How we pick', secondaryHre
     }
 
     .nav-cats-mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .nav-link {
       display: none;
     }
   }

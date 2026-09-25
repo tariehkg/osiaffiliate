@@ -1,22 +1,37 @@
 ---
 import PageHead from './PageHead.astro';
 import DisclosureNote from './DisclosureNote.astro';
+import SampleNotice from './SampleNotice.astro';
+import FilterRail from './FilterRail.astro';
+import ProductCard from './ProductCard.astro';
+import Stars from './Stars.astro';
+import CategoryGuide from './CategoryGuide.astro';
+import Faq from './Faq.astro';
 import PageTrust from './PageTrust.astro';
 import Button from './Button.astro';
 import { categories, type Category } from './data';
-import { pickDetail, hubSummary, hubNote, comparePicks } from './picks-detail';
+import { hubNote } from './picks-detail';
+import { categoryContent } from './category-content';
+import { productContent, pricingLabel } from './product-content';
+import { getRating, totalRatings, fmtAverage } from './ratings';
 
 /**
  * A category hub page, whole.
  *
  * Every one of the five hubs is this component with a different category id,
- * so the five pages cannot drift apart, and — the part other pages depend on
- * — every pick's section is guaranteed to carry `id={pick.slug}` exactly as
- * `data.ts` spells it. The homepage links in as `${hub}#${slug}`.
+ * so the five pages cannot drift apart. Every pick's row carries
+ * `id={pick.slug}` exactly as `data.ts` spells it, so `${hub}#${slug}` links
+ * from anywhere on the site still land.
  *
- * Layout follows the homepage's lattice: the shortlist is a row of cells
- * sharing one hairline, and the long entries below are a single stack whose
- * rows share their edges, rather than a column of detached cards.
+ * The shape is the one the big directories use, because it is the shape a
+ * buyer expects — filters on the left, a ranked list on the right, a
+ * comparison grid, a buyer's guide and FAQs below — drawn in this site's own
+ * language: one hairline between rows, no cards, no shadows, numbered
+ * because the list is a ranking.
+ *
+ * What is different from a big directory, on purpose: the list is short and
+ * editor-chosen, the reader rating sits beside the editorial pick rather than
+ * replacing it, and the affiliate disclosure is at the top in body type.
  */
 interface Props {
   id: Category['id'];
@@ -26,49 +41,56 @@ const { id } = Astro.props;
 
 const category = categories.find((c) => c.id === id);
 if (!category) throw new Error(`CategoryHub: no category with id "${id}"`);
+const content = categoryContent[id];
+if (!content) throw new Error(`CategoryHub: no category content for "${id}"`);
 
-const compared = new Set(comparePicks[id] ?? []);
 const others = categories.filter((c) => c.id !== id);
 const count = category.picks.length;
-const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] ?? String(count);
+const ratingsTotal = totalRatings(category.picks.map((p) => p.slug));
+const updated = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 ---
 
 <PageHead
-  trail={[{ label: 'All categories', href: '/' }]}
-  title={category.question}
-  lede={hubSummary[id]}
+  trail={[{ label: 'Home', href: '/' }]}
+  title={content.h1}
+  lede={content.intro}
   note={hubNote[id]}
-  scale="question"
 >
   <DisclosureNote links />
+  <SampleNotice class="hub-sample" />
 </PageHead>
 
-<!-- id="browse" as well as its own anchor: the nav's "See today's picks" CTA
-     points at #browse, which is the homepage's browser section. On a hub, the
-     shortlist is that same thing, so the CTA lands somewhere sensible instead
-     of doing nothing. -->
-<section class="short" id="browse" aria-labelledby="shortlist">
+<section class="catalog" id="browse" aria-labelledby="shortlist" data-catalog>
   <div class="wrap">
-    <h2 id="shortlist">
-      {category.name}: {countWord} picks
-    </h2>
+    <div class="catalog-bar">
+      <div class="catalog-bar-l">
+        <h2 id="shortlist" class="catalog-h">
+          {count} {count === 1 ? 'pick' : 'picks'}, ranked by our editors
+        </h2>
+        <p class="catalog-meta">
+          <span data-listing-status>All {count} picks</span>
+          <span aria-hidden="true">·</span>
+          <span>{ratingsTotal} reader {ratingsTotal === 1 ? 'rating' : 'ratings'}</span>
+          <span aria-hidden="true">·</span>
+          <span>Checked {updated}</span>
+        </p>
+      </div>
+      <label class="catalog-sort">
+        <span>Sort by</span>
+        <select data-sort>
+          <option value="editorial">Editor's order</option>
+          <option value="rating">Highest rated</option>
+          <option value="count">Most rated</option>
+        </select>
+      </label>
+    </div>
 
-    <div class="lattice" data-count={count}>
-      {
-        category.picks.map((p) => (
-          <div class="cell">
-            <div class="cell-top">
-              <span class="mono" aria-hidden="true">
-                {p.monogram}
-              </span>
-              <h3 class="cell-name">{p.name}</h3>
-            </div>
-            <p class="cell-role">{p.role}</p>
-            <p class="cell-plan">{p.plan}</p>
-            <a href={`#${p.slug}`} class="tlink cell-jump">The reasoning</a>
-          </div>
-        ))
-      }
+    <div class="catalog-grid">
+      <FilterRail category={category} />
+
+      <div class="listing" data-listing>
+        {category.picks.map((p, i) => <ProductCard category={category} pick={p} rank={i + 1} />)}
+      </div>
     </div>
 
     {
@@ -91,55 +113,64 @@ const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] 
   </div>
 </section>
 
-<section class="picks" aria-labelledby="reasoning">
+<section class="grid-sec" aria-labelledby="at-a-glance">
   <div class="wrap">
-    <h2 id="reasoning">Every pick, and why it is on the list</h2>
-
-    <div class="stack">
-      {
-        category.picks.map((p) => {
-          const d = pickDetail[p.slug];
-          return (
-            <article class="entry" id={p.slug}>
-              <div class="entry-id">
-                <span class="mono mono-lg" aria-hidden="true">
-                  {p.monogram}
-                </span>
-                <h3 class="entry-name">{p.name}</h3>
-                <p class="entry-role">{p.role}</p>
-                <p class="entry-plan">{p.plan}</p>
-
-                <Button href={d.url} variant="solid" class="entry-go" rel="nofollow noopener">
-                  {d.urlLabel}
-                </Button>
-
-                {category.comparison && compared.has(p.slug) ? (
-                  <a href={category.comparison.href} class="tlink entry-alt">
-                    Compared: {category.comparison.label}
-                  </a>
-                ) : (
-                  <a href="/how-we-pick" class="tlink entry-alt">
-                    How this was judged
-                  </a>
-                )}
-              </div>
-
-              <div class="entry-body">
-                {d.body.map((para) => (
-                  <p>{para}</p>
-                ))}
-
-                <p class="entry-skip">
-                  <b>Skip it if</b> {d.skip}
-                </p>
-              </div>
-            </article>
-          );
-        })
-      }
+    <h2 id="at-a-glance" class="grid-h">The shortlist at a glance</h2>
+    <p class="grid-lede">
+      The same {count} picks as a table, for the moment you want to see them side by side.
+    </p>
+    <div class="grid-scroll">
+      <table class="grid">
+        <caption class="sr">{category.name} picks compared on rating, pricing and fit</caption>
+        <thead>
+          <tr>
+            <th scope="col">Pick</th>
+            <th scope="col">Reader rating</th>
+            <th scope="col">How you start</th>
+            <th scope="col">Best for</th>
+            <th scope="col">Skip if</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            category.picks.map((p) => {
+              const r = getRating(p.slug);
+              const c = productContent[p.slug];
+              return (
+                <tr>
+                  <th scope="row">
+                    <a href={`${category.hub}/${p.slug}`}>{p.name}</a>
+                  </th>
+                  <td>
+                    {r.count > 0 ? (
+                      <span class="grid-rating">
+                        <Stars value={r.average} size={13} />
+                        <b>{fmtAverage(r.average)}</b>
+                        <span>({r.count})</span>
+                      </span>
+                    ) : (
+                      <span class="grid-none">Not rated yet</span>
+                    )}
+                  </td>
+                  <td>
+                    {c && <b class="grid-price">{pricingLabel[c.pricing]}</b>}
+                    <span class="grid-plan">{p.plan}</span>
+                  </td>
+                  <td>{c?.bestFor.join(', ')}</td>
+                  <td>{c?.skipIf.join(', ')}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
+
+<CategoryGuide name={category.short} content={content} />
+
+<Faq faqs={content.faqs} title={`${category.short} questions people ask`} />
 
 <PageTrust />
 
@@ -160,110 +191,90 @@ const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] 
 </section>
 
 <style>
-  /* ---------------------------------------------------------- shortlist */
-  .short {
+  :global(.hub-sample) {
+    margin-top: 1rem;
+  }
+
+  /* ------------------------------------------------------------ catalog */
+  .catalog {
     padding-block: clamp(1rem, 2vw, 1.75rem) clamp(2rem, 4vw, 3rem);
   }
 
-  .short h2,
-  .picks h2,
-  .next h2 {
+  .catalog-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .catalog-h {
     font-size: clamp(1.4rem, 2.8vw, 1.95rem);
     font-weight: 650;
   }
 
-  /* The lattice: cells share one hairline edge rather than floating as cards,
-     matching the homepage browser exactly. */
-  .lattice {
-    margin-top: clamp(1rem, 2vw, 1.5rem);
-    display: grid;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-  }
-
-  .lattice[data-count='2'] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .lattice[data-count='3'] {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .lattice[data-count='4'] {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .cell {
-    background: var(--color-brand-bg);
-    padding: 1.1rem 1.15rem 1rem;
+  .catalog-meta {
     display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    transition: background-color 0.16s var(--ease);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+    font-size: var(--fs-caption);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-muted);
   }
 
-  .cell:hover {
-    background: var(--tint);
-  }
-
-  .cell-top {
-    display: flex;
+  .catalog-sort {
+    display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
+    font-size: var(--fs-small);
+    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
   }
 
-  .mono {
-    flex: none;
+  .catalog-sort select {
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    background: var(--color-brand-bg);
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--color-brand-text);
+  }
+
+  .catalog-grid {
     display: grid;
-    place-items: center;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 6px;
-    background: var(--color-brand-secondary);
-    color: white;
-    font-family: var(--font-heading);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
   }
 
-  .cell-name {
-    font-size: 1.01rem;
-    font-weight: 600;
-    letter-spacing: -0.022em;
-    line-height: 1.2;
+  .listing {
+    border-bottom: 1px solid var(--line);
   }
 
-  .cell-role {
-    font-size: 0.855rem;
-    line-height: 1.45;
-    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  @media (min-width: 64rem) {
+    .catalog-grid {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+
+    .catalog-grid > :global(.fr) {
+      position: sticky;
+      top: 6rem;
+    }
   }
 
-  .cell-plan {
-    margin-top: auto;
-    padding-top: 0.7rem;
-    border-top: 1px solid var(--line);
-    font-family: var(--font-heading);
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--color-brand-primary);
-  }
-
-  .cell-jump {
-    font-size: 0.855rem;
-    font-weight: 500;
-  }
-
-  /* ------------------------------------------------- comparison band */
+  /* --------------------------------------------------- comparison band */
   .vs {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 1.1rem 2.5rem;
-    margin-top: clamp(1.25rem, 2.5vw, 2rem);
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
     padding: clamp(1.15rem, 2.5vw, 1.75rem);
     background: var(--tint);
     border: 1px solid color-mix(in oklab, var(--color-brand-primary) 22%, transparent);
@@ -287,99 +298,111 @@ const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] 
     flex: none;
   }
 
-  /* ------------------------------------------------------- long entries */
-  .picks {
-    padding-block: clamp(1.5rem, 3vw, 2.5rem) 0;
+  /* --------------------------------------------------- at a glance grid */
+  .grid-sec {
+    padding-block: clamp(1.5rem, 3vw, 2.5rem) clamp(2.5rem, 5vw, 4rem);
   }
 
-  .stack {
-    margin-top: clamp(1.1rem, 2.5vw, 1.75rem);
-    display: grid;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-  }
-
-  .entry {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.1rem, 2.5vw, 1.75rem);
-    background: var(--color-brand-bg);
-    padding: clamp(1.35rem, 3vw, 2.25rem);
-  }
-
-  .entry-id {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .mono-lg {
-    width: 2.9rem;
-    height: 2.9rem;
-    border-radius: 8px;
-    font-size: 1.12rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .entry-name {
-    font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  .grid-h {
+    font-size: clamp(1.4rem, 2.8vw, 1.95rem);
     font-weight: 650;
-    letter-spacing: -0.03em;
   }
 
-  .entry-role {
-    font-size: 0.945rem;
-    line-height: 1.5;
-    max-width: 34ch;
-    color: color-mix(in oklab, var(--color-brand-text) 68%, transparent);
+  .grid-lede {
+    margin-top: 0.5rem;
+    font-size: var(--fs-small);
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
   }
 
-  .entry-plan {
-    margin-top: 0.15rem;
+  .grid-scroll {
+    margin-top: 1.1rem;
+    overflow-x: auto;
+  }
+
+  .grid {
+    width: 100%;
+    min-width: 46rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--line);
+    text-align: left;
+    font-size: var(--fs-small);
+  }
+
+  .grid thead th {
+    padding: 0.8rem 1rem;
+    background: var(--color-brand-surface);
     font-family: var(--font-heading);
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-semibold);
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .grid tbody th,
+  .grid tbody td {
+    padding: 0.9rem 1rem;
+    border-top: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .grid tbody tr:first-child th,
+  .grid tbody tr:first-child td {
+    border-top: 0;
+  }
+
+  .grid tbody th {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    white-space: nowrap;
+  }
+
+  .grid tbody th a {
+    text-decoration: none;
+  }
+
+  .grid tbody th a:hover {
     color: var(--color-brand-primary);
   }
 
-  .entry-go {
-    margin-top: 0.85rem;
+  .grid-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
   }
 
-  .entry-alt {
-    font-size: 0.875rem;
-    font-weight: 500;
+  .grid-rating b {
+    font-family: var(--font-heading);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .grid-rating span,
+  .grid-none {
     color: var(--color-brand-muted);
   }
 
-  .entry-body p {
-    max-width: 68ch;
-    font-size: 1rem;
-    line-height: 1.68;
-    color: color-mix(in oklab, var(--color-brand-text) 88%, transparent);
+  .grid-price {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    color: var(--color-brand-primary);
   }
 
-  .entry-body p + p {
-    margin-top: 0.9rem;
-  }
-
-  /* The caveat is separated by a rule and a bold lead-in rather than a label
-     above it, so it reads as a sentence you finish rather than a badge. */
-  .entry-skip {
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--line-strong);
-  }
-
-  .entry-skip b {
-    font-weight: 650;
+  .grid-plan {
+    display: block;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
   }
 
   /* -------------------------------------------------------- other cats */
   .next {
     padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .next h2 {
+    font-size: clamp(1.4rem, 2.8vw, 1.95rem);
+    font-weight: 650;
   }
 
   .next-list {
@@ -424,35 +447,7 @@ const countWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six'][count] 
     color: color-mix(in oklab, var(--color-brand-text) 58%, transparent);
   }
 
-  @media (max-width: 76rem) {
-    .lattice[data-count='3'],
-    .lattice[data-count='4'] {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .lattice[data-count='3'] .cell:last-child {
-      grid-column: 1 / -1;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .entry {
-      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
-      gap: clamp(1.75rem, 4vw, 3.25rem);
-    }
-  }
-
   @media (max-width: 54rem) {
-    .lattice[data-count='2'],
-    .lattice[data-count='3'],
-    .lattice[data-count='4'] {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .lattice[data-count='3'] .cell:last-child {
-      grid-column: auto;
-    }
-
     .next-list span {
       width: 100%;
     }

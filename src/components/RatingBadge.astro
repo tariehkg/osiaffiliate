@@ -1,0 +1,91 @@
+---
+/**
+ * The compact rating line used on listing rows, cards and headers:
+ * "★★★★☆ 4.4 (128 ratings)". Renders an honest "Not rated yet" when there
+ * are no votes, so a new product never shows an empty row of grey stars.
+ *
+ * `href` links the count to the product's ratings section.
+ */
+import Stars from './Stars.astro';
+import { getRating, fmtAverage } from './ratings';
+
+interface Props {
+  slug: string;
+  size?: number;
+  href?: string;
+  class?: string;
+}
+
+const { slug, size = 15, href, class: cls = '' } = Astro.props;
+const r = getRating(slug);
+const label = r.count === 1 ? '1 rating' : `${r.count} ratings`;
+---
+
+<p class:list={['rb', cls]}>
+  {
+    r.count > 0 ? (
+      <>
+        <Stars value={r.average} size={size} />
+        <b class="rb-avg">{fmtAverage(r.average)}</b>
+        <span class="sr">out of 5, from</span>
+        {href ? (
+          <a href={href} class="rb-count">
+            {label}
+          </a>
+        ) : (
+          <span class="rb-count">{label}</span>
+        )}
+      </>
+    ) : (
+      <>
+        <Stars value={0} size={size} />
+        <span class="rb-none">Not rated yet</span>
+        {href && (
+          <a href={href} class="rb-count">
+            Be the first
+          </a>
+        )}
+      </>
+    )
+  }
+</p>
+
+<style>
+  .rb {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-size: var(--fs-small);
+    line-height: 1.3;
+  }
+
+  .rb-avg {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--color-brand-text);
+  }
+
+  .rb-count,
+  .rb-none {
+    color: color-mix(in oklab, var(--color-brand-text) 60%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  a.rb-count {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 45%, transparent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.22em;
+    transition:
+      color 0.16s var(--ease),
+      text-decoration-color 0.16s var(--ease);
+  }
+
+  a.rb-count:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+</style>

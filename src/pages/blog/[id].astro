@@ -9,6 +9,7 @@ import Doc from '../../components/Doc.astro';
 import AuthorCard from '../../components/AuthorCard.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { formatDate, getPublishedPosts, readingMinutes, type Post } from '../../components/blog';
+import { articleLd, breadcrumbLd } from '../../components/seo';
 
 /**
  * One page per published post. Drafts never reach getStaticPaths, so a draft
@@ -27,9 +28,31 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 const author = await getEntry(post.data.author);
 const { featuredImage } = post.data;
+const path = `/blog/${post.id}`;
+const jsonld = [
+  breadcrumbLd([
+    { label: 'Home', href: '/' },
+    { label: 'Blog', href: '/blog' },
+    { label: post.data.title, href: path },
+  ]),
+  articleLd({
+    title: post.data.title,
+    description: post.data.description,
+    path,
+    published: post.data.pubDate,
+    authorName: author?.data.name ?? 'OSI Affiliate',
+    authorPath: author ? `/authors/${author.id}` : '/about',
+  }),
+];
 ---
 
-<Layout title={`${post.data.title} — OSI Affiliate`} description={post.data.description}>
+<Layout
+  title={`${post.data.title} — OSI Affiliate`}
+  description={post.data.description}
+  path={path}
+  type="article"
+  jsonld={jsonld}
+>
   <SiteNav />
   <main>
     <article>

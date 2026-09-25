@@ -1,0 +1,69 @@
+---
+/**
+ * Five stars, filled to a fractional value.
+ *
+ * One SVG path, drawn five times; the fill is a clip on an amber layer over a
+ * hairline layer, so 4.3 shows as four full stars and a third of a fifth,
+ * not a rounded four. Amber, because amber is the colour this site uses for
+ * the thing it wants read, and a rating is exactly that.
+ *
+ * Purely presentational: the number beside it (rendered by the caller) is the
+ * accessible value, so the SVG is aria-hidden.
+ */
+interface Props {
+  /** 0–5. */
+  value: number;
+  /** Star height in px. */
+  size?: number;
+  class?: string;
+}
+
+const { value, size = 16, class: cls = '' } = Astro.props;
+const pct = Math.max(0, Math.min(5, value)) * 20;
+const star =
+  'M12 2.6l2.8 6 6.5.7-4.9 4.5 1.4 6.5L12 17l-5.8 3.3 1.4-6.5L2.7 9.3l6.5-.7z';
+const w = size * 5 + (size * 0.18) * 4;
+---
+
+<span
+  class:list={['stars', cls]}
+  style={`--star:${size}px; --pct:${pct}%`}
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 124 24" width={w} height={size} class="stars-bg">
+    {[0, 1, 2, 3, 4].map((i) => <path d={star} transform={`translate(${i * 25} 0)`} />)}
+  </svg>
+  <svg viewBox="0 0 124 24" width={w} height={size} class="stars-fg">
+    {[0, 1, 2, 3, 4].map((i) => <path d={star} transform={`translate(${i * 25} 0)`} />)}
+  </svg>
+</span>
+
+<style>
+  .stars {
+    position: relative;
+    display: inline-block;
+    height: var(--star);
+    line-height: 0;
+    vertical-align: middle;
+    flex: none;
+  }
+
+  .stars svg {
+    display: block;
+    max-width: none;
+  }
+
+  .stars-bg path {
+    fill: color-mix(in oklab, var(--color-brand-text) 16%, transparent);
+  }
+
+  .stars-fg {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--pct)) 0 0);
+  }
+
+  .stars-fg path {
+    fill: var(--color-brand-accent);
+  }
+</style>

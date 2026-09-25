@@ -1,0 +1,164 @@
+---
+/**
+ * The buyer's guide under a category listing: what the category is, the
+ * features worth checking for, and how to choose. Long-form on purpose —
+ * this is the part of a directory page that answers the question the reader
+ * typed, and the part that ranks.
+ *
+ * Set in the site's reading column. Features are a ruled two-column list;
+ * the steps are numbered because they are a sequence.
+ */
+import type { CategoryContent } from './category-content';
+
+interface Props {
+  name: string;
+  content: CategoryContent;
+}
+
+const { name, content } = Astro.props;
+---
+
+<section class="cg" id="guide" aria-labelledby="guide-h">
+  <div class="wrap">
+    <div class="cg-grid">
+      <div class="cg-main">
+        <h2 id="guide-h" class="cg-h">What {name.toLowerCase()} software is, and how to choose</h2>
+        {content.whatIs.map((p) => <p class="cg-p">{p}</p>)}
+
+        <h3 class="cg-h3">How to choose</h3>
+        <ol class="cg-steps">
+          {
+            content.howToChoose.map((s) => (
+              <li>
+                <b>{s.step}</b>
+                <span>{s.detail}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <aside class="cg-side">
+        <h3 class="cg-h3">Features worth checking for</h3>
+        <dl class="cg-features">
+          {
+            content.features.map((f) => (
+              <div class="cg-feature">
+                <dt>{f.name}</dt>
+                <dd>{f.why}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cg {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .cg-grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .cg-h {
+    font-size: clamp(1.5rem, 3vw, 2.15rem);
+    font-weight: 650;
+    max-width: 24ch;
+  }
+
+  .cg-p {
+    margin-top: 1rem;
+    max-width: 66ch;
+    font-size: var(--fs-body);
+    line-height: 1.68;
+    color: color-mix(in oklab, var(--color-brand-text) 86%, transparent);
+  }
+
+  .cg-h3 {
+    margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+  }
+
+  .cg-side .cg-h3 {
+    margin-top: 0;
+  }
+
+  .cg-steps {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    gap: 0.9rem;
+    max-width: 66ch;
+  }
+
+  .cg-steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 2.25rem;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+  }
+
+  .cg-steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
+  }
+
+  .cg-steps b {
+    display: block;
+    font-weight: var(--fw-semibold);
+  }
+
+  .cg-steps span {
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  .cg-features {
+    margin: 0.9rem 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .cg-feature {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cg-feature dt {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-small);
+  }
+
+  .cg-feature dd {
+    margin: 0.3rem 0 0;
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
+  }
+
+  @media (min-width: 64rem) {
+    .cg-grid {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    }
+
+    .cg-side {
+      padding-left: clamp(1.5rem, 4vw, 3rem);
+      border-left: 1px solid var(--line);
+    }
+  }
+</style>

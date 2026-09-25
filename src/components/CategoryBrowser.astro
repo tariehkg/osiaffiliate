@@ -1,5 +1,6 @@
 ---
 import { categories as allCategories } from './data';
+import RatingBadge from './RatingBadge.astro';
 
 /**
  * The category browser.
@@ -94,9 +95,10 @@ const {
                       </span>
 
                       <h3 class="lead-name">
-                        <a href={`${c.hub}#${lead.slug}`}>{lead.name}</a>
+                        <a href={`${c.hub}/${lead.slug}`}>{lead.name}</a>
                       </h3>
 
+                      <RatingBadge slug={lead.slug} size={14} class="lead-rating" />
                       <p class="lead-role">{lead.role}</p>
                       <p class="lead-plan">{lead.plan}</p>
                     </article>
@@ -110,9 +112,10 @@ const {
 
                           <div class="row-body">
                             <h3 class="row-name">
-                              <a href={`${c.hub}#${p.slug}`}>{p.name}</a>
+                              <a href={`${c.hub}/${p.slug}`}>{p.name}</a>
                             </h3>
                             <p class="row-role">{p.role}</p>
+                            <RatingBadge slug={p.slug} size={12} class="row-rating" />
                           </div>
 
                           <p class="row-plan">{p.plan}</p>
@@ -648,5 +651,14 @@ const {
     .row-name a {
       transition: none;
     }
+  }
+
+  :global(.lead-rating) {
+    margin-top: 0.5rem;
+  }
+
+  :global(.row-rating) {
+    margin-top: 0.3rem;
+    font-size: var(--fs-caption);
   }
 </style>

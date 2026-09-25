@@ -2,6 +2,7 @@
 import { categories } from './data';
 import { pickDetail } from './picks-detail';
 import Button from './Button.astro';
+import RatingBadge from './RatingBadge.astro';
 
 /**
  * The two contenders, stated plainly before the table.
@@ -42,6 +43,7 @@ const sides = slugs.map((slug) => {
               <h2>{pick.name}</h2>
             </div>
 
+            <RatingBadge slug={pick.slug} size={14} href={`${category.hub}/${pick.slug}#ratings`} />
             <p class="cs-role">{pick.role}</p>
             <p class="cs-plan">{pick.plan}</p>
 
@@ -49,8 +51,8 @@ const sides = slugs.map((slug) => {
               <Button href={detail.url} variant="line" class="cs-go" rel="nofollow noopener">
                 {detail.urlLabel}
               </Button>
-              <a href={`${category.hub}#${pick.slug}`} class="tlink cs-more">
-                Full entry on the shortlist
+              <a href={`${category.hub}/${pick.slug}`} class="tlink cs-more">
+                Full review and ratings
               </a>
             </div>
           </article>

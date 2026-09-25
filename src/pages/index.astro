@@ -2,20 +2,25 @@
 import Layout from '../layouts/Layout.astro';
 import SiteNav from '../components/SiteNav.astro';
 import Hero from '../components/Hero.astro';
+import TopRated from '../components/TopRated.astro';
 import CategoryBrowser from '../components/CategoryBrowser.astro';
+import RatingsHow from '../components/RatingsHow.astro';
 import CategoryDirectory from '../components/CategoryDirectory.astro';
 import ContributeCta from '../components/ContributeCta.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 ---
 
 <Layout
-  title="OSI Affiliate — a short list of business software, not a 1,600-tool wall"
-  description="Five categories of business software, two to four real picks in each, with current pricing and the reasoning shown. We say plainly which links pay us."
+  title="OSI Affiliate — business software shortlists, rated by the people who use them"
+  description="Five categories of business software, two to four editor-chosen picks in each, rated by readers, with the pricing shape and the reasoning shown. We say plainly which links pay us."
+  path="/"
 >
   <SiteNav />
   <main>
     <Hero />
+    <TopRated />
     <CategoryBrowser />
+    <RatingsHow />
     <CategoryDirectory />
     <ContributeCta />
   </main>

@@ -1,0 +1,108 @@
+---
+/**
+ * A question list, each answer folded under its question with <details>, so
+ * it works with no script and the open/closed state is the browser's own.
+ * Rendered as one ruled list, not a stack of cards.
+ *
+ * The page that uses it is responsible for emitting FAQPage schema with the
+ * same questions (see seo.ts), so what Google reads matches what is shown.
+ */
+interface Props {
+  title?: string;
+  faqs: { q: string; a: string }[];
+  id?: string;
+}
+
+const { title = 'Questions people ask', faqs, id = 'faq' } = Astro.props;
+---
+
+<section class="faq" id={id} aria-labelledby={`${id}-h`}>
+  <div class="wrap">
+    <h2 id={`${id}-h`} class="faq-h">{title}</h2>
+    <div class="faq-list">
+      {
+        faqs.map((f) => (
+          <details class="faq-item">
+            <summary>
+              <span>{f.q}</span>
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    padding-block: clamp(2rem, 4vw, 3.25rem);
+  }
+
+  .faq-h {
+    font-size: clamp(1.4rem, 2.8vw, 1.95rem);
+    font-weight: 650;
+  }
+
+  .faq-list {
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    max-width: 52rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-heading);
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary svg {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-brand-primary);
+    transition: transform 0.2s var(--ease);
+  }
+
+  .faq-item[open] summary svg {
+    transform: rotate(45deg);
+  }
+
+  .faq-item summary:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .faq-item p {
+    max-width: 68ch;
+    padding: 0 0 1.15rem;
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--color-brand-text) 84%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item summary svg {
+      transition: none;
+    }
+  }
+</style>

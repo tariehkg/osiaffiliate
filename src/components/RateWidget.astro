@@ -1,0 +1,447 @@
+---
+/**
+ * The vote.
+ *
+ * Designed so the whole thing can be done in one click: five stars, each a
+ * real radio input, so it works with a keyboard (arrow keys move between
+ * stars) and reads to a screen reader as "Rate 4 out of 5". Picking a star
+ * unfolds the optional part — the four criteria and a short written review —
+ * which a reader can ignore.
+ *
+ * `compact` is the one-line version for listing rows: stars only, and picking
+ * one takes you to the full widget on the product page with the star carried
+ * in the URL (?rate=4), so a click on a listing is never wasted.
+ *
+ * Nothing posts anywhere yet. The submit button is genuinely disabled and
+ * the note under it says so, in the same style as the closed email field on
+ * the homepage — the site does not pretend a control works when it doesn't.
+ */
+import { criteria } from './ratings';
+
+interface Props {
+  slug: string;
+  name: string;
+  /** Product page path, for the compact variant's link-out. */
+  href?: string;
+  compact?: boolean;
+  id?: string;
+}
+
+const { slug, name, href = '', compact = false, id = 'rate' } = Astro.props;
+const group = `rate-${slug}${compact ? '-c' : ''}`;
+const stars = [1, 2, 3, 4, 5] as const;
+const words = ['', 'Poor', 'Weak', 'Fine', 'Good', 'Excellent'];
+const starPath =
+  'M12 2.6l2.8 6 6.5.7-4.9 4.5 1.4 6.5L12 17l-5.8 3.3 1.4-6.5L2.7 9.3l6.5-.7z';
+---
+
+{
+  compact ? (
+    <div class="rw rw-compact" data-rate-compact data-href={href}>
+      <span class="rw-compact-l">Rate it</span>
+      <div class="rw-stars" role="radiogroup" aria-label={`Rate ${name} out of 5`}>
+        {stars.map((s) => (
+          <label class="rw-star">
+            <input type="radio" name={group} value={s} class="sr" />
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d={starPath} />
+            </svg>
+            <span class="sr">
+              {s} out of 5, {words[s]}
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <form class="rw" id={id} data-rate-form aria-labelledby={`${id}-h`}>
+      <h2 id={`${id}-h`} class="rw-h">
+        Rate {name}
+      </h2>
+      <p class="rw-lede">
+        One click is enough. Add detail if you have a minute; it helps the next person more
+        than the star does.
+      </p>
+
+      <div class="rw-row">
+        <div class="rw-stars rw-stars-lg" role="radiogroup" aria-label={`Overall, out of 5`}>
+          {stars.map((s) => (
+            <label class="rw-star">
+              <input type="radio" name={group} value={s} class="sr" required />
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d={starPath} />
+              </svg>
+              <span class="sr">
+                {s} out of 5, {words[s]}
+              </span>
+            </label>
+          ))}
+        </div>
+        <p class="rw-word" data-rate-word aria-live="polite">
+          Tap a star
+        </p>
+      </div>
+
+      <div class="rw-more" data-rate-more hidden>
+        <fieldset class="rw-crit">
+          <legend class="rw-legend">Score the parts that matter</legend>
+          {criteria.map((c) => (
+            <div class="rw-crit-row">
+              <span class="rw-crit-l" id={`${group}-${c.key}-l`}>
+                {c.label}
+              </span>
+              <div
+                class="rw-stars rw-stars-sm"
+                role="radiogroup"
+                aria-labelledby={`${group}-${c.key}-l`}
+              >
+                {stars.map((s) => (
+                  <label class="rw-star">
+                    <input type="radio" name={`${group}-${c.key}`} value={s} class="sr" />
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d={starPath} />
+                    </svg>
+                    <span class="sr">
+                      {s} out of 5
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </fieldset>
+
+        <div class="rw-fields">
+          <label class="rw-field">
+            <span>What is it good at?</span>
+            <input type="text" name="pros" maxlength="140" placeholder="One line is plenty" />
+          </label>
+          <label class="rw-field">
+            <span>What would you warn someone about?</span>
+            <input type="text" name="cons" maxlength="140" placeholder="Optional" />
+          </label>
+          <label class="rw-field rw-field-wide">
+            <span>Anything else</span>
+            <textarea name="body" rows="3" placeholder="How long you used it, what you replaced, what surprised you" />
+          </label>
+          <fieldset class="rw-rec">
+            <legend>Would you recommend it to a business like yours?</legend>
+            <label>
+              <input type="radio" name={`${group}-rec`} value="yes" /> Yes
+            </label>
+            <label>
+              <input type="radio" name={`${group}-rec`} value="no" /> No
+            </label>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="rw-foot">
+        <button type="submit" class="pill rw-submit" disabled>
+          Submit rating
+        </button>
+        <p class="rw-note">
+          Ratings are not open yet, so this form does nothing on purpose. It is here so you can
+          see how rating will work; nothing you type is stored or sent.
+        </p>
+      </div>
+    </form>
+  )
+}
+
+<style>
+  /* ---- Stars as inputs --------------------------------------------------- */
+  .rw-stars {
+    display: inline-flex;
+    gap: 0.15rem;
+  }
+
+  .rw-star {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    line-height: 0;
+  }
+
+  .rw-star svg {
+    width: var(--rw-size, 1.75rem);
+    height: var(--rw-size, 1.75rem);
+    max-width: none;
+    transition: transform 0.12s var(--ease);
+  }
+
+  .rw-star path {
+    fill: color-mix(in oklab, var(--color-brand-text) 14%, transparent);
+    stroke: color-mix(in oklab, var(--color-brand-text) 30%, transparent);
+    stroke-width: 1;
+    transition: fill 0.12s var(--ease);
+  }
+
+  /* Hover and selection both fill from the left: this star and every star
+     before it. The radios are siblings, so "before it" is every label that
+     is not after the hovered/checked one. */
+  .rw-stars:hover .rw-star path,
+  .rw-stars:has(input:checked) .rw-star path {
+    fill: var(--color-brand-accent);
+    stroke: color-mix(in oklab, var(--color-brand-accent) 70%, var(--color-brand-text));
+  }
+
+  .rw-stars .rw-star:hover ~ .rw-star path,
+  .rw-stars:not(:hover) .rw-star:has(input:checked) ~ .rw-star path {
+    fill: color-mix(in oklab, var(--color-brand-text) 14%, transparent);
+    stroke: color-mix(in oklab, var(--color-brand-text) 30%, transparent);
+  }
+
+  .rw-star:hover svg {
+    transform: scale(1.12);
+  }
+
+  .rw-star:has(input:focus-visible) svg {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .rw-stars-lg {
+    --rw-size: clamp(2.25rem, 5vw, 2.9rem);
+    gap: 0.25rem;
+  }
+
+  .rw-stars-sm {
+    --rw-size: 1.35rem;
+  }
+
+  /* ---- Compact (listing rows) -------------------------------------------- */
+  .rw-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    --rw-size: 1.3rem;
+  }
+
+  .rw-compact-l {
+    font-family: var(--font-heading);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  /* ---- Full form --------------------------------------------------------- */
+  .rw:not(.rw-compact) {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    background: var(--color-brand-surface);
+  }
+
+  .rw-h {
+    font-size: var(--fs-h3);
+    font-weight: 650;
+  }
+
+  .rw-lede {
+    margin-top: 0.5rem;
+    max-width: 52ch;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
+  }
+
+  .rw-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .rw-word {
+    font-family: var(--font-heading);
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.02em;
+    color: color-mix(in oklab, var(--color-brand-text) 60%, transparent);
+    min-width: 7ch;
+  }
+
+  .rw-word.is-set {
+    color: var(--color-brand-text);
+  }
+
+  .rw-more {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-strong);
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .rw-crit {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .rw-legend,
+  .rw-rec legend {
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    padding: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .rw-crit-row {
+    display: grid;
+    grid-template-columns: minmax(7rem, 11rem) auto;
+    align-items: center;
+    gap: 1rem;
+    font-size: var(--fs-small);
+  }
+
+  .rw-fields {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .rw-field {
+    display: grid;
+    gap: 0.35rem;
+    font-size: var(--fs-small);
+  }
+
+  .rw-field span {
+    font-weight: var(--fw-medium);
+  }
+
+  .rw-field input,
+  .rw-field textarea {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    background: var(--color-brand-bg);
+    font-size: var(--fs-small);
+  }
+
+  .rw-field input:focus-visible,
+  .rw-field textarea:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 1px;
+  }
+
+  .rw-rec {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-size: var(--fs-small);
+  }
+
+  .rw-rec legend {
+    float: left;
+    width: 100%;
+  }
+
+  .rw-rec label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .rw-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  /* Dashed and muted: this control is not live, and it should look it. */
+  .rw-submit {
+    background: transparent;
+    border: 1px dashed var(--line-strong);
+    color: var(--color-brand-muted);
+    cursor: not-allowed;
+  }
+
+  .rw-note {
+    max-width: 48ch;
+    font-size: var(--fs-caption);
+    line-height: 1.55;
+    color: var(--color-brand-muted);
+  }
+
+  @media (min-width: 60rem) {
+    .rw-fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rw-field-wide,
+    .rw-rec {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rw-star svg,
+    .rw-star path {
+      transition: none;
+    }
+
+    .rw-star:hover svg {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Two small behaviours, both progressive:
+   *  - Full form: picking a star names it ("Good") and unfolds the optional
+   *    part. If the page was opened with ?rate=N, that star is pre-selected,
+   *    so a click on a listing row lands here already answered.
+   *  - Compact: picking a star navigates to the product page with ?rate=N.
+   */
+  const WORDS = ['', 'Poor', 'Weak', 'Fine', 'Good', 'Excellent'];
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-rate-form]')) {
+    const word = form.querySelector<HTMLElement>('[data-rate-word]');
+    const more = form.querySelector<HTMLElement>('[data-rate-more]');
+    const radios = form.querySelectorAll<HTMLInputElement>('input[type=radio][required]');
+
+    const reflect = (v: number) => {
+      if (word) {
+        word.textContent = `${WORDS[v]} · ${v} out of 5`;
+        word.classList.add('is-set');
+      }
+      if (more) more.hidden = false;
+    };
+
+    for (const r of radios) r.addEventListener('change', () => reflect(Number(r.value)));
+
+    const preset = Number(new URLSearchParams(location.search).get('rate'));
+    if (preset >= 1 && preset <= 5) {
+      const r = form.querySelector<HTMLInputElement>(`input[type=radio][required][value="${preset}"]`);
+      if (r) {
+        r.checked = true;
+        reflect(preset);
+      }
+    }
+
+    form.addEventListener('submit', (e) => e.preventDefault());
+  }
+
+  for (const c of document.querySelectorAll<HTMLElement>('[data-rate-compact]')) {
+    const href = c.dataset.href;
+    if (!href) continue;
+    for (const r of c.querySelectorAll<HTMLInputElement>('input[type=radio]')) {
+      r.addEventListener('change', () => {
+        location.href = `${href}?rate=${r.value}#rate`;
+      });
+    }
+  }
+</script>

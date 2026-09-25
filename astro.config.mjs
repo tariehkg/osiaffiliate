@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
+import sitemap from '@astrojs/sitemap';
 
 // 'compile' pre-optimizes every astro:assets image at build time — right
 // for the production build. In `astro dev`, though, it routes <Image>
@@ -13,11 +14,16 @@ import tailwindcss from '@tailwindcss/vite';
 const isDev = process.argv.includes('dev');
 
 export default defineConfig({
+  site: 'https://www.osiaffiliate.com',
   output: 'static',
   adapter: cloudflare({
     imageService: isDev ? 'passthrough' : 'compile',
   }),
-  integrations: [react()],
+  integrations: [
+    react(),
+    // The design-system page is an internal inventory, not a destination.
+    sitemap({ filter: (page) => !page.includes('/design-system') }),
+  ],
   vite: {
     plugins: [tailwindcss()],
     server: {

@@ -3,12 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import SiteNav from '../components/SiteNav.astro';
 import CategoryHub from '../components/CategoryHub.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { categoryPageMeta } from '../components/category-page';
+
+const meta = categoryPageMeta('seo');
 ---
 
-<Layout
-  title="SEO tools: three picks, and what you are actually paying for — OSI Affiliate"
-  description="Semrush, Ahrefs and Moz Pro, split by where their data is strongest — links, keywords, or a gentler way in — plus a real reason to skip each one."
->
+<Layout {...meta}>
   <SiteNav />
   <main>
     <CategoryHub id="seo" />

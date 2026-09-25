@@ -34,7 +34,7 @@ utilities: `bg-brand-*`, `text-brand-*`, `border-brand-*`, `ring-brand-*`.
 |---|---|---|---|
 | `--color-brand-primary` | `#2451E8` | `bg-brand-primary` / `text-brand-primary` | Cobalt. Structural signal only — selected states, filled CTAs, link underlines, the category-browser's active hue. Never a full-bleed wash or gradient. |
 | `--color-brand-secondary` | `#0F1B33` | `bg-brand-secondary` / `text-brand-secondary` | Deep navy. The two inverted, full-bleed sections only: the Stance block and the footer. |
-| `--color-brand-accent` | `#F2A93B` | `bg-brand-accent` / `text-brand-accent` | Warm amber. Used sparingly and only as a *marker* — the mark's leading half, the Stance pull-quote's lead-in rule and its emphasised clause, the disclosure note's left border, the footer's lead-in rule. Never a background wash or a large filled area. |
+| `--color-brand-accent` | `#F2A93B` | `bg-brand-accent` / `text-brand-accent` | Warm amber. Used sparingly and only as a *marker* — the mark's leading half, the Stance pull-quote's lead-in rule and its emphasised clause, the disclosure note's left border, the footer's lead-in rule, the filled portion of rating stars (`Stars.astro`), and the sample-figures notice's left border (`SampleNotice.astro`). Never a background wash or a large filled area. |
 | `--color-brand-bg` | `#FAFAF8` | `bg-brand-bg` / `text-brand-bg` | The page's base paper. Warm neutral — deliberately not cream and not pink. |
 | `--color-brand-surface` | `#F1F0EC` | `bg-brand-surface` / `text-brand-surface` | The one step darker than paper — trust panels, the closing strip, table headers, disabled-field backgrounds. Used to change "rooms" without going all the way to an inverted section. |
 | `--color-brand-text` | `#14181F` | `text-brand-text` | Primary ink. Almost always used through `color-mix(in oklab, var(--color-brand-text) N%, transparent)` rather than at full opacity, to get body-copy and muted tiers from one token instead of a second gray scale. |
@@ -233,3 +233,84 @@ so it doesn't look like a foreign element dropped onto the page:
   same way the Hero and Stance background gradients are built today.
 - **Dimensions:** always set `width`/`height` explicitly (required by the image-handling rules in
   `CLAUDE.md`) rather than letting an image's intrinsic ratio drive layout.
+
+## Ratings
+
+The rating layer (`src/components/Stars.astro`, `RatingBadge.astro`, `RatingSummary.astro`,
+`RateWidget.astro`, `SampleNotice.astro`, with the data model in `src/components/ratings.ts`)
+follows the same rules as everything else on the site: color is a marker, depth is a hairline,
+and a control that does not work is styled so it looks like it does not work.
+
+- **Stars are amber, and fractional.** `Stars.astro` draws one SVG path five times, twice: a
+  hairline layer underneath and an amber layer on top, clipped with `clip-path: inset()` to the
+  exact value. A 4.3 shows as four full stars and a third of a fifth — never rounded to a whole
+  star, and never a half-star glyph. Amber because a rating is "the thing we want read"; the
+  numeric value beside it (rendered by the caller) is the accessible text, so the SVG itself is
+  `aria-hidden`. This is the one place amber appears more than once in a section, and it is
+  allowed because the five stars are a single mark.
+- **Bars are cobalt on a hairline track.** The distribution and criteria bars in
+  `RatingSummary.astro` are the site's lattice reduced to a rule: a track in `--line`, a fill in
+  `--color-brand-primary`, square ends, no gradients, no rounded pills. Every bar carries its
+  number as text, so the chart reads without color.
+- **The vote is five real radio inputs.** `RateWidget.astro` renders each star as an
+  `<input type="radio">` with a visible label, so a rating is one click, works with arrow keys,
+  and reads to a screen reader as "Rate 4 out of 5". Picking a star unfolds the optional criteria
+  and review fields. The `compact` variant (listing rows) is the stars alone; choosing one links
+  to the product page with the star carried as `?rate=N`.
+- **A closed control looks closed.** Until ratings post somewhere, the form's submit is a
+  genuinely `disabled` pill with a dashed `--line-strong` border and `--color-brand-muted` text,
+  and the note under it says so — the same convention as the closed email field in
+  `ContributeCta`. Do not restyle it to look live before it is.
+- **Sample figures are labelled as such.** `SAMPLE_MODE` in `ratings.ts` is `true` while every
+  number in `sampleRatings` is illustrative. While it is on, `SampleNotice.astro` renders a
+  one-line notice (body size, 3px amber left border — the same device as the affiliate
+  disclosure) wherever a rating is shown, and renders nothing once the flag is off. The badge's
+  honest empty state is the text "Not rated yet", not a row of grey stars.
+- **Schema only from real data.** `AggregateRating` (and `review`) JSON-LD is emitted by
+  `src/components/seo.ts` only when `SAMPLE_MODE` is false and the count is above zero. A sample
+  average is fabricated as far as Google is concerned, and fabricated review markup earns a
+  manual action. Never add rating markup to a page by hand.
+
+## Directory pages
+
+The five category pages (`src/pages/*-software.astro`, `website-builders.astro`,
+`seo-marketing-tools.astro`, rendered by `src/components/CategoryHub.astro`) and the product
+pages (`src/pages/[hub]/[slug].astro`) share one anatomy, so a reader who has learned one has
+learned them all.
+
+**Category page** (`CategoryHub.astro`), top to bottom:
+
+1. Page head with the buyer question, the affiliate disclosure, and the sample-figures notice.
+2. The catalog: `FilterRail.astro` beside the listing. From `64rem` up it is a two-column grid,
+   the rail at `15rem` and `position: sticky`; below that the rail stacks above the rows. Every
+   filter is a real checkbox or radio with a build-time count, and the script only ever hides or
+   reorders the sibling `[data-listing]` rows — with no script, every row shows in editorial
+   order.
+3. The ranked ledger: one `ProductCard.astro` per pick, drawn as rows sharing a single hairline
+   (`--line`) between them — no cards, no shadows, no radius beyond the tile's. Left to right on
+   a wide screen: tile and rank, name and rating line, tagline and best-for/skip-if chips,
+   pricing shape, actions, and a compact one-click `RateWidget`.
+4. The at-a-glance table: the shortlist as a grid, `--color-brand-surface` head, hairline cells.
+5. The buyer's guide (`CategoryGuide.astro`): what the category is, features as a ruled
+   two-column list, and numbered how-to-choose steps, set in the reading column.
+6. The FAQ (`Faq.astro`): one ruled list of `<details>` elements, so the open/closed state is
+   the browser's own and it works with no script. The page emits matching `FAQPage` schema from
+   `seo.ts` so what Google reads is what is shown.
+
+**Product page** (`src/pages/[hub]/[slug].astro`):
+
+1. `ProductHero.astro`: tile, name, vendor and category, the `RatingBadge` line, and the two
+   actions (visit the vendor; rate it here) in a bordered column from `60rem` up.
+2. The in-page ruler under the hero: a row of section links between two hairlines, with a
+   cobalt underline on hover. From `70rem` up it is `position: sticky` at `top: 3.5rem`, directly
+   under the site nav; below that the site nav grows its category strip, so the ruler scrolls
+   with the page rather than fighting for the top edge. One hairline, no shadow — it reads as
+   the page's ruler, not a toolbar.
+3. Sections alternate paper and surface: overview (paper), ratings (surface), pricing (paper),
+   best-for (surface), alternatives (paper), questions. Surface sections (`.ps-alt`) carry a
+   hairline top and bottom so the change of room is drawn, not implied. Every section uses the
+   standard `clamp(2.25rem, 5vw, 3.75rem)` vertical rhythm.
+
+Rule for a new directory component: it joins the ledger, not a card grid. Rows share edges,
+depth is a hairline, and any state the reader can change (a filter, an open answer, a vote) is
+a real form control before it is a script.

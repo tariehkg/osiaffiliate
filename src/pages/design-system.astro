@@ -6,6 +6,22 @@ import Button from '../components/Button.astro';
 import Mark from '../components/Mark.astro';
 import DisclosureNote from '../components/DisclosureNote.astro';
 
+// Ratings
+import Stars from '../components/Stars.astro';
+import RatingBadge from '../components/RatingBadge.astro';
+import RatingSummary from '../components/RatingSummary.astro';
+import RateWidget from '../components/RateWidget.astro';
+import SampleNotice from '../components/SampleNotice.astro';
+
+// Directory
+import ProductCard from '../components/ProductCard.astro';
+import FilterRail from '../components/FilterRail.astro';
+import Faq from '../components/Faq.astro';
+import CategoryGuide from '../components/CategoryGuide.astro';
+import ProductHero from '../components/ProductHero.astro';
+import { categories } from '../components/data';
+import { categoryContent } from '../components/category-content';
+
 // Sections
 import Hero from '../components/Hero.astro';
 import CategoryBrowser from '../components/CategoryBrowser.astro';
@@ -89,6 +105,13 @@ const colors = [
 // Real, published entries from the content collections (drafts excluded).
 const dsPosts = await getPublishedPosts();
 const [dsAuthor] = await getCollection('authors');
+
+// The directory and rating entries all render against one real pick — the
+// first category's first pick (HubSpot CRM) — so the page shows real data
+// rather than a fixture.
+const dsCategory = categories[0];
+const dsPick = dsCategory.picks[0];
+const dsContent = categoryContent[dsCategory.id];
 
 const compareA = { name: 'HubSpot CRM', monogram: 'Hs' };
 const compareB = { name: 'Pipedrive', monogram: 'Pd' };
@@ -237,6 +260,59 @@ const compareRows = [
       </div>
       <p class="ds-label"><code>DisclosureNote</code> · <code>src/components/DisclosureNote.astro</code></p>
 
+      <h3 class="ds-group-h">Ratings</h3>
+
+      <div class="ds-frame ds-frame-pad">
+        <div class="ds-atom-row">
+          <Stars value={0} size={20} />
+          <Stars value={2.5} size={20} />
+          <Stars value={4.3} size={20} />
+          <Stars value={5} size={20} />
+        </div>
+      </div>
+      <p class="ds-label">
+        <code>Stars</code> (0, 2.5, 4.3, 5) · <code>src/components/Stars.astro</code>
+      </p>
+
+      <div class="ds-frame ds-frame-pad">
+        <RatingBadge slug={dsPick.slug} href={`${dsCategory.hub}/${dsPick.slug}#ratings`} />
+      </div>
+      <p class="ds-label">
+        <code>RatingBadge</code> · <code>src/components/RatingBadge.astro</code> — every slug
+        currently carries sample data; with no votes the line reads "Not rated yet"
+      </p>
+
+      <div class="ds-frame ds-frame-pad">
+        <SampleNotice />
+      </div>
+      <p class="ds-label">
+        <code>SampleNotice</code> · <code>src/components/SampleNotice.astro</code> — renders only
+        while <code>SAMPLE_MODE</code> in <code>ratings.ts</code> is true
+      </p>
+
+      <div class="ds-frame ds-frame-pad">
+        <RateWidget
+          slug={dsPick.slug}
+          name={dsPick.name}
+          href={`${dsCategory.hub}/${dsPick.slug}`}
+          compact
+          id="ds-rate-compact"
+        />
+      </div>
+      <p class="ds-label">
+        <code>RateWidget</code> (with <code>compact</code>) · <code>src/components/RateWidget.astro</code>
+      </p>
+
+      <div class="ds-frame ds-frame-pad">
+        <RateWidget slug={dsPick.slug} name={dsPick.name} id="ds-rate" />
+      </div>
+      <p class="ds-label"><code>RateWidget</code> · <code>src/components/RateWidget.astro</code></p>
+
+      <div class="ds-frame ds-frame-pad">
+        <RatingSummary slug={dsPick.slug} name={dsPick.name} rateHref="#ds-rate" />
+      </div>
+      <p class="ds-label"><code>RatingSummary</code> · <code>src/components/RatingSummary.astro</code></p>
+
       <h3 class="ds-group-h">Sections</h3>
 
       <div class="ds-frame">
@@ -329,6 +405,40 @@ const compareRows = [
         <CompareFoot category="crm" slugs={['hubspot-crm', 'pipedrive']} />
       </div>
       <p class="ds-label"><code>CompareFoot</code> · <code>src/components/CompareFoot.astro</code></p>
+
+      <h3 class="ds-group-h">Directory</h3>
+
+      <div class="ds-frame ds-frame-pad">
+        <div style="border-bottom: 1px solid var(--line);">
+          <ProductCard category={dsCategory} pick={dsPick} rank={1} />
+        </div>
+      </div>
+      <p class="ds-label"><code>ProductCard</code> · <code>src/components/ProductCard.astro</code></p>
+
+      <div class="ds-frame ds-frame-pad">
+        <div data-catalog>
+          <FilterRail category={dsCategory} />
+        </div>
+      </div>
+      <p class="ds-label">
+        <code>FilterRail</code> · <code>src/components/FilterRail.astro</code> — inert here: its
+        script acts on a sibling <code>[data-listing]</code>, which this page does not render
+      </p>
+
+      <div class="ds-frame">
+        <Faq faqs={dsContent.faqs.slice(0, 3)} title="Example questions" id="ds-faq" />
+      </div>
+      <p class="ds-label"><code>Faq</code> · <code>src/components/Faq.astro</code></p>
+
+      <div class="ds-frame">
+        <CategoryGuide name={dsCategory.short} content={dsContent} />
+      </div>
+      <p class="ds-label"><code>CategoryGuide</code> · <code>src/components/CategoryGuide.astro</code></p>
+
+      <div class="ds-frame">
+        <ProductHero category={dsCategory} pick={dsPick} rank={1} />
+      </div>
+      <p class="ds-label"><code>ProductHero</code> · <code>src/components/ProductHero.astro</code></p>
 
       <div class="ds-frame">
         <CategoryHub id="crm" />

@@ -3,12 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import SiteNav from '../components/SiteNav.astro';
 import CategoryHub from '../components/CategoryHub.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { categoryPageMeta } from '../components/category-page';
+
+const meta = categoryPageMeta('email');
 ---
 
-<Layout
-  title="Email marketing software: three picks, compared honestly — OSI Affiliate"
-  description="Three email and automation platforms worth shortlisting — GetResponse, AWeber and ActiveCampaign — with what each is shaped for and a real reason to skip each one."
->
+<Layout {...meta}>
   <SiteNav />
   <main>
     <CategoryHub id="email" />

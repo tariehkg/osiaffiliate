@@ -3,6 +3,7 @@ import Mark from './Mark.astro';
 import Button from './Button.astro';
 import { categories } from './data';
 import { directoryTotals } from './directory-taxonomy';
+import { totalRatings } from './ratings';
 
 /**
  * Hero.
@@ -57,7 +58,7 @@ interface Props {
 const {
   headlineTop = 'Where you find',
   headlineBottom = 'the right software.',
-  subheadline = 'Five categories. A real shortlist in each, with the pricing page and the reasoning behind every pick.',
+  subheadline = 'Five categories. A short shortlist in each, chosen by editors, rated by the people who use the tools, with the reasoning behind every pick.',
   searchPlaceholder = 'Search HubSpot, CRM, email marketing…',
   searchLabel = 'Search',
   howWePickLabel = 'How we pick',
@@ -71,6 +72,13 @@ const {
 const suggestions = [
   ...categories.map((c) => c.name),
   ...categories.flatMap((c) => c.picks.map((p) => p.name)),
+];
+
+/* Counted from the real data, so the numbers cannot drift. */
+const stats = [
+  { n: categories.length, label: 'categories' },
+  { n: categories.reduce((t, c) => t + c.picks.length, 0), label: 'picks' },
+  { n: totalRatings(categories.flatMap((c) => c.picks.map((p) => p.slug))), label: 'reader ratings' },
 ];
 ---
 
@@ -133,8 +141,18 @@ const suggestions = [
 
       <p class="hero-links">
         <a href={howWePickHref} class="tlink">{howWePickLabel}</a>
+        <a href="/rate" class="tlink">Rate a tool</a>
         <a href="#directory" class="tlink">All {directoryTotals.entries} categories</a>
       </p>
+
+      <ul class="hero-stats" aria-label="What is on the site">
+        {stats.map((s) => (
+          <li>
+            <b>{s.n}</b>
+            <span>{s.label}</span>
+          </li>
+        ))}
+      </ul>
     </div>
 
     <!-- Wrapped rather than class-passed: a class handed to Mark lands on the
@@ -402,6 +420,41 @@ const suggestions = [
       max-width: 40ch;
       margin-top: 0.4rem;
     }
+  }
+
+  /* Three counted facts, in the same ruled strip the About page uses. */
+  .hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+    padding: 0;
+    list-style: none;
+    background: var(--line);
+    border: 1px solid var(--line);
+    width: fit-content;
+  }
+
+  .hero-stats li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    background: var(--color-brand-bg);
+    padding: 0.6rem 1rem;
+  }
+
+  .hero-stats b {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
+  }
+
+  .hero-stats span {
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
   }
 </style>
 

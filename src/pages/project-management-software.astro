@@ -3,12 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import SiteNav from '../components/SiteNav.astro';
 import CategoryHub from '../components/CategoryHub.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import { categoryPageMeta } from '../components/category-page';
+
+const meta = categoryPageMeta('pm');
 ---
 
-<Layout
-  title="Project management tools: three picks by how much upkeep they need — OSI Affiliate"
-  description="Notion, ClickUp and Asana, separated by who has to maintain them rather than by feature count — with a real reason to skip each one."
->
+<Layout {...meta}>
   <SiteNav />
   <main>
     <CategoryHub id="pm" />

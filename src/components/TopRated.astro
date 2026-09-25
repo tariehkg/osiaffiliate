@@ -1,0 +1,226 @@
+---
+/**
+ * The reader-rated leaderboard: the highest-rated pick in each category,
+ * one row per category, ranked by average across the five.
+ *
+ * This is the one place on the homepage where readers' opinion leads and
+ * the editorial order does not — which is why it is a separate strip with
+ * its own heading, not a re-sort of the browser below it. Each row says
+ * which category the tool leads, because a 4.6 in CRM and a 4.6 in SEO are
+ * not the same claim.
+ */
+import Stars from './Stars.astro';
+import SampleNotice from './SampleNotice.astro';
+import { categories } from './data';
+import { getRating, fmtAverage } from './ratings';
+
+interface Props {
+  heading?: string;
+  lede?: string;
+}
+
+const {
+  heading = 'Rated highest by readers',
+  lede = 'The top-rated pick in each category, ranked by the people who use them rather than by us. Where readers and our editors disagree, you will see it here first.',
+} = Astro.props;
+
+const leaders = categories
+  .map((c) => {
+    const best = [...c.picks].sort(
+      (a, b) => getRating(b.slug).average - getRating(a.slug).average,
+    )[0];
+    return { category: c, pick: best, rating: getRating(best.slug) };
+  })
+  .filter((l) => l.rating.count > 0)
+  .sort((a, b) => b.rating.average - a.rating.average);
+---
+
+{
+  leaders.length > 0 && (
+    <section class="tr" aria-labelledby="top-rated">
+      <div class="wrap">
+        <header class="tr-head" data-rise>
+          <div>
+            <h2 id="top-rated" class="tr-h">
+              {heading}
+            </h2>
+            <p class="tr-lede">{lede}</p>
+          </div>
+          <a href="/rate" class="pill pill-line tr-go">
+            Rate what you use
+          </a>
+        </header>
+
+        <ol class="tr-list" data-rise>
+          {leaders.map((l, i) => (
+            <li class="tr-row">
+              <span class="tr-rank" aria-hidden="true">
+                {i + 1}
+              </span>
+              <span class="tr-tile" aria-hidden="true">
+                {l.pick.monogram}
+              </span>
+              <div class="tr-body">
+                <h3 class="tr-name">
+                  <a href={`${l.category.hub}/${l.pick.slug}`}>{l.pick.name}</a>
+                </h3>
+                <p class="tr-cat">
+                  Leads <a href={l.category.hub}>{l.category.short}</a>
+                </p>
+              </div>
+              <p class="tr-rating">
+                <Stars value={l.rating.average} size={15} />
+                <b>{fmtAverage(l.rating.average)}</b>
+                <span>{l.rating.count} ratings</span>
+              </p>
+            </li>
+          ))}
+        </ol>
+
+        <SampleNotice class="tr-sample" />
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .tr {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .tr-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .tr-h {
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.036em;
+    line-height: 1.02;
+    max-width: 14ch;
+  }
+
+  .tr-lede {
+    margin-top: 0.85rem;
+    max-width: 54ch;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
+  }
+
+  .tr-go {
+    flex: none;
+  }
+
+  .tr-list {
+    margin: clamp(1.25rem, 3vw, 2rem) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .tr-row {
+    display: grid;
+    grid-template-columns: 1.5rem auto minmax(0, 1fr);
+    grid-template-areas:
+      'rank tile body'
+      'rank tile rating';
+    align-items: center;
+    gap: 0.35rem 0.9rem;
+    padding: 0.95rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tr-rank {
+    grid-area: rank;
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
+  }
+
+  .tr-tile {
+    grid-area: tile;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 7px;
+    background: var(--color-brand-secondary);
+    color: white;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .tr-body {
+    grid-area: body;
+    min-width: 0;
+  }
+
+  .tr-name {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.02em;
+  }
+
+  .tr-name a {
+    text-decoration: none;
+  }
+
+  .tr-name a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .tr-cat {
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .tr-cat a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.2em;
+  }
+
+  .tr-cat a:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .tr-rating {
+    grid-area: rating;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--fs-small);
+  }
+
+  .tr-rating b {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tr-rating span {
+    color: var(--color-brand-muted);
+  }
+
+  :global(.tr-sample) {
+    margin-top: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .tr-row {
+      grid-template-columns: 1.5rem auto minmax(0, 1fr) auto;
+      grid-template-areas: 'rank tile body rating';
+      gap: 1rem;
+    }
+  }
+</style>
