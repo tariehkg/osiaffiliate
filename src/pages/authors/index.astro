@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import PageHead from '../../components/PageHead.astro';
+import AuthorCard from '../../components/AuthorCard.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { getPublishedPosts } from '../../components/blog';
+
+const authors = (await getCollection('authors')).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name),
+);
+
+// Counts come from published posts only, so drafts never inflate them.
+const posts = await getPublishedPosts();
+const countFor = (id: string) => posts.filter((p) => p.data.author.id === id).length;
+---
+
+<Layout
+  title="Authors — OSI Affiliate"
+  description="Who writes the posts on the OSI Affiliate blog, and where to find everything each author has published."
+>
+  <SiteNav />
+  <main>
+    <PageHead
+      trail={[
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+      ]}
+      title="Who writes here"
+      lede="Every post names who stands behind it. Follow a name to read everything they have published."
+    />
+
+    <section class="authors" aria-label="All authors">
+      <div class="wrap">
+        <div class="authors-list">
+          {
+            authors.map((a) => (
+              <AuthorCard author={a} variant="row" postCount={countFor(a.id)} />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</Layout>
+
+<style>
+  .authors {
+    padding-block: clamp(0.5rem, 2vw, 1rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .authors-list {
+    max-width: 52rem;
+    border-bottom: 1px solid var(--line);
+  }
+</style>

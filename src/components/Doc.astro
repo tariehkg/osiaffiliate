@@ -81,8 +81,48 @@
     background: var(--color-brand-accent);
   }
 
-  .doc-col :global(li b) {
+  .doc-col :global(li b),
+  .doc-col :global(strong) {
     font-weight: 600;
+    color: var(--color-brand-text);
+  }
+
+  /* Markdown bodies (blog posts) arrive as one flat run of h2/p/ul/ol rather
+     than as <section>s, so a heading that follows copy needs its own space
+     above it. `* + h2` never matches the site-wide pages, where every h2 is
+     the first thing in its section. */
+  .doc-col :global(* + h2) {
+    margin-top: clamp(2.25rem, 4.5vw, 3rem);
+  }
+
+  /* Ordered lists only ever hold real sequences (steps, an order of work),
+     so they are numbered — in the heading face, in cobalt — instead of
+     taking the amber bar the unordered lists use. */
+  .doc-col :global(ol) {
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .doc-col :global(ol > li) {
+    counter-increment: step;
+    padding-left: 2rem;
+  }
+
+  .doc-col :global(ol > li)::before {
+    content: counter(step);
+    top: 0.05em;
+    width: 1.35rem;
+    height: auto;
+    background: none;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
   }
 
   /* A quiet inset for the honest limits — surface tone, no shadow, no radius

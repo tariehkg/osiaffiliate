@@ -28,6 +28,7 @@ const { categories = allCategories, secondaryLabel = 'How we pick', secondaryHre
          permanently in reach, and it is what the big directories do not
          put in their nav at all. -->
     <div class="nav-actions">
+      <a href="/blog" class="nav-link">Blog</a>
       <a href={secondaryHref} class="nav-secondary">{secondaryLabel}</a>
     </div>
   </div>
@@ -109,6 +110,27 @@ const { categories = allCategories, secondaryLabel = 'How we pick', secondaryHre
     align-items: center;
     gap: 0.75rem;
     margin-left: auto;
+  }
+
+  /* Blog sits beside the methodology rather than among the categories: it is
+     not a category, and like "How we pick" it should never fall into the
+     mobile chip strip. Plain text so the pill stays the one outlined action. */
+  .nav-link {
+    font-size: var(--fs-small);
+    font-weight: var(--fw-regular);
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+    text-decoration: none;
+    white-space: nowrap;
+    padding-block: 0.3rem;
+    border-bottom: 2px solid transparent;
+    transition:
+      color 0.16s var(--ease),
+      border-color 0.16s var(--ease);
+  }
+
+  .nav-link:hover {
+    color: var(--color-brand-text);
+    border-bottom-color: var(--color-brand-primary);
   }
 
   /* Shown at every width: it is the site's trust promise and should never be

@@ -207,12 +207,20 @@ the production-hardening pass done on this project.
 
 ## Image treatment
 
-There are currently **no content images anywhere in the codebase** — the entire homepage and every
-page are built from typography, color, and one shared SVG mark (`Mark.astro`), not photography.
-Nothing below describes an existing `<img>` treatment; it describes the surface/card system
-already used everywhere else on the site, which any future content image should match so it
-doesn't look like a foreign element dropped onto the page:
+The marketing pages are still built from typography, color and one shared SVG mark
+(`Mark.astro`), with no photography. The blog is the one place photos appear: each post's
+featured image, shown by `PostList.astro` (the lead photo and ledger thumbnails) and on
+`src/pages/blog/[id].astro` (the wide hero). Author avatars (`AuthorCard.astro`) currently use
+the brand mark itself (`src/assets/images/authors/osi-affiliate.svg`), because the site uses no
+personal bylines. Every photo follows the same surface and card system as the rest of the site,
+so it doesn't look like a foreign element dropped onto the page:
 
+- **Source and licence:** photos are CC0 from Wikimedia Commons, stored in
+  `src/assets/images/blog/` and credited in each post's `featuredImage.credit`, which is shown
+  under the hero.
+- **Cropping:** 3:2 in lists and on small screens; a 21:9 letterbox for the post hero from
+  `44rem` up, so the title and the opening paragraph still share the first screen. Crops are
+  done with CSS `aspect-ratio` + `object-fit: cover`, not by re-cutting the file.
 - **Corner radius:** `2–4px`, matching cards and panels elsewhere (not fully square, not
   heavily rounded). Use the same radius as the container it sits in.
 - **Border:** a 1px hairline in `--line` (or `--line-strong` if it needs to read as a distinct
@@ -223,6 +231,5 @@ doesn't look like a foreign element dropped onto the page:
   (e.g. a scrim behind text on a hero photo), it should be built from the existing tokens
   (e.g. a `linear-gradient` into `--color-brand-secondary`) rather than a new arbitrary color, the
   same way the Hero and Stance background gradients are built today.
-- **Aspect ratio / cropping:** not yet established anywhere in the code — decide per use case, but
-  set `width`/`height` explicitly (required by the image-handling rules in `CLAUDE.md`) rather than
-  letting an image's intrinsic ratio drive layout.
+- **Dimensions:** always set `width`/`height` explicitly (required by the image-handling rules in
+  `CLAUDE.md`) rather than letting an image's intrinsic ratio drive layout.

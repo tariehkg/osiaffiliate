@@ -45,6 +45,10 @@ const { trail = [], title, lede, note, scale = 'title' } = Astro.props;
       )
     }
 
+    <!-- `before` holds anything that identifies the page ahead of its title,
+         such as an author's avatar on their profile. -->
+    <slot name="before" />
+
     <h1 class:list={['ph-h', `is-${scale}`]}>{title}</h1>
     {lede && <p class="ph-lede">{lede}</p>}
     {note && <p class="ph-note">{note}</p>}

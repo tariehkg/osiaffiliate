@@ -1,0 +1,102 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import PageHead from '../../components/PageHead.astro';
+import PostList from '../../components/PostList.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { getPostsByAuthor, type Author } from '../../components/blog';
+
+export const getStaticPaths = (async () => {
+  const authors = await getCollection('authors');
+  return authors.map((author) => ({ params: { id: author.id }, props: { author } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  author: Author;
+}
+
+const { author } = Astro.props;
+// Published only — getPostsByAuthor() reads through getPublishedPosts().
+const posts = await getPostsByAuthor(author.id);
+---
+
+<Layout
+  title={`${author.data.name} — Authors — OSI Affiliate`}
+  description={`Everything ${author.data.name} has published on the OSI Affiliate blog.`}
+>
+  <SiteNav />
+  <main>
+    <PageHead
+      trail={[
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+        { label: 'Authors', href: '/authors' },
+      ]}
+      title={author.data.name}
+      lede={author.data.bio}
+    >
+      <Image
+        slot="before"
+        src={author.data.avatar}
+        alt={`${author.data.name} avatar`}
+        width={96}
+        height={96}
+        quality={80}
+        loading="eager"
+        fetchpriority="high"
+        decoding="sync"
+        class="profile-avatar"
+      />
+    </PageHead>
+
+    <section class="profile-posts" aria-labelledby="profile-posts-h">
+      <div class="wrap">
+        <h2 id="profile-posts-h" class="profile-posts-h">
+          {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+        </h2>
+        {
+          posts.length > 0 ? (
+            <PostList posts={posts} label={`Posts by ${author.data.name}`} />
+          ) : (
+            <p class="profile-empty">
+              Nothing published yet. <a href="/blog" class="tlink">See every post on the blog</a>.
+            </p>
+          )
+        }
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</Layout>
+
+<style>
+  .profile-posts {
+    padding-block: clamp(0.5rem, 2vw, 1rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .profile-avatar {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
+    padding: 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--color-brand-bg);
+  }
+
+  .profile-posts-h {
+    margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+  }
+
+  .profile-empty {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-body);
+    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+  }
+</style>

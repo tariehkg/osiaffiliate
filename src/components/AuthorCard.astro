@@ -1,0 +1,130 @@
+---
+/**
+ * An author: avatar, name and bio.
+ *
+ * `variant="panel"` is the closing "who wrote this" block at the foot of a
+ * post — the same surface panel the site uses for PageTrust, so it reads as
+ * context rather than as another piece of the article. `variant="row"` is the
+ * entry on /authors, where several sit in a ruled list.
+ *
+ * `postCount` (row only) is passed in by the page from published posts, so a
+ * draft never shows up in the number.
+ */
+import { Image } from 'astro:assets';
+import type { Author } from './blog';
+
+interface Props {
+  author: Author;
+  variant?: 'panel' | 'row';
+  postCount?: number;
+  /** Heading level for the name, so the card fits the page outline. */
+  as?: 'h2' | 'h3';
+}
+
+const { author, variant = 'panel', postCount, as: Heading = 'h2' } = Astro.props;
+const href = `/authors/${author.id}`;
+---
+
+<div class:list={['ac', `is-${variant}`]}>
+  <Image
+    src={author.data.avatar}
+    alt={`${author.data.name} avatar`}
+    width={64}
+    height={64}
+    quality={80}
+    class="ac-avatar"
+  />
+  <div class="ac-text">
+    {variant === 'panel' && <p class="ac-kicker">Written by</p>}
+    <Heading class="ac-name">
+      <a href={href}>{author.data.name}</a>
+    </Heading>
+    <p class="ac-bio">{author.data.bio}</p>
+    {
+      variant === 'row' && typeof postCount === 'number' && (
+        <p class="ac-count">
+          {postCount} {postCount === 1 ? 'post' : 'posts'}
+        </p>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .ac {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 1.1rem;
+    align-items: start;
+  }
+
+  .ac :global(.ac-avatar) {
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0.45rem;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+    background: var(--color-brand-bg);
+  }
+
+  .is-panel {
+    padding: clamp(1.2rem, 3vw, 1.75rem);
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .is-row {
+    padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .ac-kicker {
+    margin: 0;
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .ac-name {
+    margin: 0.15rem 0 0;
+    max-width: none;
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.02em;
+  }
+
+  .is-row .ac-name {
+    font-size: var(--fs-h3);
+  }
+
+  .ac-name a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.16em;
+    transition:
+      color 0.16s var(--ease),
+      text-decoration-color 0.16s var(--ease);
+  }
+
+  .ac-name a:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .ac-bio {
+    margin-top: 0.5rem;
+    max-width: 62ch;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  .ac-count {
+    margin-top: 0.6rem;
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    color: var(--color-brand-muted);
+  }
+</style>

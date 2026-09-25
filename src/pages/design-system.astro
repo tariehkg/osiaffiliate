@@ -22,6 +22,12 @@ import CompareTable from '../components/CompareTable.astro';
 import CompareSides from '../components/CompareSides.astro';
 import CompareFoot from '../components/CompareFoot.astro';
 
+// Blog
+import PostList from '../components/PostList.astro';
+import AuthorCard from '../components/AuthorCard.astro';
+import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../components/blog';
+
 /**
  * The design system inventory.
  *
@@ -79,6 +85,10 @@ const colors = [
     usage: 'Secondary/disabled text — breadcrumbs, disabled controls, captions.',
   },
 ];
+
+// Real, published entries from the content collections (drafts excluded).
+const dsPosts = await getPublishedPosts();
+const [dsAuthor] = await getCollection('authors');
 
 const compareA = { name: 'HubSpot CRM', monogram: 'Hs' };
 const compareB = { name: 'Pipedrive', monogram: 'Pd' };
@@ -324,6 +334,36 @@ const compareRows = [
         <CategoryHub id="crm" />
       </div>
       <p class="ds-label"><code>CategoryHub</code> · <code>src/components/CategoryHub.astro</code></p>
+
+      <h3 class="ds-group-h">Blog</h3>
+
+      <div class="ds-frame ds-frame-pad">
+        <PostList posts={dsPosts} feature label="Example post list" />
+      </div>
+      <p class="ds-label">
+        <code>PostList</code> (with <code>feature</code>) · <code>src/components/PostList.astro</code>
+      </p>
+
+      <div class="ds-frame ds-frame-pad">
+        <PostList posts={dsPosts} label="Example post ledger" />
+      </div>
+      <p class="ds-label">
+        <code>PostList</code> (ledger only) · <code>src/components/PostList.astro</code>
+      </p>
+
+      {
+        dsAuthor && (
+          <div class="ds-frame ds-frame-pad">
+            <AuthorCard author={dsAuthor} />
+            <div style="margin-top: 1.5rem;">
+              <AuthorCard author={dsAuthor} variant="row" as="h3" postCount={dsPosts.length} />
+            </div>
+          </div>
+        )
+      }
+      <p class="ds-label">
+        <code>AuthorCard</code> (panel, row) · <code>src/components/AuthorCard.astro</code>
+      </p>
     </section>
   </main>
 </Layout>
