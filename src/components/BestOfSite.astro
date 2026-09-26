@@ -1,0 +1,188 @@
+---
+import { categories } from './data';
+import { articleUrl, inCategory, ofType, topRated, type Article } from './articles';
+
+/**
+ * "Start here": one column per category, listing that category's shortlist,
+ * its highest-scored reviews and its comparisons, plus a column of guides.
+ * The whole site in one screen of links, which is the one thing a home page
+ * of articles cannot do on its own.
+ */
+interface Props {
+  articles: Article[];
+}
+
+const { articles } = Astro.props;
+
+type Link = { label: string; href: string; lead?: boolean };
+
+const columns: { title: string; href: string; tone?: string; links: Link[] }[] = categories.map((c) => {
+  const inCat = inCategory(articles, c.id);
+  const best = ofType(inCat, 'best')[0];
+  const links: Link[] = [];
+  if (best) links.push({ label: `Best ${c.plain} tools`, href: articleUrl(best), lead: true });
+  for (const r of topRated(articles, c.id).slice(0, 3)) {
+    links.push({ label: `${r.data.product?.name} review`, href: articleUrl(r) });
+  }
+  for (const a of [...ofType(inCat, 'comparison'), ...ofType(inCat, 'alternatives'), ...ofType(inCat, 'pricing')].slice(0, 3)) {
+    links.push({ label: a.data.title.split(/[:(]| in /)[0].trim(), href: articleUrl(a) });
+  }
+  return { title: c.name, href: c.hub, tone: c.tone, links };
+});
+
+const guides = ofType(articles, 'guide').slice(0, 5);
+columns.push({
+  title: 'Choosing and switching',
+  href: '/articles',
+  links: [
+    ...guides.map((g) => ({ label: g.data.title, href: articleUrl(g) })),
+    { label: 'How we test and score', href: '/how-we-pick', lead: true },
+  ],
+});
+---
+
+<section class="bos" aria-labelledby="bos-h">
+  <div class="wrap">
+    <h2 id="bos-h">Start here</h2>
+    <p class="bos-lede">
+      The shortlist, the top-scored reviews and the comparisons for each category, picked from
+      everything we have published.
+    </p>
+
+    <div class="bos-grid">
+      {
+        columns.map((col, i) => (
+          <div class="bos-col" data-tone={col.tone} data-rise style={`transition-delay:${i * 60}ms`}>
+            <h3>
+              <a href={col.href}>
+                {col.tone && <i aria-hidden="true"></i>}
+                {col.title}
+              </a>
+            </h3>
+            <ul>
+              {col.links.map((l) => (
+                <li class:list={[l.lead && 'is-lead']}>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .bos {
+    padding-block: clamp(2.75rem, 6vw, 4.5rem);
+    background: var(--color-brand-surface);
+    border-top: 1px solid var(--line);
+  }
+
+  .bos h2 {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+
+  .bos-lede {
+    margin-top: 0.75rem;
+    max-width: 58ch;
+    font-size: var(--fs-lede);
+    font-weight: var(--fw-light);
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  /* Fixed column counts, and the lattice drawn on each cell rather than as a
+     grid background, so an orphan column can never expose a slab. */
+  .bos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+  }
+
+  .bos-col {
+    background: var(--color-brand-bg);
+    padding: 1.1rem 1.15rem 1.3rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bos-col h3 {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .bos-col h3 a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bos-col h3 i {
+    flex: none;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
+  }
+
+  .bos-col {
+    transition: background-color 0.2s var(--ease);
+  }
+
+  .bos-col:hover {
+    background: var(--tone-soft, var(--color-brand-bg));
+  }
+
+  .bos-col h3 a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .bos-col ul {
+    margin: 0.7rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .bos-col li a {
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+    text-decoration: none;
+  }
+
+  .bos-col li a:hover {
+    color: var(--color-brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* The shortlist link leads its column by weight alone. */
+  .bos-col li.is-lead a {
+    font-weight: 600;
+    color: var(--color-brand-text);
+  }
+
+  @media (min-width: 44rem) {
+    .bos-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .bos-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+</style>

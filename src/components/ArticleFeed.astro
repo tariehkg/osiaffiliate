@@ -1,0 +1,51 @@
+---
+import ArticleRow from './ArticleRow.astro';
+import type { Article } from './articles';
+
+/**
+ * A ruled list of articles under one heading, with an optional link to the
+ * rest. Every feed on the site is one of these.
+ */
+interface Props {
+  title?: string;
+  articles: Article[];
+  more?: { label: string; href: string };
+  compact?: boolean;
+  /** Heading level for each row's title. */
+  rowAs?: 'h2' | 'h3';
+  /** Mark the first thumbnail as above the fold. */
+  eagerFirst?: boolean;
+  id?: string;
+}
+
+const { title, articles, more, compact = false, rowAs = 'h3', eagerFirst = false, id } = Astro.props;
+---
+
+<section class="feed" id={id} aria-label={title}>
+  {title && <h2 class="sec-h">{title}</h2>}
+  <div class="feed-list">
+    {articles.map((a, i) => <ArticleRow article={a} compact={compact} as={rowAs} eager={eagerFirst && i === 0} />)}
+  </div>
+  {
+    more && (
+      <p class="feed-more">
+        <a href={more.href} class="tlink">{more.label}</a>
+      </p>
+    )
+  }
+</section>
+
+<style>
+  .feed-list {
+    margin-top: 0.25rem;
+  }
+
+  .feed-more {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+  }
+</style>

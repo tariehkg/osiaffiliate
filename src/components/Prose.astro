@@ -1,0 +1,208 @@
+---
+/**
+ * The reading column's typography: headings, paragraphs, lists, tables,
+ * links, images. Rendered markdown and hand-written page sections both go
+ * inside one of these, so an article and the methodology page read alike.
+ *
+ * Styles are :global so markdown output needs no classes.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: cls = '' } = Astro.props;
+---
+
+<div class:list={['prose', cls]}>
+  <slot />
+</div>
+
+<style>
+  .prose :global(section + section) {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.75rem, 3.5vw, 2.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .prose :global(h2) {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 650;
+    max-width: 32ch;
+    scroll-margin-top: 5.5rem;
+  }
+
+  .prose :global(* + h2) {
+    margin-top: clamp(2.25rem, 4.5vw, 3rem);
+  }
+
+  .prose :global(h3) {
+    margin-top: clamp(1.4rem, 2.5vw, 1.9rem);
+    font-size: 1.15rem;
+    font-weight: 600;
+    scroll-margin-top: 5.5rem;
+  }
+
+  .prose :global(p) {
+    margin-top: 0.85rem;
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-brand-text) 86%, transparent);
+  }
+
+  .prose :global(h2 + p),
+  .prose :global(h3 + p) {
+    margin-top: 0.7rem;
+  }
+
+  .prose :global(ul) {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .prose :global(li) {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--color-brand-text) 86%, transparent);
+  }
+
+  /* List markers are the amber standing bar from the mark, at list scale. */
+  .prose :global(ul > li)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 3px;
+    height: 0.85em;
+    border-radius: 2px;
+    background: var(--color-brand-primary);
+  }
+
+  .prose :global(li b),
+  .prose :global(strong) {
+    font-weight: 600;
+    color: var(--color-brand-text);
+  }
+
+  /* Ordered lists only ever hold real sequences, so they are numbered in
+     the heading face, in cobalt. */
+  .prose :global(ol) {
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .prose :global(ol > li) {
+    counter-increment: step;
+    padding-left: 2rem;
+  }
+
+  .prose :global(ol > li)::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.05em;
+    width: 1.35rem;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
+  }
+
+  .prose :global(a:not(.pill)) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 50%, transparent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.24em;
+    transition:
+      color 0.16s var(--ease),
+      text-decoration-color 0.16s var(--ease);
+  }
+
+  .prose :global(a:not(.pill):hover) {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .prose :global(blockquote) {
+    margin: 1.25rem 0 0;
+    padding: 0.25rem 0 0.25rem 1.1rem;
+    border-left: 3px solid var(--color-brand-accent);
+  }
+
+  .prose :global(blockquote p) {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-brand-text);
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    margin-top: 1.25rem;
+    border-collapse: collapse;
+    border: 1px solid var(--line-strong);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .prose :global(th) {
+    background: var(--color-brand-surface);
+    font-family: var(--font-heading);
+    font-weight: 650;
+  }
+
+  .prose :global(img) {
+    margin-top: 1.25rem;
+    border-radius: 4px;
+  }
+
+  .prose :global(hr) {
+    margin: 2rem 0 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .prose :global(code) {
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    background: var(--color-brand-surface);
+    border-radius: 3px;
+  }
+
+  /* A quiet inset for the honest limits. */
+  .prose :global(.doc-inset) {
+    margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
+    padding: clamp(1.1rem, 2.5vw, 1.6rem);
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .prose :global(.doc-inset > :first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(.doc-lead) {
+    font-size: clamp(1.1rem, 1.8vw, 1.28rem);
+    line-height: 1.6;
+    color: var(--color-brand-text);
+  }
+</style>

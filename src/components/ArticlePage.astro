@@ -1,0 +1,520 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from './CategoryStrip.astro';
+import Byline from './Byline.astro';
+import ArticleThumb from './ArticleThumb.astro';
+import DisclosureNote from './DisclosureNote.astro';
+import ProvisionalNote from './ProvisionalNote.astro';
+import SummaryBox from './SummaryBox.astro';
+import ProsCons from './ProsCons.astro';
+import FitList from './FitList.astro';
+import ScoreBars from './ScoreBars.astro';
+import QuickPicks from './QuickPicks.astro';
+import PickTable from './PickTable.astro';
+import CompareTable from './CompareTable.astro';
+import VendorCta from './VendorCta.astro';
+import Score from './Score.astro';
+import Prose from './Prose.astro';
+import Faq from './Faq.astro';
+import AuthorCard from './AuthorCard.astro';
+import Sidebar from './Sidebar.astro';
+import Toc from './Toc.astro';
+import ArticleFeed from './ArticleFeed.astro';
+import { articleUrl, authorUrl, byId, categoryOf, inCategory, readingMinutes, type Article, type Author } from './articles';
+import { articleLd, breadcrumbLd, faqPageLd, itemListLd, reviewLd } from './seo';
+
+/**
+ * The one template every article renders through. The markdown body is the
+ * narrative; the structured blocks around it (summary, pros and cons, the
+ * scoring table, the pick table, the comparison grid) are drawn from the
+ * frontmatter, in an order fixed per article type so two reviews always
+ * read the same way.
+ */
+interface Props {
+  article: Article;
+  articles: Article[];
+  author: Author;
+}
+
+const { article, articles, author } = Astro.props;
+const d = article.data;
+const { Content, headings } = await render(article);
+const cat = categoryOf(article);
+const path = articleUrl(article);
+const minutes = readingMinutes(article.body);
+const isPerson = !author.data.placeholder && author.id !== 'reviews-desk';
+
+const picks = d.picks
+  .map((p) => ({ review: byId(articles, p.review), bestFor: p.bestFor }))
+  .filter((p): p is { review: Article; bestFor: string } => Boolean(p.review?.data.product));
+
+const sideA = d.compare ? byId(articles, d.compare.a) : undefined;
+const sideB = d.compare ? byId(articles, d.compare.b) : undefined;
+
+const showsScores = d.type === 'review' || d.type === 'best' || d.type === 'alternatives' || d.type === 'comparison';
+const hasVendorLinks = d.type !== 'guide';
+
+/* "In this article": the fixed blocks first, then the markdown h2s, then the FAQ. */
+const fixed: { text: string; slug: string }[] = [];
+if (d.type === 'review' && d.product) {
+  fixed.push({ text: `${d.product.name} in short`, slug: 'summary' });
+  fixed.push({ text: 'Pros and cons', slug: 'pros-cons' });
+  fixed.push({ text: `Is ${d.product.name} for you?`, slug: 'fit' });
+  fixed.push({ text: 'How we scored it', slug: 'scores' });
+}
+if ((d.type === 'best' || d.type === 'alternatives') && picks.length) fixed.push({ text: 'The shortlist at a glance', slug: 'overview' });
+if (d.type === 'comparison' && d.compare) fixed.push({ text: 'Where they differ', slug: 'differences' }, { text: 'Which one to pick', slug: 'verdict' });
+const toc = [
+  ...fixed,
+  ...headings.filter((h) => h.depth === 2).map((h) => ({ text: h.text, slug: h.slug })),
+  ...(d.faqs.length ? [{ text: 'Questions people ask', slug: 'faq' }] : []),
+];
+
+const trail = [
+  { label: 'Home', href: '/' },
+  ...(cat ? [{ label: cat.name, href: cat.hub }] : []),
+  { label: d.title, href: path },
+];
+
+const jsonld = [
+  breadcrumbLd(trail),
+  articleLd({
+    title: d.title,
+    description: d.description,
+    path,
+    published: d.pubDate,
+    updated: d.updatedDate,
+    authorName: author.data.name,
+    authorPath: authorUrl(author.id),
+    authorIsPerson: isPerson,
+  }),
+  ...(d.faqs.length ? [faqPageLd(d.faqs)] : []),
+  ...(d.type === 'review' && d.product
+    ? [
+        d.product.score !== undefined
+          ? reviewLd({ name: d.product.name, path, description: d.description, category: cat?.name ?? '', vendorUrl: d.product.url, plan: d.product.plan, score: d.product.score, authorName: author.data.name, authorPath: authorUrl(author.id), authorIsPerson: isPerson, published: d.pubDate, title: d.title })
+          : null,
+      ]
+    : []),
+  ...(picks.length ? [itemListLd(d.title, picks.map((p) => ({ name: p.review.data.product!.name, url: articleUrl(p.review) })))] : []),
+];
+
+const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.id !== article.id).slice(0, 4);
+---
+
+<Layout title={`${d.title} — OSI Affiliate`} description={d.description} path={path} type="article" jsonld={jsonld}>
+  <CategoryStrip current={cat?.id} />
+  <main id="main" class="art">
+    <div class="wrap">
+      <header class="art-head">
+        <nav class="art-trail" aria-label="Breadcrumb">
+          <ol class="trail">
+            {trail.slice(0, -1).map((c) => (
+              <li><a href={c.href}>{c.label}</a></li>
+            ))}
+          </ol>
+        </nav>
+        <h1 class="art-h">{d.title}</h1>
+        <div class="art-by">
+          <Byline author={author} published={d.pubDate} updated={d.updatedDate} minutes={minutes} />
+        </div>
+      </header>
+
+      <div class="cols art-cols">
+        <div class="art-main">
+          <div class="art-open">
+            <div class:list={['art-thumb', !d.image && 'is-tile']}>
+              {d.image ? (
+                <Image src={d.image.src} alt={d.image.alt} width={720} height={450} widths={[480, 720, 1440]} sizes="(min-width: 64rem) 720px, 100vw" quality={80} loading="eager" fetchpriority="high" decoding="sync" class="art-photo" />
+              ) : (
+                <ArticleThumb article={article} size="md" eager />
+              )}
+              {d.image?.credit && <p class="art-credit">{d.image.credit}</p>}
+            </div>
+            <div class="art-intro">
+              {d.intro.map((p) => <p>{p}</p>)}
+              {d.intro.length === 0 && <p>{d.description}</p>}
+            </div>
+          </div>
+
+          {hasVendorLinks && <DisclosureNote links={d.type === 'review' || d.type === 'pricing'} />}
+          {showsScores && <div class="art-prov"><ProvisionalNote /></div>}
+
+          <div class="art-blocks">
+            {d.type === 'review' && d.product && (
+              <>
+                <div id="summary" class="art-block">
+                  <SummaryBox name={d.product.name} score={d.product.score} summary={d.product.summary} verdict={d.product.verdict} url={d.product.url} urlLabel={d.product.urlLabel} plan={d.product.plan} />
+                </div>
+                <div class="art-block"><ProsCons name={d.product.name} pros={d.product.pros} cons={d.product.cons} /></div>
+                <div class="art-block"><FitList name={d.product.name} bestFor={d.product.bestFor} notFor={d.product.notFor} /></div>
+                {d.product.score !== undefined && d.product.criteria.length > 0 && (
+                  <div class="art-block"><ScoreBars name={d.product.name} criteria={d.product.criteria} overall={d.product.score} /></div>
+                )}
+              </>
+            )}
+
+            {(d.type === 'best' || d.type === 'alternatives') && picks.length > 0 && (
+              <div class="art-block"><PickTable picks={picks} /></div>
+            )}
+
+            {d.type === 'comparison' && d.compare && sideA?.data.product && sideB?.data.product && (
+              <>
+                <div class="art-block art-sides">
+                  {[sideA, sideB].map((s) => {
+                    const p = s.data.product!;
+                    return (
+                      <article class="art-side">
+                        <div class="art-side-top">
+                          <div>
+                            <h2>{p.name}</h2>
+                            <p>{p.role}</p>
+                          </div>
+                          {p.score !== undefined && <Score score={p.score} size="md" />}
+                        </div>
+                        <p class="art-side-plan">{p.plan}</p>
+                        <p class="art-side-links">
+                          <a href={articleUrl(s)} class="tlink">Full {p.name} review</a>
+                          <VendorCta href={p.url} label={p.urlLabel} variant="line" />
+                        </p>
+                      </article>
+                    );
+                  })}
+                </div>
+                <div class="art-block">
+                  <CompareTable
+                    title="Where they actually differ"
+                    caption={`${sideA.data.product.name} and ${sideB.data.product.name} compared`}
+                    a={{ name: sideA.data.product.name, monogram: sideA.data.product.monogram, href: articleUrl(sideA) }}
+                    b={{ name: sideB.data.product.name, monogram: sideB.data.product.monogram, href: articleUrl(sideB) }}
+                    rows={d.compare.rows}
+                  />
+                </div>
+                <div class="art-block art-verdict" id="verdict">
+                  <h2>Which one to pick</h2>
+                  <div class="art-calls">
+                    {d.compare.calls.map((c) => (
+                      <div class="art-call">
+                        <h3>Pick {c.name} if</h3>
+                        <p>{c.who}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {d.type === 'pricing' && d.product && (
+              <div class="art-block art-price">
+                <div class="art-price-top">
+                  <div>
+                    <h2>{d.product.name} pricing at a glance</h2>
+                    <p class="art-price-plan">{d.product.plan}</p>
+                  </div>
+                  <VendorCta href={d.product.url} label={d.product.urlLabel} variant="line" />
+                </div>
+                <dl>
+                  <div><dt>How you pay</dt><dd>{d.product.pricingShape}</dd></div>
+                  <div><dt>What is free</dt><dd>{d.product.freeTier}</dd></div>
+                </dl>
+              </div>
+            )}
+          </div>
+
+          <Prose class="art-prose">
+            <Content />
+          </Prose>
+
+          {d.faqs.length > 0 && <div class="art-faq"><Faq faqs={d.faqs} /></div>}
+
+          {d.type === 'review' && d.product && (
+            <div class="art-close">
+              <p>
+                <b>Our verdict on {d.product.name}.</b> {d.product.verdict}
+              </p>
+              <VendorCta href={d.product.url} label={d.product.urlLabel} />
+            </div>
+          )}
+
+          <div class="art-author">
+            <AuthorCard author={author} variant="panel" />
+          </div>
+
+          {related.length > 0 && (
+            <div class="art-related">
+              <ArticleFeed title={cat ? `More on ${cat.plain}` : 'More from the desk'} articles={related} compact />
+            </div>
+          )}
+        </div>
+
+        <Sidebar articles={articles} category={cat?.id}>
+          <Toc items={toc} />
+          {(d.type === 'best' || d.type === 'alternatives') && picks.length > 0 && <QuickPicks picks={picks} />}
+        </Sidebar>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .art {
+    padding-block: clamp(1.75rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .art-trail {
+    margin-bottom: 1rem;
+  }
+
+  .art-h {
+    font-size: clamp(1.9rem, 4.6vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: -0.038em;
+    line-height: 1.05;
+    max-width: 28ch;
+  }
+
+  .art-by {
+    margin-top: 1.1rem;
+  }
+
+  .art-cols {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .art-main {
+    min-width: 0;
+  }
+
+  .art-open {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem 1.75rem;
+    align-items: start;
+  }
+
+  .art-thumb {
+    max-width: 22rem;
+  }
+
+  @media (max-width: 43.9375rem) {
+    .art-thumb.is-tile {
+      display: none;
+    }
+  }
+
+  .art-thumb :global(.art-photo) {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .art-credit {
+    margin-top: 0.4rem;
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .art-intro p {
+    font-size: var(--fs-lede);
+    line-height: 1.55;
+    font-weight: var(--fw-light);
+    color: color-mix(in oklab, var(--color-brand-text) 84%, transparent);
+  }
+
+  .art-intro p + p {
+    margin-top: 0.85rem;
+  }
+
+  .art-prov {
+    margin-top: 1rem;
+  }
+
+  .art-blocks {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+
+  .art-block h2 {
+    scroll-margin-top: 5.5rem;
+  }
+
+  .art-prose {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    padding-top: clamp(1.75rem, 3.5vw, 2.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  /* Faq brings its own wrap; inside the column it must not re-gutter. */
+  .art-faq :global(.wrap) {
+    padding-inline: 0;
+  }
+
+  .art-close {
+    display: grid;
+    gap: 1rem;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    padding: clamp(1.2rem, 3vw, 1.75rem);
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    justify-items: start;
+  }
+
+  .art-close p {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+  }
+
+  .art-close b {
+    font-weight: 600;
+  }
+
+  .art-author {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .art-related {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  /* Comparison: the two sides, then the verdict calls. */
+  .art-sides {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .art-side {
+    padding: 1.2rem 1.25rem 1.3rem;
+    background: var(--color-brand-bg);
+  }
+
+  .art-side-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
+  }
+
+  .art-side h2 {
+    font-size: 1.35rem;
+    font-weight: 650;
+  }
+
+  .art-side-top p {
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+  }
+
+  .art-side-plan {
+    margin-top: 0.75rem;
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .art-side-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 0.9rem;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+  }
+
+  .art-verdict h2 {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 650;
+  }
+
+  .art-calls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .art-call {
+    padding: 1.1rem 1.2rem 1.2rem;
+    background: var(--color-brand-secondary);
+    color: white;
+    border-radius: 3px;
+  }
+
+  .art-call h3 {
+    font-size: 1.05rem;
+    font-weight: 650;
+    color: var(--color-brand-accent);
+  }
+
+  .art-call p {
+    margin-top: 0.5rem;
+    font-size: 0.97rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.84);
+  }
+
+  /* Pricing guide: the facts box. */
+  .art-price {
+    padding: clamp(1.2rem, 3vw, 1.75rem);
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+  }
+
+  .art-price-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1rem;
+  }
+
+  .art-price h2 {
+    font-size: 1.35rem;
+    font-weight: 650;
+  }
+
+  .art-price-plan {
+    margin-top: 0.25rem;
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  .art-price dl {
+    display: grid;
+    gap: 0.9rem;
+    margin: 1.1rem 0 0;
+  }
+
+  .art-price dt {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 650;
+  }
+
+  .art-price dd {
+    margin: 0.2rem 0 0;
+    font-size: 0.97rem;
+    line-height: 1.6;
+  }
+
+  @media (min-width: 40rem) {
+    .art-open {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+
+    .art-sides,
+    .art-calls {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

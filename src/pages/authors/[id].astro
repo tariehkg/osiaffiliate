@@ -1,101 +1,87 @@
 ---
-import type { GetStaticPaths } from 'astro';
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import SiteNav from '../../components/SiteNav.astro';
+import CategoryStrip from '../../components/CategoryStrip.astro';
 import PageHead from '../../components/PageHead.astro';
-import PostList from '../../components/PostList.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
-import { getPostsByAuthor, type Author } from '../../components/blog';
+import ArticleFeed from '../../components/ArticleFeed.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getArticles, getAuthors, authorUrl } from '../../components/articles';
+import { breadcrumbLd } from '../../components/seo';
 
-export const getStaticPaths = (async () => {
-  const authors = await getCollection('authors');
-  return authors.map((author) => ({ params: { id: author.id }, props: { author } }));
-}) satisfies GetStaticPaths;
-
-interface Props {
-  author: Author;
+export async function getStaticPaths() {
+  const authors = await getAuthors();
+  const articles = await getArticles();
+  return authors.map((author) => ({
+    params: { id: author.id },
+    props: { author, articles, mine: articles.filter((a) => a.data.author.id === author.id) },
+  }));
 }
 
-const { author } = Astro.props;
-// Published only — getPostsByAuthor() reads through getPublishedPosts().
-const posts = await getPostsByAuthor(author.id);
+const { author, articles, mine } = Astro.props;
+const path = authorUrl(author.id);
 ---
 
 <Layout
-  title={`${author.data.name} — Authors — OSI Affiliate`}
-  description={`Everything ${author.data.name} has published on the OSI Affiliate blog.`}
+  title={`${author.data.name} — OSI Affiliate`}
+  description={author.data.bio}
+  path={path}
+  noindex={author.data.placeholder}
+  jsonld={[breadcrumbLd([{ label: 'Home', href: '/' }, { label: 'The reviews desk', href: '/authors' }, { label: author.data.name, href: path }])]}
 >
-  <SiteNav />
-  <main>
+  <CategoryStrip />
+  <main id="main">
     <PageHead
-      trail={[
-        { label: 'Home', href: '/' },
-        { label: 'Blog', href: '/blog' },
-        { label: 'Authors', href: '/authors' },
-      ]}
+      trail={[{ label: 'Home', href: '/' }, { label: 'The reviews desk', href: '/authors' }]}
       title={author.data.name}
       lede={author.data.bio}
+      note={author.data.role}
     >
-      <Image
-        slot="before"
-        src={author.data.avatar}
-        alt={`${author.data.name} avatar`}
-        width={96}
-        height={96}
-        quality={80}
-        loading="eager"
-        fetchpriority="high"
-        decoding="sync"
-        class="profile-avatar"
-      />
+      <Image slot="before" src={author.data.avatar} alt="" width={96} height={96} quality={80} class:list={['ap-avatar', author.data.placeholder && 'is-placeholder']} />
     </PageHead>
 
-    <section class="profile-posts" aria-labelledby="profile-posts-h">
+    <section class="ap">
       <div class="wrap">
-        <h2 id="profile-posts-h" class="profile-posts-h">
-          {posts.length} {posts.length === 1 ? 'post' : 'posts'}
-        </h2>
-        {
-          posts.length > 0 ? (
-            <PostList posts={posts} label={`Posts by ${author.data.name}`} />
-          ) : (
-            <p class="profile-empty">
-              Nothing published yet. <a href="/blog" class="tlink">See every post on the blog</a>.
-            </p>
-          )
-        }
+        <div class="cols">
+          <div class="ap-main">
+            {
+              mine.length > 0 ? (
+                <ArticleFeed title={`Articles by ${author.data.name}`} articles={mine} rowAs="h2" />
+              ) : (
+                <p class="ap-empty">Nothing published under this name yet.</p>
+              )
+            }
+          </div>
+          <Sidebar articles={articles} />
+        </div>
       </div>
     </section>
   </main>
-  <SiteFooter />
 </Layout>
 
 <style>
-  .profile-posts {
-    padding-block: clamp(0.5rem, 2vw, 1rem) clamp(3rem, 6vw, 5rem);
-  }
-
-  .profile-avatar {
+  :global(.ap-avatar) {
     width: 4.5rem;
     height: 4.5rem;
-    margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
-    padding: 0.6rem;
+    padding: 0.55rem;
+    margin-bottom: 1.1rem;
+    border-radius: 4px;
     border: 1px solid var(--line);
-    border-radius: 3px;
     background: var(--color-brand-bg);
   }
 
-  .profile-posts-h {
-    margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
-    font-size: var(--fs-h4);
-    font-weight: var(--fw-semibold);
+  :global(.ap-avatar.is-placeholder) {
+    border-style: dashed;
   }
 
-  .profile-empty {
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--line);
+  .ap {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .ap-main {
+    min-width: 0;
+  }
+
+  .ap-empty {
     font-size: var(--fs-body);
     color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
   }

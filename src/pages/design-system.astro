@@ -1,618 +1,342 @@
 ---
+import { getEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-
-// Atoms
-import Button from '../components/Button.astro';
-import Mark from '../components/Mark.astro';
-import DisclosureNote from '../components/DisclosureNote.astro';
-
-// Ratings
-import Stars from '../components/Stars.astro';
-import RatingBadge from '../components/RatingBadge.astro';
-import RatingSummary from '../components/RatingSummary.astro';
-import RateWidget from '../components/RateWidget.astro';
-import SampleNotice from '../components/SampleNotice.astro';
-
-// Directory
-import ProductCard from '../components/ProductCard.astro';
-import FilterRail from '../components/FilterRail.astro';
-import Faq from '../components/Faq.astro';
-import CategoryGuide from '../components/CategoryGuide.astro';
-import ProductHero from '../components/ProductHero.astro';
-import { categories } from '../components/data';
-import { categoryContent } from '../components/category-content';
-
-// Sections
-import Hero from '../components/Hero.astro';
-import CategoryBrowser from '../components/CategoryBrowser.astro';
-import Stance from '../components/Stance.astro';
-import CategoryDirectory from '../components/CategoryDirectory.astro';
-import ContributeCta from '../components/ContributeCta.astro';
-import SiteNav from '../components/SiteNav.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import CategoryHub from '../components/CategoryHub.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
 import PageHead from '../components/PageHead.astro';
-import PageTrust from '../components/PageTrust.astro';
-import Verdict from '../components/Verdict.astro';
+import Mark from '../components/Mark.astro';
+import Button from '../components/Button.astro';
+import VendorCta from '../components/VendorCta.astro';
+import Score from '../components/Score.astro';
+import ScoreBars from '../components/ScoreBars.astro';
+import ProsCons from '../components/ProsCons.astro';
+import FitList from '../components/FitList.astro';
+import SummaryBox from '../components/SummaryBox.astro';
+import ArticleThumb from '../components/ArticleThumb.astro';
+import ArticleRow from '../components/ArticleRow.astro';
+import ArticleFeed from '../components/ArticleFeed.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import QuickPicks from '../components/QuickPicks.astro';
+import PickTable from '../components/PickTable.astro';
 import CompareTable from '../components/CompareTable.astro';
-import CompareSides from '../components/CompareSides.astro';
-import CompareFoot from '../components/CompareFoot.astro';
-
-// Blog
-import PostList from '../components/PostList.astro';
+import HelpBox from '../components/HelpBox.astro';
+import Toc from '../components/Toc.astro';
+import Pagination from '../components/Pagination.astro';
 import AuthorCard from '../components/AuthorCard.astro';
-import { getCollection } from 'astro:content';
-import { getPublishedPosts } from '../components/blog';
+import Byline from '../components/Byline.astro';
+import DisclosureNote from '../components/DisclosureNote.astro';
+import ProvisionalNote from '../components/ProvisionalNote.astro';
+import Faq from '../components/Faq.astro';
+import SearchBox from '../components/SearchBox.astro';
+import Prose from '../components/Prose.astro';
+import { getArticles, byId, ofType, typeLabel } from '../components/articles';
 
 /**
- * The design system inventory.
- *
- * Every entry here is the real component from `src/components/`, rendered
- * with either its own defaults or representative placeholder content — never
- * markup re-created inline. If it's on this page, it's safe to import and
- * reuse; if a new component is built, it gets added here in the same change
- * (see the "Component rules" in CLAUDE.md).
- *
- * `Doc.astro` is intentionally not listed: it's a slot-only prose wrapper
- * with no visual identity of its own to show in isolation.
+ * The component inventory. Every reusable component in src/components/ is
+ * listed here with its file path, and rendered with real data from the
+ * articles collection wherever it can be rendered in isolation. Keep this
+ * page in step with the folder: add, rename or remove a component here in
+ * the same change.
  */
+const articles = await getArticles();
+const review = ofType(articles, 'review')[0];
+const best = ofType(articles, 'best')[0];
+const comparison = ofType(articles, 'comparison')[0];
+const guide = ofType(articles, 'guide')[0];
+const author = review ? await getEntry(review.data.author) : undefined;
+const p = review?.data.product;
+const picks = (best?.data.picks ?? [])
+  .map((k) => ({ review: byId(articles, k.review), bestFor: k.bestFor }))
+  .filter((k): k is { review: NonNullable<typeof k.review>; bestFor: string } => Boolean(k.review));
+const sideA = comparison?.data.compare ? byId(articles, comparison.data.compare.a) : undefined;
+const sideB = comparison?.data.compare ? byId(articles, comparison.data.compare.b) : undefined;
 
-const colors = [
-  {
-    name: 'Cobalt',
-    token: 'brand-primary',
-    hex: '#2451E8',
-    usage: 'Structural signal — selected states, filled CTAs, link underlines. Never a wash.',
-  },
-  {
-    name: 'Deep navy',
-    token: 'brand-secondary',
-    hex: '#0F1B33',
-    usage: 'The two inverted, full-bleed sections only: Stance and the footer.',
-  },
-  {
-    name: 'Warm amber',
-    token: 'brand-accent',
-    hex: '#F2A93B',
-    usage: 'A marker, not a fill — mark glyph, pull-quote rule, disclosure border.',
-  },
-  {
-    name: 'Paper',
-    token: 'brand-bg',
-    hex: '#FAFAF8',
-    usage: 'Base page background.',
-  },
-  {
-    name: 'Surface',
-    token: 'brand-surface',
-    hex: '#F1F0EC',
-    usage: 'One step darker than paper — trust panels, closing strip, table heads.',
-  },
-  {
-    name: 'Ink',
-    token: 'brand-text',
-    hex: '#14181F',
-    usage: 'Primary text color, almost always used via color-mix() for tone.',
-  },
-  {
-    name: 'Muted',
-    token: 'brand-muted',
-    hex: '#6B7280',
-    usage: 'Secondary/disabled text — breadcrumbs, disabled controls, captions.',
-  },
-];
-
-// Real, published entries from the content collections (drafts excluded).
-const dsPosts = await getPublishedPosts();
-const [dsAuthor] = await getCollection('authors');
-
-// The directory and rating entries all render against one real pick — the
-// first category's first pick (HubSpot CRM) — so the page shows real data
-// rather than a fixture.
-const dsCategory = categories[0];
-const dsPick = dsCategory.picks[0];
-const dsContent = categoryContent[dsCategory.id];
-
-const compareA = { name: 'HubSpot CRM', monogram: 'Hs' };
-const compareB = { name: 'Pipedrive', monogram: 'Pd' };
-const compareRows = [
-  {
-    dim: 'Free tier',
-    a: 'A genuinely usable free CRM: contacts, companies, deals, and forms.',
-    b: 'No lasting free plan. A trial, then paid from the first month.',
-  },
-  {
-    dim: 'Best for',
-    a: 'A business that wants one record of the customer marketing and support can work from too.',
-    b: 'A team that lives in the pipeline and wants the tool to keep asking what happens next.',
-  },
+const sections = [
+  { name: 'Layout', file: 'src/layouts/Layout.astro', note: 'Document shell. Renders SiteNav and SiteFooter, the meta tags, JSON-LD and the search index JSON on every page.' },
+  { name: 'SiteNav', file: 'src/components/SiteNav.astro', note: 'Header with the four panel menus, compact search and the "How we test" action; folds into a drawer under 64rem. In the Layout, so it is on this page.' },
+  { name: 'SiteFooter', file: 'src/components/SiteFooter.astro', note: 'Footer site map read from the collection, disclosure and sign-off. In the Layout.' },
+  { name: 'Hero', file: 'src/components/Hero.astro', note: 'Homepage opening: the phrase, the search field, the three counts and the mark. Homepage only.' },
+  { name: 'BestOfSite', file: 'src/components/BestOfSite.astro', note: '"Start here": one column of links per category plus guides. Homepage only.' },
+  { name: 'TrustStrip', file: 'src/components/TrustStrip.astro', note: 'The inverted staff-and-counts section. Homepage only.' },
+  { name: 'Sidebar', file: 'src/components/Sidebar.astro', note: 'The right column: search, HelpBox, top-scored tools, categories, guides, plus a slot. Article pages, hubs and indexes.' },
+  { name: 'ArticlePage', file: 'src/components/ArticlePage.astro', note: 'The template every article renders through, ordering the structured blocks per article type.' },
+  { name: 'CategoryHubPage', file: 'src/components/CategoryHubPage.astro', note: 'The template each of the five hub pages passes its category id to.' },
+  { name: 'PageHead', file: 'src/components/PageHead.astro', note: 'Title, lede, note and optional breadcrumb for the site-wide pages. It heads this page.' },
+  { name: 'Doc', file: 'src/components/Doc.astro', note: 'Reading column for site-wide pages: page wrap plus Prose at 44rem.' },
+  { name: 'Redirect', file: 'src/components/Redirect.astro', note: 'A forwarding page for old URLs: canonical, meta refresh, one link.' },
 ];
 ---
 
-<Layout
-  title="Design System — OSI Affiliate"
-  description="Component inventory and brand reference for OSI Affiliate."
-  noindex
->
-  <main class="ds">
-    <header class="ds-intro wrap">
-      <h1>Design System</h1>
-      <p>Component inventory and brand reference</p>
-      <p class="ds-note">
-        Every element below is the real component imported from <code>src/components/</code>. See
-        <code>docs/brand-guide.md</code> for the reasoning behind these choices, and
-        <code>CLAUDE.md</code> for the rule that keeps this page in sync with the codebase.
-      </p>
-    </header>
+<Layout title="Design system — OSI Affiliate" description="Component inventory for the OSI Affiliate site." noindex>
+  <CategoryStrip />
+  <main id="main" class="ds">
+    <PageHead
+      title="Design system"
+      lede="Every reusable component, with its file path, rendered with real data from the articles collection. Check here before building anything new."
+    />
 
-    <section class="ds-block wrap" aria-labelledby="ds-colors">
-      <h2 id="ds-colors">Colors</h2>
-      <p class="ds-block-lede">Every color token in <code>@theme</code>, from <code>src/styles/theme.css</code>.</p>
+    <div class="wrap ds-body">
+      <section class="ds-sec">
+        <h2>Page-level components</h2>
+        <p class="ds-note">These compose whole pages or regions and are described rather than rendered twice.</p>
+        <ul class="ds-list">
+          {sections.map((s) => (
+            <li>
+              <b>{s.name}</b> <code>{s.file}</code>
+              <span>{s.note}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <div class="ds-swatches">
-        {
-          colors.map((c) => (
-            <div class="ds-swatch">
-              <div class={`ds-swatch-fill bg-${c.token}`} />
-              <p class="ds-swatch-name">{c.name}</p>
-              <p class="ds-swatch-meta">
-                <code>bg-{c.token}</code>
-              </p>
-              <p class="ds-swatch-meta">{c.hex}</p>
-              <p class="ds-swatch-usage">{c.usage}</p>
-            </div>
-          ))
-        }
-      </div>
-    </section>
-
-    <section class="ds-block wrap" aria-labelledby="ds-type">
-      <h2 id="ds-type">Typography</h2>
-      <p class="ds-block-lede">
-        Families from <code>@theme</code>; sizes from the fluid type scale in
-        <code>src/styles/base.css</code>.
-      </p>
-
-      <div class="ds-type-rows">
-        <div class="ds-type-row">
-          <p class="ds-type-label">h1 · --fs-h1 · font-heading · 700</p>
-          <p style="font-family: var(--font-heading); font-size: var(--fs-h1); font-weight: var(--fw-bold); line-height: 1.02; letter-spacing: -0.04em;">
-            Where you find
-          </p>
+      <section class="ds-sec">
+        <h2>Mark</h2>
+        <code>src/components/Mark.astro</code>
+        <div class="ds-row">
+          <Mark size={26} wordmark />
+          <Mark size={48} />
+          <span class="ds-navy"><Mark size={26} tone="light" wordmark /></span>
         </div>
+      </section>
 
-        <div class="ds-type-row">
-          <p class="ds-type-label">h2 · --fs-h2 · font-heading · 600</p>
-          <p style="font-family: var(--font-heading); font-size: var(--fs-h2); font-weight: var(--fw-semibold); line-height: 1.08; letter-spacing: -0.035em;">
-            Start with what you're replacing
-          </p>
-        </div>
-
-        <div class="ds-type-row">
-          <p class="ds-type-label">h3 · --fs-h3 · font-heading · 600</p>
-          <p style="font-family: var(--font-heading); font-size: var(--fs-h3); font-weight: var(--fw-semibold); line-height: 1.1;">
-            HubSpot CRM
-          </p>
-        </div>
-
-        <div class="ds-type-row">
-          <p class="ds-type-label">h4 · --fs-h4 · font-heading · 500</p>
-          <p style="font-family: var(--font-heading); font-size: var(--fs-h4); font-weight: var(--fw-medium);">
-            Pipedrive
-          </p>
-        </div>
-
-        <div class="ds-type-row">
-          <p class="ds-type-label">Body · --fs-body · font-body · 400</p>
-          <p style="font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.6;">
-            Five categories. A real shortlist in each, with the pricing page and the reasoning
-            behind every pick.
-          </p>
-        </div>
-
-        <div class="ds-type-row">
-          <p class="ds-type-label">Small · --fs-small · font-body · 400</p>
-          <p style="font-family: var(--font-body); font-size: var(--fs-small);">How we pick</p>
-        </div>
-
-        <div class="ds-type-row">
-          <p class="ds-type-label">Caption · --fs-caption · font-body · 400</p>
-          <p style="font-family: var(--font-body); font-size: var(--fs-caption); color: var(--color-brand-muted);">
-            3 picks
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="ds-block wrap" aria-labelledby="ds-components">
-      <h2 id="ds-components">Components</h2>
-
-      <h3 class="ds-group-h">Atoms</h3>
-
-      <div class="ds-frame ds-frame-pad">
-        <div class="ds-atom-row">
+      <section class="ds-sec">
+        <h2>Button and VendorCta</h2>
+        <code>src/components/Button.astro</code> <code>src/components/VendorCta.astro</code>
+        <div class="ds-row">
           <Button variant="solid">Solid</Button>
           <Button variant="line">Line</Button>
-          <Button disabled>Disabled</Button>
+          <span class="ds-navy"><Button variant="invert">Invert</Button></span>
+          <VendorCta href="https://example.com" label="Visit example.com" />
+          <VendorCta href="https://example.com" label="Visit example.com" variant="line" />
         </div>
-        <div class="ds-atom-row ds-atom-row-dark">
-          <Button variant="invert">Invert (on navy)</Button>
-        </div>
-      </div>
-      <p class="ds-label"><code>Button</code> · <code>src/components/Button.astro</code></p>
+      </section>
 
-      <div class="ds-frame ds-frame-pad">
-        <div class="ds-atom-row">
-          <Mark size={40} />
-          <Mark size={40} wordmark />
+      <section class="ds-sec">
+        <h2>Score</h2>
+        <code>src/components/Score.astro</code>
+        <div class="ds-row">
+          <Score score={4.4} size="sm" />
+          <Score score={4.4} size="md" />
+          <Score score={4.4} size="lg" label="Editor's score" />
         </div>
-        <div class="ds-atom-row ds-atom-row-dark">
-          <Mark size={40} tone="light" wordmark />
-        </div>
-      </div>
-      <p class="ds-label"><code>Mark</code> · <code>src/components/Mark.astro</code></p>
+      </section>
 
-      <div class="ds-frame ds-frame-pad">
-        <DisclosureNote />
-        <div style="margin-top: 1rem;">
+      <section class="ds-sec">
+        <h2>CategoryStrip and SearchBox</h2>
+        <code>src/components/CategoryStrip.astro</code> <code>src/components/SearchBox.astro</code>
+        <p class="ds-note">The strip is under the header on this page. Search in three sizes:</p>
+        <div class="ds-stack">
+          <SearchBox variant="hero" id="ds-search-hero" />
+          <SearchBox variant="nav" id="ds-search-nav" placeholder="Search…" />
+          <SearchBox variant="side" id="ds-search-side" />
+        </div>
+      </section>
+
+      <section class="ds-sec">
+        <h2>DisclosureNote, ProvisionalNote, HelpBox</h2>
+        <code>src/components/DisclosureNote.astro</code> <code>src/components/ProvisionalNote.astro</code> <code>src/components/HelpBox.astro</code>
+        <div class="ds-stack">
           <DisclosureNote links />
+          <ProvisionalNote />
+          <div class="ds-narrow"><HelpBox /></div>
         </div>
-      </div>
-      <p class="ds-label"><code>DisclosureNote</code> · <code>src/components/DisclosureNote.astro</code></p>
+      </section>
 
-      <h3 class="ds-group-h">Ratings</h3>
-
-      <div class="ds-frame ds-frame-pad">
-        <div class="ds-atom-row">
-          <Stars value={0} size={20} />
-          <Stars value={2.5} size={20} />
-          <Stars value={4.3} size={20} />
-          <Stars value={5} size={20} />
-        </div>
-      </div>
-      <p class="ds-label">
-        <code>Stars</code> (0, 2.5, 4.3, 5) · <code>src/components/Stars.astro</code>
-      </p>
-
-      <div class="ds-frame ds-frame-pad">
-        <RatingBadge slug={dsPick.slug} href={`${dsCategory.hub}/${dsPick.slug}#ratings`} />
-      </div>
-      <p class="ds-label">
-        <code>RatingBadge</code> · <code>src/components/RatingBadge.astro</code> — every slug
-        currently carries sample data; with no votes the line reads "Not rated yet"
-      </p>
-
-      <div class="ds-frame ds-frame-pad">
-        <SampleNotice />
-      </div>
-      <p class="ds-label">
-        <code>SampleNotice</code> · <code>src/components/SampleNotice.astro</code> — renders only
-        while <code>SAMPLE_MODE</code> in <code>ratings.ts</code> is true
-      </p>
-
-      <div class="ds-frame ds-frame-pad">
-        <RateWidget
-          slug={dsPick.slug}
-          name={dsPick.name}
-          href={`${dsCategory.hub}/${dsPick.slug}`}
-          compact
-          id="ds-rate-compact"
-        />
-      </div>
-      <p class="ds-label">
-        <code>RateWidget</code> (with <code>compact</code>) · <code>src/components/RateWidget.astro</code>
-      </p>
-
-      <div class="ds-frame ds-frame-pad">
-        <RateWidget slug={dsPick.slug} name={dsPick.name} id="ds-rate" />
-      </div>
-      <p class="ds-label"><code>RateWidget</code> · <code>src/components/RateWidget.astro</code></p>
-
-      <div class="ds-frame ds-frame-pad">
-        <RatingSummary slug={dsPick.slug} name={dsPick.name} rateHref="#ds-rate" />
-      </div>
-      <p class="ds-label"><code>RatingSummary</code> · <code>src/components/RatingSummary.astro</code></p>
-
-      <h3 class="ds-group-h">Sections</h3>
-
-      <div class="ds-frame">
-        <SiteNav />
-      </div>
-      <p class="ds-label"><code>SiteNav</code> · <code>src/components/SiteNav.astro</code></p>
-
-      <div class="ds-frame">
-        <Hero />
-      </div>
-      <p class="ds-label"><code>Hero</code> · <code>src/components/Hero.astro</code></p>
-
-      <div class="ds-frame">
-        <CategoryBrowser />
-      </div>
-      <p class="ds-label"><code>CategoryBrowser</code> · <code>src/components/CategoryBrowser.astro</code></p>
-
-      <div class="ds-frame">
-        <Stance />
-      </div>
-      <p class="ds-label"><code>Stance</code> · <code>src/components/Stance.astro</code></p>
-
-      <div class="ds-frame">
-        <CategoryDirectory />
-      </div>
-      <p class="ds-label"><code>CategoryDirectory</code> · <code>src/components/CategoryDirectory.astro</code></p>
-
-      <div class="ds-frame">
-        <ContributeCta />
-      </div>
-      <p class="ds-label"><code>ContributeCta</code> · <code>src/components/ContributeCta.astro</code></p>
-
-      <div class="ds-frame">
-        <SiteFooter />
-      </div>
-      <p class="ds-label"><code>SiteFooter</code> · <code>src/components/SiteFooter.astro</code></p>
-
-      <div class="ds-frame">
-        <PageHead
-          trail={[
-            { label: 'All categories', href: '/' },
-            { label: 'CRM & Sales', href: '/crm-software' },
-          ]}
-          title="Where do leads live, and what makes sure nobody gets dropped?"
-          lede="Four CRMs made the list. One is free to start, one is built for people who live in a pipeline."
-          note="Some links on this page can pay us. We say which ones."
-          scale="question"
-        />
-      </div>
-      <p class="ds-label"><code>PageHead</code> · <code>src/components/PageHead.astro</code></p>
-
-      <div class="ds-frame">
-        <CompareSides category="crm" slugs={['hubspot-crm', 'pipedrive']} />
-      </div>
-      <p class="ds-label"><code>CompareSides</code> · <code>src/components/CompareSides.astro</code></p>
-
-      <div class="ds-frame">
-        <CompareTable
-          a={compareA}
-          b={compareB}
-          rows={compareRows}
-          caption="Example comparison table"
-          title="Where they differ"
-          lede="Representative rows for the design system — the real page draws these from picks-detail.ts."
-        />
-      </div>
-      <p class="ds-label"><code>CompareTable</code> · <code>src/components/CompareTable.astro</code></p>
-
-      <div class="ds-frame">
-        <Verdict
-          calls={[
-            { name: 'HubSpot', who: 'you want the broadest free tier and room to grow into marketing.' },
-            { name: 'Pipedrive', who: 'you want a pipeline-first tool that stays out of your way.' },
-          ]}
-        >
-          <p>
-            Placeholder verdict copy showing the <em>emphasis treatment</em> this section uses for
-            its recommended pick.
-          </p>
-        </Verdict>
-      </div>
-      <p class="ds-label"><code>Verdict</code> · <code>src/components/Verdict.astro</code></p>
-
-      <div class="ds-frame">
-        <PageTrust />
-      </div>
-      <p class="ds-label"><code>PageTrust</code> · <code>src/components/PageTrust.astro</code></p>
-
-      <div class="ds-frame">
-        <CompareFoot category="crm" slugs={['hubspot-crm', 'pipedrive']} />
-      </div>
-      <p class="ds-label"><code>CompareFoot</code> · <code>src/components/CompareFoot.astro</code></p>
-
-      <h3 class="ds-group-h">Directory</h3>
-
-      <div class="ds-frame ds-frame-pad">
-        <div style="border-bottom: 1px solid var(--line);">
-          <ProductCard category={dsCategory} pick={dsPick} rank={1} />
-        </div>
-      </div>
-      <p class="ds-label"><code>ProductCard</code> · <code>src/components/ProductCard.astro</code></p>
-
-      <div class="ds-frame ds-frame-pad">
-        <div data-catalog>
-          <FilterRail category={dsCategory} />
-        </div>
-      </div>
-      <p class="ds-label">
-        <code>FilterRail</code> · <code>src/components/FilterRail.astro</code> — inert here: its
-        script acts on a sibling <code>[data-listing]</code>, which this page does not render
-      </p>
-
-      <div class="ds-frame">
-        <Faq faqs={dsContent.faqs.slice(0, 3)} title="Example questions" id="ds-faq" />
-      </div>
-      <p class="ds-label"><code>Faq</code> · <code>src/components/Faq.astro</code></p>
-
-      <div class="ds-frame">
-        <CategoryGuide name={dsCategory.short} content={dsContent} />
-      </div>
-      <p class="ds-label"><code>CategoryGuide</code> · <code>src/components/CategoryGuide.astro</code></p>
-
-      <div class="ds-frame">
-        <ProductHero category={dsCategory} pick={dsPick} rank={1} />
-      </div>
-      <p class="ds-label"><code>ProductHero</code> · <code>src/components/ProductHero.astro</code></p>
-
-      <div class="ds-frame">
-        <CategoryHub id="crm" />
-      </div>
-      <p class="ds-label"><code>CategoryHub</code> · <code>src/components/CategoryHub.astro</code></p>
-
-      <h3 class="ds-group-h">Blog</h3>
-
-      <div class="ds-frame ds-frame-pad">
-        <PostList posts={dsPosts} feature label="Example post list" />
-      </div>
-      <p class="ds-label">
-        <code>PostList</code> (with <code>feature</code>) · <code>src/components/PostList.astro</code>
-      </p>
-
-      <div class="ds-frame ds-frame-pad">
-        <PostList posts={dsPosts} label="Example post ledger" />
-      </div>
-      <p class="ds-label">
-        <code>PostList</code> (ledger only) · <code>src/components/PostList.astro</code>
-      </p>
-
-      {
-        dsAuthor && (
-          <div class="ds-frame ds-frame-pad">
-            <AuthorCard author={dsAuthor} />
-            <div style="margin-top: 1.5rem;">
-              <AuthorCard author={dsAuthor} variant="row" as="h3" postCount={dsPosts.length} />
+      {review && p && author && (
+        <>
+          <section class="ds-sec">
+            <h2>ArticleThumb</h2>
+            <code>src/components/ArticleThumb.astro</code>
+            <p class="ds-note">One tile per article type, on the category's tone. A guide with a photo shows the photo.</p>
+            <div class="ds-thumbs">
+              {[review, best, comparison, ofType(articles, 'alternatives')[0], ofType(articles, 'pricing')[0], guide].filter(Boolean).map((a) => (
+                <div>
+                  <ArticleThumb article={a!} size="md" />
+                  <small>{typeLabel[a!.data.type]}</small>
+                </div>
+              ))}
             </div>
+          </section>
+
+          <section class="ds-sec">
+            <h2>Byline and AuthorCard</h2>
+            <code>src/components/Byline.astro</code> <code>src/components/AuthorCard.astro</code>
+            <div class="ds-stack">
+              <Byline author={author} published={review.data.pubDate} minutes={6} />
+              <AuthorCard author={author} variant="panel" />
+              <AuthorCard author={author} variant="row" articleCount={3} as="h3" />
+            </div>
+          </section>
+
+          <section class="ds-sec">
+            <h2>ArticleRow, ArticleFeed, ReviewCard</h2>
+            <code>src/components/ArticleRow.astro</code> <code>src/components/ArticleFeed.astro</code> <code>src/components/ReviewCard.astro</code>
+            <div class="ds-stack">
+              <ArticleRow article={review} />
+              <ArticleRow article={best} compact />
+              <ArticleFeed title="A feed" articles={articles.slice(0, 2)} more={{ label: 'All articles', href: '/articles' }} />
+              <div class="ds-narrow"><ReviewCard review={review} /></div>
+            </div>
+          </section>
+
+          <section class="ds-sec">
+            <h2>SummaryBox, ProsCons, FitList, ScoreBars</h2>
+            <code>src/components/SummaryBox.astro</code> <code>src/components/ProsCons.astro</code> <code>src/components/FitList.astro</code> <code>src/components/ScoreBars.astro</code>
+            <div class="ds-stack">
+              <SummaryBox name={p.name} score={p.score} summary={p.summary} verdict={p.verdict} url={p.url} urlLabel={p.urlLabel} plan={p.plan} />
+              <ProsCons name={p.name} pros={p.pros} cons={p.cons} id="ds-pc" />
+              <FitList name={p.name} bestFor={p.bestFor} notFor={p.notFor} id="ds-fit" />
+              {p.score !== undefined && <ScoreBars name={p.name} criteria={p.criteria} overall={p.score} id="scores" />}
+            </div>
+          </section>
+        </>
+      )}
+
+      {picks.length > 0 && (
+        <section class="ds-sec">
+          <h2>QuickPicks and PickTable</h2>
+          <code>src/components/QuickPicks.astro</code> <code>src/components/PickTable.astro</code>
+          <div class="ds-stack">
+            <QuickPicks picks={picks} />
+            <PickTable picks={picks} id="ds-overview" />
           </div>
-        )
-      }
-      <p class="ds-label">
-        <code>AuthorCard</code> (panel, row) · <code>src/components/AuthorCard.astro</code>
-      </p>
-    </section>
+        </section>
+      )}
+
+      {comparison?.data.compare && sideA?.data.product && sideB?.data.product && (
+        <section class="ds-sec">
+          <h2>CompareTable</h2>
+          <code>src/components/CompareTable.astro</code>
+          <CompareTable
+            a={{ name: sideA.data.product.name, monogram: sideA.data.product.monogram }}
+            b={{ name: sideB.data.product.name, monogram: sideB.data.product.monogram }}
+            rows={comparison.data.compare.rows.slice(0, 3)}
+            caption="Sample"
+            id="ds-ct"
+          />
+        </section>
+      )}
+
+      <section class="ds-sec">
+        <h2>Toc, Pagination, Faq</h2>
+        <code>src/components/Toc.astro</code> <code>src/components/Pagination.astro</code> <code>src/components/Faq.astro</code>
+        <div class="ds-stack">
+          <div class="ds-narrow"><Toc items={[{ text: 'Pros and cons', slug: 'ds-pc' }, { text: 'Is it for you?', slug: 'ds-fit' }, { text: 'How we scored it', slug: 'scores' }]} /></div>
+          <Pagination page={{ currentPage: 2, lastPage: 4, url: { prev: '#', next: '#' } }} hrefFor={() => '#'} />
+          <div class="ds-faq"><Faq id="ds-faq" faqs={[{ q: 'A question?', a: 'An answer, two to four sentences long.' }, { q: 'Another question?', a: 'Another answer.' }]} /></div>
+        </div>
+      </section>
+
+      <section class="ds-sec">
+        <h2>Prose</h2>
+        <code>src/components/Prose.astro</code>
+        <Prose>
+          <h2>A heading</h2>
+          <p>Body copy at the reading size, with a <a href="#">link</a> and <strong>emphasis</strong>.</p>
+          <ul><li>An unordered item with the amber marker</li><li>Another</li></ul>
+          <ol><li>A numbered step</li><li>The next step</li></ol>
+          <blockquote><p>A pulled sentence.</p></blockquote>
+        </Prose>
+      </section>
+    </div>
   </main>
 </Layout>
 
 <style>
-  .ds {
+  .ds-body {
     padding-bottom: clamp(3rem, 6vw, 5rem);
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    max-width: 60rem;
   }
 
-  .ds-intro {
-    padding-block: clamp(2.5rem, 5vw, 3.75rem) clamp(1.5rem, 3vw, 2rem);
-  }
-
-  .ds-intro h1 {
-    font-size: var(--fs-display);
-    font-weight: var(--fw-bold);
-    letter-spacing: -0.038em;
-  }
-
-  .ds-intro > p:nth-of-type(1) {
-    margin-top: 0.6rem;
-    font-size: var(--fs-lede);
-    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
-  }
-
-  .ds-note {
-    margin-top: 1.25rem;
-    max-width: 60ch;
-    font-size: var(--fs-small);
-    line-height: 1.6;
-    color: var(--color-brand-muted);
-  }
-
-  .ds-block {
-    padding-block: clamp(1.75rem, 3.5vw, 2.5rem);
+  .ds-sec {
+    padding-top: 1.5rem;
     border-top: 1px solid var(--line);
   }
 
-  .ds-block h2 {
-    font-size: var(--fs-h2);
-    font-weight: var(--fw-semibold);
-    letter-spacing: -0.03em;
+  .ds-sec h2 {
+    font-size: 1.35rem;
+    font-weight: 650;
   }
 
-  .ds-block-lede {
-    margin-top: 0.5rem;
-    font-size: var(--fs-small);
-    color: var(--color-brand-muted);
+  .ds-sec > code {
+    display: inline-block;
+    margin: 0.4rem 0.4rem 0 0;
+    font-size: 0.82rem;
+    padding: 0.1rem 0.4rem;
+    background: var(--color-brand-surface);
+    border-radius: 3px;
   }
 
-  .ds-group-h {
-    margin-top: clamp(2rem, 4vw, 3rem);
-    font-size: var(--fs-h3);
-    font-weight: var(--fw-semibold);
-  }
-
-  /* --- colors --- */
-  .ds-swatches {
-    margin-top: 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-    gap: 1.25rem;
-  }
-
-  .ds-swatch-fill {
-    height: 5rem;
-    border-radius: 4px;
-    border: 1px solid var(--line);
-  }
-
-  .ds-swatch-name {
+  .ds-note {
     margin-top: 0.6rem;
-    font-family: var(--font-heading);
-    font-weight: var(--fw-semibold);
+    font-size: 0.95rem;
+    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
   }
 
-  .ds-swatch-meta {
-    margin-top: 0.15rem;
-    font-size: var(--fs-caption);
-    color: var(--color-brand-muted);
-  }
-
-  .ds-swatch-usage {
-    margin-top: 0.35rem;
-    font-size: var(--fs-caption);
-    line-height: 1.5;
-    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
-  }
-
-  /* --- typography --- */
-  .ds-type-rows {
-    margin-top: 1.5rem;
+  .ds-list {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
     display: grid;
-    gap: 1.5rem;
+    gap: 0.75rem;
   }
 
-  .ds-type-label {
-    font-size: var(--fs-caption);
-    font-family: var(--font-body);
+  .ds-list li {
+    display: grid;
+    gap: 0.15rem;
+    font-size: 0.95rem;
+  }
+
+  .ds-list code {
+    font-size: 0.82rem;
     color: var(--color-brand-muted);
-    margin-bottom: 0.3rem;
   }
 
-  /* --- components --- */
-  .ds-frame {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    margin-top: 1.25rem;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: var(--color-brand-bg);
+  .ds-list span {
+    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
   }
 
-  .ds-frame-pad {
-    padding: 1.5rem;
-  }
-
-  .ds-atom-row {
+  .ds-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
+    margin-top: 1rem;
   }
 
-  .ds-atom-row-dark {
+  .ds-stack {
+    display: grid;
+    gap: 1.5rem;
     margin-top: 1rem;
-    padding: 1.25rem;
+  }
+
+  .ds-narrow {
+    max-width: 19rem;
+  }
+
+  .ds-navy {
+    display: inline-block;
+    padding: 0.75rem 1rem;
     background: var(--color-brand-secondary);
     border-radius: 4px;
   }
 
-  .ds-label {
-    margin-top: 0.5rem;
+  .ds-thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .ds-thumbs small {
+    display: block;
+    margin-top: 0.4rem;
     font-size: var(--fs-caption);
     color: var(--color-brand-muted);
   }
 
-  .ds-label code {
-    color: var(--color-brand-text);
+  .ds-faq :global(.wrap) {
+    padding-inline: 0;
   }
 </style>

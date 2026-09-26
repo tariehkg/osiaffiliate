@@ -1,0 +1,90 @@
+---
+/**
+ * Pros and cons, side by side. Plus and minus are drawn in cobalt rather
+ * than green and red: the site's colour means state, not verdict.
+ */
+interface Props {
+  pros: string[];
+  cons: string[];
+  name?: string;
+  id?: string;
+}
+
+const { pros, cons, name, id = 'pros-cons' } = Astro.props;
+---
+
+<section class="pc" id={id} aria-labelledby={`${id}-h`}>
+  <h2 id={`${id}-h`}>{name ? `${name} pros and cons` : 'Pros and cons'}</h2>
+  <div class="pc-grid">
+    <div class="pc-col">
+      <h3>Pros</h3>
+      <ul>
+        {pros.map((p) => <li data-sign="+">{p}</li>)}
+      </ul>
+    </div>
+    <div class="pc-col">
+      <h3>Cons</h3>
+      <ul>
+        {cons.map((c) => <li data-sign="−">{c}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pc h2 {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 650;
+  }
+
+  .pc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .pc-col {
+    padding: 1rem 1.15rem 1.15rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .pc-col h3 {
+    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  .pc-col ul {
+    margin: 0.7rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .pc-col li {
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: 0.97rem;
+    line-height: 1.55;
+    color: color-mix(in oklab, var(--color-brand-text) 84%, transparent);
+  }
+
+  .pc-col li::before {
+    content: attr(data-sign);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+  }
+
+  @media (min-width: 40rem) {
+    .pc-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

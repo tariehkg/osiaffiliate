@@ -1,184 +1,120 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SiteNav from '../components/SiteNav.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
 import PageHead from '../components/PageHead.astro';
 import Doc from '../components/Doc.astro';
-import SiteFooter from '../components/SiteFooter.astro';
+import AuthorCard from '../components/AuthorCard.astro';
 import Button from '../components/Button.astro';
 import { categories } from '../components/data';
+import { getArticles, getAuthors, ofType } from '../components/articles';
+import { breadcrumbLd } from '../components/seo';
 
-/**
- * About. Written in the site's voice, and careful about one thing: it makes no
- * claim about who "we" are beyond what is true. No headcount, no founding
- * date, no location, no invented bylines. The counts in the fact strip are
- * computed from the real shortlists so they cannot drift out of date.
- */
-const facts = [
-  { n: String(categories.length), label: 'categories' },
-  { n: String(categories.reduce((t, c) => t + c.picks.length, 0)), label: 'picks in total' },
-  { n: String(categories.filter((c) => c.comparison).length), label: 'head-to-heads' },
-];
+const authors = await getAuthors();
+const articles = await getArticles();
+const count = (id: string) => articles.filter((a) => a.data.author.id === id).length;
+const reviews = ofType(articles, 'review').length;
 ---
 
 <Layout
-  title="About OSI Affiliate — why this site is short"
-  description="OSI Affiliate is a curated software directory for small businesses and solopreneurs: a handful of real picks per category instead of an open marketplace, with the business model stated plainly."
+  title="About OSI Affiliate — who reviews the software, and how"
+  description="OSI Affiliate is a small staff desk that reviews, scores and compares business software for solopreneurs and small teams. Who we are, what we cover, and how the site pays for itself."
+  path="/about"
+  jsonld={[breadcrumbLd([{ label: 'Home', href: '/' }, { label: 'About', href: '/about' }])]}
 >
-  <SiteNav />
-  <main>
+  <CategoryStrip />
+  <main id="main">
     <PageHead
-      title="Why this site is short"
-      lede="OSI Affiliate is a software directory built on the opposite bet from the big ones. They win by listing everything. We are trying to be useful by listing almost nothing."
-    >
-      <ul class="facts">
-        {
-          facts.map((f) => (
-            <li>
-              <span class="facts-n">{f.n}</span>
-              <span class="facts-l">{f.label}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </PageHead>
+      title="A small desk that reviews software for small businesses"
+      lede="Choosing a CRM, an email tool or a website builder is a decision most owners make once, in a hurry, from a page written by a vendor. We wanted the page a knowledgeable friend would have written instead."
+    />
 
     <Doc>
       <section>
-        <h2>Who it is for</h2>
-        <p class="doc-lead">
-          Someone running a small business who needs to pick a CRM, an email platform, a website
-          builder, a project tool or an SEO tool — this month, once — and get back to work.
+        <h2>What the site is</h2>
+        <p>
+          OSI Affiliate covers {categories.length} categories of business software: {categories.map((c) => c.name).join(", ")}. In each one we
+          review and score the tools a solopreneur or a team under twenty is actually choosing
+          between, keep one short shortlist, and write the comparisons that decide between the
+          picks. There are {reviews} full reviews on the site today, and every one has a staff name
+          on it.
         </p>
         <p>
-          That includes solopreneurs buying their first proper tool, owners replacing something
-          that has stopped fitting, and in-house marketers who have been handed the decision and
-          a browser full of tabs. It is not built for procurement teams running a formal
-          evaluation, and it is not built for people who enjoy comparing software.
-        </p>
-        <p>
-          The assumption behind every page is that you want a defensible answer and a reason,
-          not a filterable database.
+          It is written for the owner replacing a specific tool, not for a procurement team. So
+          each review says who the tool is for, who should skip it, and what the bill looks like a
+          year in, in plain words and without a login or a demo call.
         </p>
       </section>
 
       <section>
-        <h2>What is actually different here</h2>
+        <h2>How it started</h2>
         <p>
-          Search “best CRM” and you land on a marketplace with over a thousand listings under
-          that one category. It is an impressive asset and a terrible answer to the question you
-          asked. Sorting it requires you to already know what matters, which is the thing you
-          came to find out.
+          The site began as a set of shortlists: two to four picks per category, with the reasoning
+          shown and the affiliate model stated on the page instead of buried in it. That premise has
+          not changed. What changed is who does the judging. Shortlists on their own are an opinion;
+          a review is an opinion with the work shown. So the site now runs on staff reviews: a
+          member of the desk signs up for the tool, tests it against the same five criteria as every
+          other tool, and writes down what they found.
         </p>
+        <p>
+          The <a href="/how-we-pick">methodology page</a> is the full method, including its limits.
+        </p>
+      </section>
+
+      <section>
+        <h2>How we work</h2>
         <ul>
           <li>
-            <b>Two to four picks per category.</b> The shortlist is the product. If a tool no
-            longer earns its slot it comes off, rather than being kept for the extra link.
+            <b>Everyone on the desk has used the category of tool they review</b> in a business of
+            their own or for a client, before reviewing it here.
           </li>
           <li>
-            <b>Every pick carries a reason to skip it.</b> Written by us, in the entry, not
-            buried in a pros-and-cons vote count. A recommendation with no stated limit is an
-            advert.
+            <b>We test in our own accounts</b>, on the plan a reader would buy, and the review says
+            when a vendor gave us a demo account instead.
           </li>
           <li>
-            <b>Reader ratings, never borrowed ones.</b> Every star on this site is given by a
-            reader, here, and sits beside our pick without changing it. Nothing is pulled in
-            from another directory, and until real ratings exist the figures are labelled as
-            samples on every page that shows them.
+            <b>Every review is read by a second member of staff</b> before it is published, and
+            disagreements go in the review rather than being smoothed over.
           </li>
           <li>
-            <b>The business model is on the page.</b> Not in a footer line in grey six-point
-            type — at the top of every page that carries a vendor link.
+            <b>We say plainly which links pay us.</b> The disclosure is on every page with a vendor
+            link, at body size, and a commission has never moved a score or a position.
           </li>
         </ul>
       </section>
 
       <section>
-        <h2>How this site makes money</h2>
+        <h2>Meet the desk</h2>
         <p>
-          Affiliate commission. If you follow a link from here and sign up with a vendor, they
-          may pay us a share of what you pay them, at no extra cost to you. That is the same
-          mechanism the large directories use, and on its own it is fine. What is not fine is
-          the arrangement we refuse: nobody can pay to be on a shortlist here, pay to sit higher
-          on one, or pay to soften what an entry says.
+          The people who write, test and check what is published here. A profile marked as not
+          filled in yet is exactly that: a slot on the desk waiting for its person.
         </p>
-        <p>
-          The full version, including exactly where the site stands today on which links earn
-          anything, is on the <a href="/disclosure">disclosure page</a>, and the rules that
-          decide the picks are on <a href="/how-we-pick">how we pick</a>.
-        </p>
-      </section>
-
-      <section>
-        <h2>Where the site is today</h2>
-        <p>
-          New, and saying so. {categories.length} categories are live, with {
-            categories.reduce((t, c) => t + c.picks.length, 0)
-          } picks between them and {categories.filter((c) => c.comparison).length} head-to-head
-          comparisons where the “X or Y” question is common enough to deserve its own page.
-        </p>
-        <p>
-          The picks come from research rather than from running every tool in a live business,
-          and the entries say so where it matters. Categories and comparisons get added when
-          real reader demand shows up, not to fill out a sitemap — so if a comparison you want
-          is missing, asking for it is the fastest way to make it exist.
-        </p>
-        <div class="doc-inset">
-          <p>
-            One note on voice: “we” here means whoever wrote and checked the page you are
-            reading. Entries carry the site’s name rather than personal bylines, because the
-            judgement being offered is the site’s and the site is what you should hold to it.
-          </p>
+        <div class="about-team">
+          {authors.map((a) => <AuthorCard author={a} variant="row" articleCount={count(a.id)} as="h3" />)}
         </div>
       </section>
 
       <section>
-        <h2>Tell us what we are missing</h2>
+        <h2>Get in touch</h2>
         <p>
-          The two most useful messages we get are “this pricing line is out of date” and “you
-          have left the obvious tool off this list”. Both change the site.
+          A tool we should review, a pricing line that has gone stale, a caveat you think is unfair,
+          or a comparison you wanted and could not find: all of it is worth a message, and all of
+          it is read by a person.
         </p>
-        <p>
-          <Button href="/contact" variant="line">Get in touch</Button>
+        <p class="about-cta">
+          <Button href="/contact" variant="solid">Contact the desk</Button>
         </p>
       </section>
     </Doc>
   </main>
-  <SiteFooter />
 </Layout>
 
 <style>
-  /* Three counted facts, taken from the real shortlists. Set at heading scale
-     but not at hero scale — they are context, not the point of the page. */
-  .facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1px;
-    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
-    padding: 0;
-    list-style: none;
-    background: var(--line);
-    border: 1px solid var(--line);
-    width: fit-content;
+  .about-team {
+    margin-top: 1rem;
+    border-bottom: 1px solid var(--line);
   }
 
-  .facts li {
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-    background: var(--color-brand-bg);
-    padding: 0.75rem 1.15rem;
-  }
-
-  .facts-n {
-    font-family: var(--font-heading);
-    font-size: 1.45rem;
-    font-weight: 650;
-    letter-spacing: -0.03em;
-    color: var(--color-brand-primary);
-  }
-
-  .facts-l {
-    font-size: 0.9rem;
-    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  .about-cta {
+    margin-top: 1.25rem;
   }
 </style>

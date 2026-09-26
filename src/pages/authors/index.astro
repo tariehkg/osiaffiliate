@@ -1,57 +1,42 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import SiteNav from '../../components/SiteNav.astro';
+import CategoryStrip from '../../components/CategoryStrip.astro';
 import PageHead from '../../components/PageHead.astro';
 import AuthorCard from '../../components/AuthorCard.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
-import { getPublishedPosts } from '../../components/blog';
+import { getArticles, getAuthors } from '../../components/articles';
 
-const authors = (await getCollection('authors')).sort((a, b) =>
-  a.data.name.localeCompare(b.data.name),
-);
-
-// Counts come from published posts only, so drafts never inflate them.
-const posts = await getPublishedPosts();
-const countFor = (id: string) => posts.filter((p) => p.data.author.id === id).length;
+const authors = await getAuthors();
+const articles = await getArticles();
+const count = (id: string) => articles.filter((a) => a.data.author.id === id).length;
 ---
 
 <Layout
-  title="Authors — OSI Affiliate"
-  description="Who writes the posts on the OSI Affiliate blog, and where to find everything each author has published."
+  title="The reviews desk — OSI Affiliate"
+  description="The staff who review, score and compare the software on this site."
+  path="/authors"
 >
-  <SiteNav />
-  <main>
+  <CategoryStrip />
+  <main id="main">
     <PageHead
-      trail={[
-        { label: 'Home', href: '/' },
-        { label: 'Blog', href: '/blog' },
-      ]}
-      title="Who writes here"
-      lede="Every post names who stands behind it. Follow a name to read everything they have published."
+      title="The reviews desk"
+      lede="Everyone who writes here signs up for the tool, runs it against the same five criteria and puts their name on the result."
     />
-
-    <section class="authors" aria-label="All authors">
+    <section class="au">
       <div class="wrap">
-        <div class="authors-list">
-          {
-            authors.map((a) => (
-              <AuthorCard author={a} variant="row" postCount={countFor(a.id)} />
-            ))
-          }
+        <div class="au-list">
+          {authors.map((a) => <AuthorCard author={a} variant="row" articleCount={count(a.id)} />)}
         </div>
       </div>
     </section>
   </main>
-  <SiteFooter />
 </Layout>
 
 <style>
-  .authors {
-    padding-block: clamp(0.5rem, 2vw, 1rem) clamp(3rem, 6vw, 5rem);
+  .au {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
   }
 
-  .authors-list {
+  .au-list {
     max-width: 52rem;
     border-bottom: 1px solid var(--line);
   }

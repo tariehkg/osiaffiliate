@@ -1,0 +1,167 @@
+---
+import Score from './Score.astro';
+import { articleUrl, fmtScore, type Article } from './articles';
+
+/**
+ * The overview table at the top of a best-of list: every pick, what it is
+ * best for, how you can start, and the score, with each name linking to its
+ * review. What the reference sites show as a wall of logos, drawn as a table
+ * a reader can actually compare down.
+ */
+interface Props {
+  picks: { review: Article; bestFor: string }[];
+  title?: string;
+  id?: string;
+}
+
+const pricingWord = { free: 'Free plan', trial: 'Free trial', paid: 'Paid only' } as const;
+
+const { picks, title = 'The shortlist at a glance', id = 'overview' } = Astro.props;
+---
+
+<section class="pt" id={id} aria-labelledby={`${id}-h`}>
+  <h2 id={`${id}-h`}>{title}</h2>
+  <table class="pt-table" role="table">
+    <caption class="sr">Every pick on this list, with what it is best for, how you can start and the editor's score</caption>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader">Tool</th>
+        <th scope="col" role="columnheader">Best for</th>
+        <th scope="col" role="columnheader">To start</th>
+        <th scope="col" role="columnheader">Score</th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      {
+        picks.map(({ review, bestFor }, i) => {
+          const p = review.data.product!;
+          return (
+            <tr role="row">
+              <th scope="row" role="rowheader">
+                <span class="pt-n">{i + 1}</span>
+                <a href={articleUrl(review)}>{p.name}</a>
+              </th>
+              <td role="cell" data-col="Best for">{bestFor}</td>
+              <td role="cell" data-col="To start">{pricingWord[p.pricing]}</td>
+              <td role="cell" data-col="Score" class="pt-score">
+                {p.score !== undefined && (
+                  <>
+                    <span class="pt-score-tile"><Score score={p.score} size="sm" /></span>
+                    <span class="pt-score-text">{fmtScore(p.score)}/5</span>
+                  </>
+                )}
+              </td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</section>
+
+<style>
+  .pt h2 {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 650;
+  }
+
+  .pt-table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    border: 1px solid var(--line-strong);
+    font-size: 0.95rem;
+  }
+
+  .pt-table th,
+  .pt-table td {
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--line);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .pt-table thead th {
+    background: var(--color-brand-surface);
+    font-family: var(--font-heading);
+    font-size: var(--fs-caption);
+    font-weight: 650;
+  }
+
+  .pt-table tbody th {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .pt-table tbody th a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 45%, transparent);
+    text-underline-offset: 0.2em;
+  }
+
+  .pt-table tbody th a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .pt-n {
+    display: inline-block;
+    width: 1.4rem;
+    color: var(--color-brand-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pt-score-text {
+    display: none;
+    font-family: var(--font-heading);
+    font-weight: 650;
+    color: var(--color-brand-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 40rem) {
+    .pt-score-tile {
+      display: none;
+    }
+
+    .pt-score-text {
+      display: inline;
+    }
+
+    .pt-table thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .pt-table,
+    .pt-table tbody,
+    .pt-table tr,
+    .pt-table th,
+    .pt-table td {
+      display: block;
+    }
+
+    .pt-table tr {
+      border-top: 1px solid var(--line-strong);
+      padding: 0.4rem 0;
+    }
+
+    .pt-table th,
+    .pt-table td {
+      border: 0;
+      padding: 0.3rem 0.85rem;
+    }
+
+    .pt-table td::before {
+      content: attr(data-col) ': ';
+      font-family: var(--font-heading);
+      font-size: var(--fs-caption);
+      font-weight: 650;
+      color: color-mix(in oklab, var(--color-brand-text) 60%, transparent);
+    }
+  }
+</style>

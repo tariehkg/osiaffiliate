@@ -1,0 +1,64 @@
+---
+/**
+ * "In this article": the h2s, as anchor links. Built from the headings
+ * Astro extracts when it renders the markdown, plus any fixed sections the
+ * page adds around it, so it can never list a heading that is not there.
+ */
+interface Props {
+  items: { text: string; slug: string }[];
+  title?: string;
+}
+
+const { items, title = 'In this article' } = Astro.props;
+---
+
+{
+  items.length > 1 && (
+    <nav class="toc" aria-label={title}>
+      <p class="toc-h">{title}</p>
+      <ol>
+        {items.map((h) => (
+          <li>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    padding: 1rem 1.15rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .toc-h {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+  }
+
+  .toc ol {
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .toc a {
+    display: block;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--color-brand-primary);
+  }
+</style>

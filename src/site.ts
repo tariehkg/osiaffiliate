@@ -5,9 +5,17 @@
  */
 export const SITE_URL = 'https://www.osiaffiliate.com';
 export const SITE_NAME = 'OSI Affiliate';
-export const SITE_TAGLINE = 'Short software shortlists, rated by the people who use them';
+export const SITE_TAGLINE = 'Business software, reviewed by staff who actually use it';
 export const SITE_DESCRIPTION =
-  'A curated directory of business software for solopreneurs and small teams: a short, editor-chosen shortlist in every category, rated by readers, with the business model stated on the page.';
+  'Independent reviews, shortlists and comparisons of business software for solopreneurs and small teams. Every tool is tested and scored by our staff, and we say plainly which links pay us.';
+
+/**
+ * The editor scores in the seed reviews were set before the staff testing
+ * round was complete. While this is true, every page that shows a score also
+ * shows a one-line note saying so, and the Review schema markup is withheld.
+ * Flip it to false once the numbers are the staff's own.
+ */
+export const SCORES_PROVISIONAL = true;
 
 /** Absolute URL for a site path. Accepts "/crm-software" or "crm-software". */
 export function absoluteUrl(path = '/'): string {

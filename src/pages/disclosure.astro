@@ -1,9 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SiteNav from '../components/SiteNav.astro';
 import PageHead from '../components/PageHead.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
 import Doc from '../components/Doc.astro';
-import SiteFooter from '../components/SiteFooter.astro';
 import Button from '../components/Button.astro';
 
 /**
@@ -21,8 +20,8 @@ import Button from '../components/Button.astro';
   title="Affiliate disclosure — OSI Affiliate"
   description="Plain-language affiliate disclosure: some links on this site can earn us a commission, it costs you nothing, and no vendor can pay for placement or a higher ranking."
 >
-  <SiteNav />
-  <main>
+  <CategoryStrip />
+  <main id="main">
     <PageHead
       title="Affiliate disclosure"
       lede="The whole disclosure is on this page, in plain words, and the part that matters is the first paragraph. Nothing important has been moved further down."
@@ -149,7 +148,6 @@ import Button from '../components/Button.astro';
       </section>
     </Doc>
   </main>
-  <SiteFooter />
 </Layout>
 
 <style>

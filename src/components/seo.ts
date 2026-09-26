@@ -2,12 +2,11 @@
  * JSON-LD builders. Each returns a plain object; Layout serialises whatever
  * it is handed in `jsonld`.
  *
- * The one rule that matters: `aggregateRating` and `review` are only ever
- * emitted from real data. In SAMPLE_MODE (see ratings.ts) the product schema
- * carries the application details and nothing about ratings.
+ * One rule matters: rating markup is only emitted from scores the staff have
+ * actually set. While SCORES_PROVISIONAL is true the product schema carries
+ * the application details and nothing about ratings.
  */
-import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, absoluteUrl } from '../site';
-import { SAMPLE_MODE, getRating, type RatingSummary } from './ratings';
+import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, SCORES_PROVISIONAL, absoluteUrl } from '../site';
 
 export interface Crumb {
   label: string;
@@ -33,7 +32,7 @@ export function websiteLd() {
     url: SITE_URL,
     potentialAction: {
       '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/?q={search_term_string}` },
+      target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/articles?q={search_term_string}` },
       'query-input': 'required name=search_term_string',
     },
   };
@@ -52,13 +51,13 @@ export function breadcrumbLd(trail: Crumb[]) {
   };
 }
 
-export interface ListedProduct {
+export interface ListedItem {
   name: string;
   url: string;
 }
 
-/** A category page is an ordered list of the products on it. */
-export function itemListLd(name: string, items: ListedProduct[]) {
+/** A shortlist or a hub is an ordered list of the things on it. */
+export function itemListLd(name: string, items: ListedItem[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -75,7 +74,6 @@ export function itemListLd(name: string, items: ListedProduct[]) {
 }
 
 export interface ProductLdInput {
-  slug: string;
   name: string;
   path: string;
   description: string;
@@ -86,7 +84,7 @@ export interface ProductLdInput {
 }
 
 export function softwareApplicationLd(p: ProductLdInput) {
-  const base: Record<string, unknown> = {
+  return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: p.name,
@@ -103,19 +101,38 @@ export function softwareApplicationLd(p: ProductLdInput) {
       availability: 'https://schema.org/OnlineOnly',
     },
   };
+}
 
-  const r: RatingSummary = getRating(p.slug);
-  if (!SAMPLE_MODE && r.count > 0) {
-    base.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: r.average,
-      ratingCount: r.count,
-      bestRating: 5,
-      worstRating: 1,
-    };
-  }
+export interface ReviewLdInput extends ProductLdInput {
+  score: number;
+  authorName: string;
+  authorPath: string;
+  authorIsPerson: boolean;
+  published: Date;
+  title: string;
+}
 
-  return base;
+/**
+ * A critic review: one author, one score. Returns null while scores are
+ * provisional, so the caller can spread it away and emit nothing.
+ */
+export function reviewLd(r: ReviewLdInput) {
+  if (SCORES_PROVISIONAL) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Review',
+    name: r.title,
+    url: absoluteUrl(r.path),
+    datePublished: r.published.toISOString(),
+    itemReviewed: softwareApplicationLd(r),
+    reviewRating: { '@type': 'Rating', ratingValue: r.score, bestRating: 5, worstRating: 1 },
+    author: {
+      '@type': r.authorIsPerson ? 'Person' : 'Organization',
+      name: r.authorName,
+      url: absoluteUrl(r.authorPath),
+    },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  };
 }
 
 export interface Faq {
@@ -135,14 +152,16 @@ export function faqPageLd(faqs: Faq[]) {
   };
 }
 
-/** Article schema for blog posts. */
+/** Article schema for everything in the articles collection. */
 export function articleLd(a: {
   title: string;
   description: string;
   path: string;
   published: Date;
+  updated?: Date;
   authorName: string;
   authorPath: string;
+  authorIsPerson: boolean;
   image?: string;
 }) {
   return {
@@ -152,7 +171,12 @@ export function articleLd(a: {
     description: a.description,
     url: absoluteUrl(a.path),
     datePublished: a.published.toISOString(),
-    author: { '@type': 'Organization', name: a.authorName, url: absoluteUrl(a.authorPath) },
+    dateModified: (a.updated ?? a.published).toISOString(),
+    author: {
+      '@type': a.authorIsPerson ? 'Person' : 'Organization',
+      name: a.authorName,
+      url: absoluteUrl(a.authorPath),
+    },
     publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     ...(a.image ? { image: a.image.startsWith('http') ? a.image : absoluteUrl(a.image) } : {}),
   };

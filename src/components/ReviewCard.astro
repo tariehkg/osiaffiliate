@@ -1,0 +1,86 @@
+---
+import ArticleThumb from './ArticleThumb.astro';
+import Score from './Score.astro';
+import { articleUrl, type Article } from './articles';
+
+/**
+ * A review as a card: thumbnail, tool name, what it is for, how you can
+ * start, and the score. The hubs and the reviews index lay these in a grid.
+ */
+interface Props {
+  review: Article;
+  as?: 'h2' | 'h3';
+}
+
+const { review, as: Heading = 'h3' } = Astro.props;
+const p = review.data.product!;
+const href = articleUrl(review);
+---
+
+<article class="rc" data-rise>
+  <a href={href} class="rc-thumb" tabindex="-1" aria-hidden="true">
+    <ArticleThumb article={review} size="sm" />
+  </a>
+  <div class="rc-body">
+    <Heading class="rc-h"><a href={href}>{p.name}</a></Heading>
+    <p class="rc-role">{p.role}</p>
+    <p class="rc-plan">{p.plan}</p>
+  </div>
+  {p.score !== undefined && <div class="rc-score"><Score score={p.score} size="sm" /></div>}
+</article>
+
+<style>
+  /* A ledger row, not a card: one hairline shared with its neighbours, no
+     radius, no shadow, no lift. */
+  .rc {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    gap: 0.9rem;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .rc-thumb {
+    display: block;
+    align-self: start;
+  }
+
+  .rc-h {
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .rc-h a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rc-h a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .rc:hover .rc-h a {
+    color: var(--color-brand-primary);
+  }
+
+  .rc-role {
+    margin-top: 0.25rem;
+    font-size: var(--fs-small);
+    line-height: 1.45;
+    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+  }
+
+  .rc-plan {
+    margin-top: 0.35rem;
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, var(--color-brand-text) 64%, transparent);
+  }
+
+  .rc-score {
+    align-self: start;
+  }
+</style>

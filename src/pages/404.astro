@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import SearchBox from '../components/SearchBox.astro';
+import ArticleFeed from '../components/ArticleFeed.astro';
+import { getArticles, ofType } from '../components/articles';
+
+const articles = await getArticles();
+const best = ofType(articles, 'best');
+---
+
+<Layout title="Page not found — OSI Affiliate" description="That page is not here. Search the site or start from a shortlist." noindex>
+  <CategoryStrip />
+  <main id="main">
+    <PageHead
+      title="That page is not here"
+      lede="The address may have changed when the site moved to staff reviews, or it may never have existed. Search for the tool or category you wanted, or start from a shortlist."
+    >
+      <div class="nf-search"><SearchBox variant="hero" id="search-404" /></div>
+    </PageHead>
+    <section class="nf">
+      <div class="wrap">
+        <ArticleFeed title="Start from a shortlist" articles={best} compact />
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .nf-search {
+    margin-top: 1.25rem;
+  }
+
+  .nf {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .nf :global(.feed) {
+    max-width: 44rem;
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+/**
+ * Previous / next and the page numbers, for the article index.
+ * Astro's `paginate()` result is passed straight in.
+ */
+interface Props {
+  page: {
+    currentPage: number;
+    lastPage: number;
+    url: { prev?: string; next?: string; first?: string };
+  };
+  /** Builds the URL for page n: n === 1 is the bare index. */
+  hrefFor: (n: number) => string;
+}
+
+const { page, hrefFor } = Astro.props;
+const pages = Array.from({ length: page.lastPage }, (_, i) => i + 1);
+---
+
+{
+  page.lastPage > 1 && (
+    <nav class="pg" aria-label="Pages">
+      {page.url.prev ? <a href={page.url.prev} class="pg-step">Newer</a> : <span class="pg-step is-off">Newer</span>}
+      <ol>
+        {pages.map((n) => (
+          <li>
+            {n === page.currentPage ? (
+              <span aria-current="page">{n}</span>
+            ) : (
+              <a href={hrefFor(n)}>{n}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+      {page.url.next ? <a href={page.url.next} class="pg-step">Older</a> : <span class="pg-step is-off">Older</span>}
+    </nav>
+  )
+}
+
+<style>
+  .pg {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+  }
+
+  .pg ol {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pg li a,
+  .pg li span {
+    display: grid;
+    place-items: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    padding-inline: 0.5rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pg li a:hover {
+    background: var(--tint);
+    color: var(--color-brand-primary);
+  }
+
+  .pg li span[aria-current] {
+    background: var(--color-brand-primary);
+    color: white;
+  }
+
+  .pg-step {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 45%, transparent);
+    text-underline-offset: 0.24em;
+  }
+
+  .pg-step:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .pg-step.is-off {
+    color: var(--color-brand-muted);
+    text-decoration: none;
+  }
+</style>

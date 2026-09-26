@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import ArticleFeed from '../components/ArticleFeed.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getArticles, ofType } from '../components/articles';
+
+/**
+ * Everything that decides between two or more tools: the head-to-heads,
+ * the alternatives lists, and the pricing guides.
+ */
+const articles = await getArticles();
+const comparisons = ofType(articles, 'comparison');
+const alternatives = ofType(articles, 'alternatives');
+const pricing = ofType(articles, 'pricing');
+---
+
+<Layout
+  title="Compare business software — OSI Affiliate"
+  description="Head-to-head comparisons, alternatives lists and pricing guides for the business software on our shortlists, written and scored by our staff."
+  path="/compare"
+>
+  <CategoryStrip />
+  <main id="main">
+    <PageHead
+      title="Compare"
+      lede="When the shortlist leaves two tools standing, these pages decide between them: what actually differs, who each one suits, and what the bill looks like a year in."
+    />
+
+    <section class="cp">
+      <div class="wrap">
+        <div class="cols">
+          <div class="cp-main">
+            <ArticleFeed title="Head to head" articles={comparisons} rowAs="h2" eagerFirst />
+            {alternatives.length > 0 && <div class="cp-sec"><ArticleFeed title="Alternatives to a tool you already use" articles={alternatives} rowAs="h2" /></div>}
+            {pricing.length > 0 && <div class="cp-sec"><ArticleFeed title="Pricing guides" articles={pricing} rowAs="h2" /></div>}
+          </div>
+          <Sidebar articles={articles} />
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .cp {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .cp-main {
+    min-width: 0;
+  }
+
+  .cp-sec {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+</style>

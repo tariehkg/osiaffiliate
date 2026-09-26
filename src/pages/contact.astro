@@ -1,9 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SiteNav from '../components/SiteNav.astro';
 import PageHead from '../components/PageHead.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
 import Doc from '../components/Doc.astro';
-import SiteFooter from '../components/SiteFooter.astro';
 import Button from '../components/Button.astro';
 
 /**
@@ -24,8 +23,8 @@ const inbox = 'hello@osiaffiliate.com';
   title="Contact — OSI Affiliate"
   description="Email OSI Affiliate with a tool suggestion, a correction to a pricing line, or a question about whether a link on the site earns us anything."
 >
-  <SiteNav />
-  <main>
+  <CategoryStrip />
+  <main id="main">
     <PageHead
       title="Contact"
       lede="One address, read by a person. There is no contact form on this page because there is no server behind this site to receive one — a form here would be decoration."
@@ -97,7 +96,6 @@ const inbox = 'hello@osiaffiliate.com';
       </section>
     </Doc>
   </main>
-  <SiteFooter />
 </Layout>
 
 <style>

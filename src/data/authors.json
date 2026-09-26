@@ -1,8 +1,29 @@
 [
   {
-    "id": "osi-affiliate",
-    "name": "OSI Affiliate",
-    "bio": "The editorial desk behind the shortlists. Posts here are desk research: vendor pricing pages and documentation read on the day of writing, with the reasoning shown and the limits stated. There is no personal byline on purpose. The judgement is the site's, and the site is what you should hold to it.",
-    "avatar": "../assets/images/authors/osi-affiliate.svg"
+    "id": "reviews-desk",
+    "name": "OSI Affiliate Reviews Desk",
+    "role": "Editorial team",
+    "bio": "The staff desk behind every review, shortlist and comparison on this site. We sign up for the tools ourselves, read the pricing page rather than the press release, and say plainly which links pay us. Where a finding rests on documentation rather than our own daily use, the page says so.",
+    "avatar": "../assets/images/authors/osi-affiliate.svg",
+    "placeholder": false,
+    "links": []
+  },
+  {
+    "id": "reviews-editor",
+    "name": "Reviews Editor",
+    "role": "Lead reviewer",
+    "bio": "Placeholder profile. Replace this entry in src/data/authors.json with the staff member who leads hands-on testing: their name, a two-sentence background, and a photo in src/assets/images/authors/. Articles they write set author: reviews-editor.",
+    "avatar": "../assets/images/authors/placeholder.svg",
+    "placeholder": true,
+    "links": []
+  },
+  {
+    "id": "software-tester",
+    "name": "Software Tester",
+    "role": "Hands-on testing",
+    "bio": "Placeholder profile. Replace this entry with the staff member who runs each tool through the scoring criteria on the methodology page: name, background, and photo. Articles they write set author: software-tester.",
+    "avatar": "../assets/images/authors/placeholder.svg",
+    "placeholder": true,
+    "links": []
   }
 ]

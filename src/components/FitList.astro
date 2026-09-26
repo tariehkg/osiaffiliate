@@ -1,0 +1,94 @@
+---
+/**
+ * "Is it for you?" — recommended if, not recommended if. Two ruled lists,
+ * one answer each, with the tick and the cross drawn as the site's own
+ * hairline glyphs.
+ */
+interface Props {
+  name: string;
+  bestFor: string[];
+  notFor: string[];
+  id?: string;
+}
+
+const { name, bestFor, notFor, id = 'fit' } = Astro.props;
+---
+
+<section class="fit" id={id} aria-labelledby={`${id}-h`}>
+  <h2 id={`${id}-h`}>Is {name} for you?</h2>
+  <div class="fit-grid">
+    <div>
+      <h3>Recommended if</h3>
+      <ul>
+        {bestFor.map((b) => (
+          <li>
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h3>Not recommended if</h3>
+      <ul>
+        {notFor.map((n) => (
+          <li>
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+            <span>{n}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fit h2 {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 650;
+  }
+
+  .fit-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem 2rem;
+    margin-top: 1rem;
+  }
+
+  .fit h3 {
+    font-size: 1rem;
+    font-weight: 650;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .fit ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fit li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: start;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.97rem;
+    line-height: 1.5;
+  }
+
+  .fit svg {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.2rem;
+    color: var(--color-brand-primary);
+  }
+
+  @media (min-width: 40rem) {
+    .fit-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

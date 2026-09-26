@@ -1,0 +1,209 @@
+---
+import { Image } from 'astro:assets';
+import { categories } from './data';
+import { authorUrl, ofType, type Article, type Author } from './articles';
+
+/**
+ * Who does the work, and how much of it there is. The one inverted section
+ * on the homepage besides the footer.
+ *
+ * Every number is counted from the articles collection at build time. There
+ * is no "hours tested" figure, because nobody here has measured one; the
+ * day the desk logs its testing hours, that is the number to add.
+ */
+interface Props {
+  articles: Article[];
+  authors: Author[];
+}
+
+const { articles, authors } = Astro.props;
+
+const stats = [
+  { n: ofType(articles, 'review').length, label: 'tools reviewed and scored' },
+  { n: 5, label: 'criteria scored on every tool' },
+  { n: categories.length, label: 'software categories covered' },
+  { n: ofType(articles, 'comparison').length + ofType(articles, 'alternatives').length, label: 'head-to-heads and alternatives lists' },
+];
+---
+
+<section class="ts" aria-labelledby="ts-h">
+  <div class="wrap ts-in">
+    <div class="ts-copy">
+      <h2 id="ts-h">Reviewed by staff, not by a crowd.</h2>
+      <p>
+        Every review on this site is written by a member of our desk who signed up for the tool,
+        ran it against the same five criteria, and wrote down what they found. No reader ratings,
+        no vendor-supplied copy, and the reasons to skip a tool get the same weight as the reasons
+        to buy it.
+      </p>
+      <p class="ts-links">
+        <a href="/how-we-pick" class="tlink">How we test and score</a>
+        <a href="/about" class="tlink">Meet the team</a>
+      </p>
+
+      <ul class="ts-staff" aria-label="The reviews desk">
+        {
+          authors.filter((a) => !a.data.placeholder).map((a) => (
+            <li>
+              <a href={authorUrl(a.id)}>
+                <Image src={a.data.avatar} alt="" width={44} height={44} quality={80} />
+                <span>
+                  <b>{a.data.name}</b>
+                  <small>{a.data.role}</small>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <ul class="ts-stats" aria-label="What is on the site">
+      {
+        stats.map((s, i) => (
+          <li data-rise style={`transition-delay:${i * 80}ms`}>
+            <b>{s.n}</b>
+            <span>{s.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ts {
+    background: var(--color-brand-secondary);
+    color: white;
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .ts-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .ts h2 {
+    font-size: var(--fs-h2);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    max-width: 16ch;
+  }
+
+  .ts-copy > p {
+    margin-top: 1rem;
+    max-width: 54ch;
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    color: color-mix(in oklab, white 78%, transparent);
+  }
+
+  .ts-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-weight: var(--fw-medium);
+  }
+
+  .ts-links a {
+    color: white;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-accent) 70%, transparent);
+  }
+
+  .ts-links a:hover {
+    color: var(--color-brand-accent);
+  }
+
+  .ts-staff {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 1.75rem 0 0;
+    padding: 1.25rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--line-invert);
+  }
+
+  .ts-staff a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ts-staff :global(img) {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0.35rem;
+    border-radius: 3px;
+    background: white;
+  }
+
+  .ts-staff span {
+    display: grid;
+  }
+
+  .ts-staff b {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .ts-staff small {
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, white 62%, transparent);
+  }
+
+  .ts-staff a:hover b {
+    color: var(--color-brand-accent);
+  }
+
+
+  /* Four counted facts as a lattice of cells on navy. */
+  .ts-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: var(--line-invert);
+    border: 1px solid var(--line-invert);
+  }
+
+  .ts-stats li {
+    display: grid;
+    gap: 0.35rem;
+    padding: clamp(1.1rem, 2.5vw, 1.6rem);
+    background: var(--color-brand-secondary);
+  }
+
+  .ts-stats b {
+    font-family: var(--font-heading);
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: white;
+  }
+
+  .ts-stats li:first-child b {
+    color: var(--color-brand-accent);
+  }
+
+  .ts-stats span {
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    color: color-mix(in oklab, white 72%, transparent);
+  }
+
+  @media (min-width: 60rem) {
+    .ts-in {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    }
+  }
+</style>

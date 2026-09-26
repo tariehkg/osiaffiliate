@@ -1,0 +1,90 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import ProvisionalNote from '../components/ProvisionalNote.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { categories } from '../components/data';
+import { getArticles, topRated } from '../components/articles';
+
+/**
+ * Every review on the site, grouped by category and ordered by score.
+ */
+const articles = await getArticles();
+const groups = categories
+  .map((c) => ({ category: c, reviews: topRated(articles, c.id) }))
+  .filter((g) => g.reviews.length > 0);
+const total = groups.reduce((n, g) => n + g.reviews.length, 0);
+---
+
+<Layout
+  title="All software reviews — OSI Affiliate"
+  description={`${total} business software tools reviewed and scored by our staff, grouped by category and ordered by score.`}
+  path="/reviews"
+>
+  <CategoryStrip />
+  <main id="main">
+    <PageHead
+      title="Every tool we have reviewed"
+      lede={`${total} tools across ${groups.length} categories, each with a full staff review, a score out of five on the same five criteria, and a plain reason to skip it.`}
+    >
+      <div class="rv-prov"><ProvisionalNote /></div>
+    </PageHead>
+
+    <section class="rv">
+      <div class="wrap">
+        <div class="cols">
+          <div class="rv-main">
+            {
+              groups.map((g) => (
+                <section class="rv-group" aria-labelledby={`rv-${g.category.id}`}>
+                  <h2 class="sec-h" id={`rv-${g.category.id}`}>
+                    <a href={g.category.hub}>{g.category.name}</a>
+                  </h2>
+                  <div class="rv-grid">
+                    {g.reviews.map((r) => <ReviewCard review={r} />)}
+                  </div>
+                </section>
+              ))
+            }
+          </div>
+          <Sidebar articles={articles} />
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .rv-prov {
+    margin-top: 1rem;
+  }
+
+  .rv {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .rv-main {
+    min-width: 0;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .rv-group h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .rv-group h2 a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .rv-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+</style>

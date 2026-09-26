@@ -1,0 +1,331 @@
+---
+/**
+ * Site search. One component, three sizes: the hero's wide field, the nav's
+ * compact one and the sidebar's.
+ *
+ * It matches what you type against the index Layout renders into the page
+ * (every hub and every published article) and shows the best matches under
+ * the field as you type; Enter goes to the top match. With no JS the form
+ * falls back to a plain GET of /articles?q=…, and that page filters itself
+ * from the same index, so a search URL is shareable and still resolves.
+ */
+interface Props {
+  variant?: 'hero' | 'nav' | 'side';
+  placeholder?: string;
+  id?: string;
+}
+
+const {
+  variant = 'side',
+  placeholder = 'Search reviews, tools, categories…',
+  id = `search-${variant}`,
+} = Astro.props;
+---
+
+<form class:list={['sb', `is-${variant}`]} role="search" action="/articles" method="get" data-search autocomplete="off">
+  <label class="sr" for={id}>Search the site</label>
+  <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <circle cx="10.5" cy="10.5" r="6.75"></circle>
+    <path d="M15.6 15.6 L20.5 20.5"></path>
+  </svg>
+  <input class="sb-q" id={id} name="q" type="search" placeholder={placeholder} enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls={`${id}-list`} aria-expanded="false" />
+  <button class="sb-go" type="submit" tabindex={variant === 'nav' ? -1 : undefined}>Search</button>
+  <ul class="sb-list" id={`${id}-list`} role="listbox" hidden></ul>
+</form>
+
+<style>
+  .sb {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    background: white;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    transition:
+      border-color 0.18s var(--ease),
+      box-shadow 0.18s var(--ease);
+  }
+
+  .sb:focus-within {
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand-primary) 20%, transparent);
+  }
+
+  .sb-icon {
+    flex: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    color: color-mix(in oklab, var(--color-brand-text) 46%, transparent);
+  }
+
+  .sb-q {
+    flex: 1 1 auto;
+    min-width: 0;
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 0.55rem 0;
+    font-size: 0.97rem;
+  }
+
+  .sb-q:focus,
+  .sb-q:focus-visible {
+    outline: none;
+  }
+
+  .sb-q::placeholder {
+    color: color-mix(in oklab, var(--color-brand-text) 62%, transparent);
+  }
+
+  .sb-q::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
+  .sb-go {
+    flex: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.55rem 1.05rem;
+    background: var(--color-brand-primary);
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .sb-go:hover {
+    background: var(--color-primary-dark);
+  }
+
+  /* Sizes */
+  .is-hero {
+    max-width: 34rem;
+    padding: 0.4rem 0.45rem 0.4rem 1.05rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .is-hero .sb-q {
+    padding-block: 0.8rem;
+    font-size: 1.01rem;
+  }
+
+  .is-hero .sb-go {
+    padding: 0.7rem 1.4rem;
+    font-size: 0.95rem;
+  }
+
+  .is-nav {
+    width: clamp(11rem, 18vw, 16rem);
+    padding: 0.15rem 0.2rem 0.15rem 0.8rem;
+    background: color-mix(in oklab, var(--color-brand-surface) 70%, white);
+  }
+
+  .is-nav .sb-q {
+    padding-block: 0.45rem;
+    font-size: 0.9rem;
+  }
+
+  .is-nav .sb-go {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .is-side {
+    padding: 0.3rem 0.35rem 0.3rem 0.9rem;
+  }
+
+  /* Results, drawn under the field in the page's own paper. */
+  .sb-list {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    left: 0;
+    right: 0;
+    z-index: 70;
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+    background: var(--color-brand-bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .sb-list[hidden] {
+    display: none;
+  }
+
+  .sb-list :global(a) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    text-decoration: none;
+    color: var(--color-brand-text);
+  }
+
+  .sb-list :global([aria-selected='true'] a),
+  .sb-list :global(a:hover) {
+    background: var(--tint);
+    color: var(--color-brand-primary);
+  }
+
+  .sb-list :global(small) {
+    flex: none;
+    font-size: var(--fs-caption);
+    color: var(--color-brand-muted);
+  }
+
+  .sb-list :global(.sb-none) {
+    padding: 0.55rem 0.7rem;
+    font-size: 0.9rem;
+    color: var(--color-brand-muted);
+  }
+</style>
+
+<script>
+  type Entry = { t: string; u: string; k: string; x: string[] };
+
+  let index: Entry[] = [];
+  try {
+    index = JSON.parse(document.getElementById('site-index')?.textContent ?? '[]');
+  } catch {
+    /* Suggestions stay off; the plain GET to /articles still works. */
+  }
+
+  const kindLabel: Record<string, string> = {
+    hub: 'Category',
+    review: 'Review',
+    best: 'Best of',
+    alternatives: 'Alternatives',
+    pricing: 'Pricing',
+    comparison: 'Head to head',
+    guide: 'Guide',
+  };
+
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+  /** How well one term answers the query. 0 means it does not. */
+  function score(term: string, q: string): number {
+    const t = norm(term);
+    if (!t) return 0;
+    if (t === q) return 6;
+    if (t.startsWith(q)) return 5;
+    if (t.split(' ').some((w) => w.startsWith(q))) return 4;
+    if (t.includes(q)) return 3;
+    const words = q.split(' ').filter(Boolean);
+    if (words.length > 1 && words.every((w) => t.includes(w))) return 2;
+    return 0;
+  }
+
+  export function search(raw: string, limit = 6): Entry[] {
+    const q = norm(raw);
+    if (q.length < 2) return [];
+    const scored = index
+      .map((e) => {
+        const s = Math.max(score(e.t, q), ...e.x.map((x) => score(x, q) - 0.5));
+        /* A tie goes to the category hub, then to a review, then by title length. */
+        const kind = e.k === 'hub' ? 2 : e.k === 'review' ? 1 : 0;
+        return { e, s, kind };
+      })
+      .filter((r) => r.s > 0)
+      .sort((a, b) => b.s - a.s || b.kind - a.kind || a.e.t.length - b.e.t.length);
+    return scored.slice(0, limit).map((r) => r.e);
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-search]')) {
+    const input = form.querySelector<HTMLInputElement>('input[name=q]')!;
+    const list = form.querySelector<HTMLUListElement>('.sb-list')!;
+    let results: Entry[] = [];
+    let active = -1;
+
+    function render() {
+      list.innerHTML = '';
+      active = -1;
+      input.removeAttribute('aria-activedescendant');
+      if (!input.value.trim()) {
+        list.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+        return;
+      }
+      if (!results.length) {
+        list.innerHTML = '<li class="sb-none" role="status">Nothing matches. Try a tool name or a category.</li>';
+      } else {
+        results.forEach((r, i) => {
+          const li = document.createElement('li');
+          li.setAttribute('role', 'option');
+          li.id = `${input.id}-opt-${i}`;
+          li.setAttribute('aria-selected', 'false');
+          const a = document.createElement('a');
+          a.href = r.u;
+          a.textContent = r.t;
+          const small = document.createElement('small');
+          small.textContent = kindLabel[r.k] ?? r.k;
+          a.append(small);
+          li.append(a);
+          list.append(li);
+        });
+      }
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    function highlight(i: number) {
+      const options = list.querySelectorAll<HTMLLIElement>('[role=option]');
+      options.forEach((li, n) => li.setAttribute('aria-selected', String(n === i)));
+      const current = options[i];
+      if (current) input.setAttribute('aria-activedescendant', current.id);
+      else input.removeAttribute('aria-activedescendant');
+      active = i;
+    }
+
+    input.addEventListener('input', () => {
+      results = search(input.value);
+      render();
+    });
+
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'ArrowDown' && results.length) {
+        ev.preventDefault();
+        highlight(Math.min(active + 1, results.length - 1));
+      } else if (ev.key === 'ArrowUp' && results.length) {
+        ev.preventDefault();
+        highlight(Math.max(active - 1, 0));
+      } else if (ev.key === 'Escape') {
+        list.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    form.addEventListener('submit', (ev) => {
+      const q = input.value.trim();
+      if (!q) {
+        ev.preventDefault();
+        input.focus();
+        return;
+      }
+      const pick = active >= 0 ? results[active] : search(q, 1)[0];
+      if (pick) {
+        ev.preventDefault();
+        window.location.assign(pick.u);
+      }
+      /* Otherwise the plain GET to /articles?q= runs and that page filters. */
+    });
+
+    document.addEventListener('click', (ev) => {
+      if (!form.contains(ev.target as Node)) {
+        list.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+</script>

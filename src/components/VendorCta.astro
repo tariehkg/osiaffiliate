@@ -1,0 +1,22 @@
+---
+/**
+ * The outbound button to a vendor. Always says where it goes, opens in a
+ * new tab, and is marked sponsored so search engines know some of these
+ * links can pay us. The label is the vendor's domain, never "Get started".
+ */
+interface Props {
+  href: string;
+  label: string;
+  variant?: 'solid' | 'line';
+  class?: string;
+}
+
+const { href, label, variant = 'solid', class: cls = '' } = Astro.props;
+---
+
+<a href={href} class:list={['pill', `pill-${variant}`, cls]} rel="nofollow sponsored noopener" target="_blank">
+  {label}
+  <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" width="14" height="14">
+    <path d="M6 3h7v7M13 3 5 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</a>

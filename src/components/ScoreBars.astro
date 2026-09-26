@@ -1,0 +1,160 @@
+---
+import Score from './Score.astro';
+import { fmtScore } from './articles';
+
+/**
+ * The scoring table on a review: one row per criterion with the score drawn
+ * as a bar, then the overall. The criteria are the same five on every
+ * review, so two reviews can be read side by side.
+ */
+interface Props {
+  criteria: { label: string; score: number; note?: string }[];
+  overall: number;
+  name: string;
+  id?: string;
+}
+
+const { criteria, overall, name, id = 'scores' } = Astro.props;
+---
+
+<section class="sbars" id={id} aria-labelledby={`${id}-h`}>
+  <h2 id={`${id}-h`}>How we scored {name}</h2>
+  <p class="sb-lede">
+    Five criteria, each scored out of five by the reviewer, weighted equally. The{' '}
+    <a href="/how-we-pick" class="tlink">methodology page</a> says what each one measures.
+  </p>
+
+  <dl class="sb-rows">
+    {
+      criteria.map((c) => (
+        <div class="sb-row">
+          <dt>
+            <span class="sb-label">{c.label}</span>
+            {c.note && <span class="sb-note">{c.note}</span>}
+          </dt>
+          <dd>
+            <span class="sb-track" aria-hidden="true">
+              <span class="sb-fill" style={`width:${(c.score / 5) * 100}%`}></span>
+            </span>
+            <span class="sb-n">{fmtScore(c.score)}</span>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <div class="sb-overall">
+    <div>
+      <p class="sb-overall-h">Overall</p>
+      <p class="sb-overall-b">The mean of the five, to one decimal.</p>
+    </div>
+    <Score score={overall} size="lg" label="Editor's score" />
+  </div>
+</section>
+
+<style>
+  .sbars h2 {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 650;
+  }
+
+  .sb-lede {
+    margin-top: 0.6rem;
+    max-width: 60ch;
+    font-size: 0.97rem;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  .sb-rows {
+    margin: 1.25rem 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sb-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem 1.5rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sb-row dt {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .sb-label {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .sb-note {
+    font-size: var(--fs-caption);
+    line-height: 1.45;
+    color: color-mix(in oklab, var(--color-brand-text) 62%, transparent);
+    max-width: 52ch;
+  }
+
+  .sb-row dd {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .sb-track {
+    flex: 1 1 auto;
+    height: 0.375rem;
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .sb-fill {
+    display: block;
+    height: 100%;
+    background: var(--color-brand-primary);
+  }
+
+  .sb-n {
+    flex: none;
+    width: 2.2rem;
+    text-align: right;
+    font-family: var(--font-heading);
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
+  }
+
+  .sb-overall {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .sb-overall-h {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 650;
+  }
+
+  .sb-overall-b {
+    margin-top: 0.2rem;
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, var(--color-brand-text) 62%, transparent);
+  }
+
+  @media (min-width: 40rem) {
+    .sb-row {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      align-items: center;
+    }
+  }
+</style>

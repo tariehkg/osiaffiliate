@@ -1,151 +1,51 @@
 ---
 import Mark from './Mark.astro';
-import Button from './Button.astro';
-import { categories } from './data';
-import { directoryTotals } from './directory-taxonomy';
-import { totalRatings } from './ratings';
+import SearchBox from './SearchBox.astro';
+import { ofType, type Article } from './articles';
 
 /**
- * Hero.
+ * The homepage opening. Painted by CSS alone: no reveal, no script, because
+ * it is above the fold on every viewport.
  *
- * No entrance animation and no [data-rise] attribute anywhere in here: this
- * block is above the fold on every viewport, so it is painted by CSS alone
- * and cannot be blanked by a slow script.
- *
- * The search field is back, and this time it works. It matches what you type
- * against the real category and product names in `data.ts` (plus the standard
- * category names in `directory-taxonomy.ts` for the five that are live) and
- * sends you to that category's hub, or straight to a single product's own
- * section on it. Nothing matched goes to the category wall further down the
- * page, which is the honest answer: here is everything there is.
- *
- * It degrades in the right order. The <datalist> is real, server-rendered
- * autocomplete from the same names the matcher uses, so the field suggests
- * only queries that resolve. With no JS the form falls back to a plain GET of
- * `/?q=…`, and the script re-reads that parameter on load, so a search URL is
- * shareable and still resolves.
- *
- * The mark takes the slot the old illustration had. That drawing explained the
- * previous logo's idea, and the logo it explained is gone.
- *
- * The section's background is the same mark at ~1000px, cropped by the section
- * box so only its top-left corner sweep is in frame, sitting under a cool
- * paper-to-tint gradient and one soft cobalt glow. Same component, same
- * geometry — no second drawing of the brand to keep in sync. The readable mark
- * is then placed inside that giant counter rather than centred on it: the small
- * one reads as the answer sitting inside the larger shape, and it is doing
- * something in the layout instead of hovering in blank space.
- *
- * Mobile is composed rather than inherited. The crisp mark steps aside (the nav
- * already carries one at that width), the ghost is re-anchored so its corner
- * sweep crops into the top-right behind the headline, and the disclosure note
- * that sits beside the mark on desktop becomes the block that closes the hero.
+ * The phrase stays. What changed underneath it is the promise: reviews by
+ * staff who signed up for the tools, not ratings collected from readers.
+ * The three counts are read from the articles collection, so they cannot
+ * drift from what is actually published.
  */
-
 interface Props {
-  headlineTop?: string;
-  headlineBottom?: string;
-  subheadline?: string;
-  searchPlaceholder?: string;
-  searchLabel?: string;
-  howWePickLabel?: string;
-  howWePickHref?: string;
-  noteText?: string;
-  noteLinkLabel?: string;
-  noteLinkHref?: string;
+  articles: Article[];
 }
 
-const {
-  headlineTop = 'Where you find',
-  headlineBottom = 'the right software.',
-  subheadline = 'Five categories. A short shortlist in each, chosen by editors, rated by the people who use the tools, with the reasoning behind every pick.',
-  searchPlaceholder = 'Search HubSpot, CRM, email marketing…',
-  searchLabel = 'Search',
-  howWePickLabel = 'How we pick',
-  howWePickHref = '/how-we-pick',
-  noteText = 'Some links here pay us a commission. We say which ones.',
-  noteLinkLabel = 'The disclosure',
-  noteLinkHref = '/disclosure',
-} = Astro.props;
+const { articles } = Astro.props;
 
-/* Both drawn from the real index below, so neither can drift into fiction. */
-const suggestions = [
-  ...categories.map((c) => c.name),
-  ...categories.flatMap((c) => c.picks.map((p) => p.name)),
-];
-
-/* Counted from the real data, so the numbers cannot drift. */
 const stats = [
-  { n: categories.length, label: 'categories' },
-  { n: categories.reduce((t, c) => t + c.picks.length, 0), label: 'picks' },
-  { n: totalRatings(categories.flatMap((c) => c.picks.map((p) => p.slug))), label: 'reader ratings' },
+  { n: ofType(articles, 'review').length, label: 'staff reviews' },
+  { n: ofType(articles, 'best').length, label: 'shortlists' },
+  { n: ofType(articles, 'comparison').length + ofType(articles, 'alternatives').length, label: 'comparisons' },
 ];
 ---
 
 <section class="hero">
-  <!-- Background only. The mark is the site's own geometry, so the texture
-       behind the headline is that shape at scale rather than an invented
-       pattern; the section box does the cropping. -->
   <div class="hero-bg" aria-hidden="true">
-    <!-- The inner frame is the same max-width as `.wrap`, so the ghost is
-         placed against the layout's right edge rather than the viewport's and
-         stays locked to the mark beside it at every width. -->
     <div class="hero-bg-frame">
-      <div class="hero-ghost"><Mark size={1000} /></div>
+      <div class="hero-ghost"><Mark size={900} /></div>
     </div>
   </div>
 
   <div class="wrap hero-inner">
     <div class="hero-copy">
-      <h1 class="hero-h">
-        {headlineTop}<br />
-        {headlineBottom}
-      </h1>
-
-      <p class="hero-sub">{subheadline}</p>
-
-      <form class="hero-search" id="hero-search" role="search">
-        <label class="sr" for="hero-q">Search categories and tools</label>
-
-        <svg
-          class="hero-search-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.1"
-          stroke-linecap="round"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <circle cx="10.5" cy="10.5" r="6.75"></circle>
-          <path d="M15.6 15.6 L20.5 20.5"></path>
-        </svg>
-
-        <input
-          class="hero-q"
-          id="hero-q"
-          name="q"
-          type="search"
-          list="hero-suggest"
-          placeholder={searchPlaceholder}
-          autocomplete="off"
-          enterkeyhint="search"
-        />
-
-        <Button type="submit" variant="solid" class="hero-search-go">{searchLabel}</Button>
-      </form>
-
-      <datalist id="hero-suggest">
-        {suggestions.map((s) => <option value={s} />)}
-      </datalist>
-
-      <p class="hero-links">
-        <a href={howWePickHref} class="tlink">{howWePickLabel}</a>
-        <a href="/rate" class="tlink">Rate a tool</a>
-        <a href="#directory" class="tlink">All {directoryTotals.entries} categories</a>
+      <h1 class="hero-h" data-enter style="--enter-i:0">Where you find<br />the right software.</h1>
+      <p class="hero-sub" data-enter style="--enter-i:1">
+        Independent reviews of business software for solopreneurs and small teams. Our staff sign up,
+        test each tool against the same criteria, and write down what they found, including the reasons
+        to skip it.
       </p>
 
-      <ul class="hero-stats" aria-label="What is on the site">
+      <div class="hero-search" data-enter style="--enter-i:2">
+        <SearchBox variant="hero" id="search-hero" placeholder="Search HubSpot, CRM, email marketing…" />
+      </div>
+
+      <ul class="hero-stats" aria-label="What is on the site" data-enter style="--enter-i:3">
         {stats.map((s) => (
           <li>
             <b>{s.n}</b>
@@ -155,20 +55,12 @@ const stats = [
       </ul>
     </div>
 
-    <!-- Wrapped rather than class-passed: a class handed to Mark lands on the
-         same element Mark styles itself, at the same specificity, so which one
-         wins comes down to bundle order. -->
-    <div class="hero-aside">
-      <div class="hero-mark">
-        <Mark size={232} />
-      </div>
-
-      <!-- The differentiator, above the fold, in one sentence. Marked with the
-           amber rule this site uses for the thing it wants read — the same
-           device as the full disclosure note on the category pages. -->
+    <div class="hero-aside" data-enter style="--enter-i:2">
+      <div class="hero-mark"><Mark size={160} /></div>
       <p class="hero-note">
-        {noteText}
-        <a href={noteLinkHref} class="tlink">{noteLinkLabel}</a>
+        Some links here pay us a commission. We say which ones, and a commission has never moved a
+        score.
+        <a href="/disclosure" class="tlink">The disclosure</a>
       </p>
     </div>
   </div>
@@ -178,18 +70,15 @@ const stats = [
   .hero {
     position: relative;
     isolation: isolate;
-    padding-block: clamp(3.25rem, 8vw, 6rem) clamp(3.25rem, 6vw, 5.25rem);
-
-    /* Two layers: one cool wash that lifts the top of the page off the flat
-       paper below it, and one soft cobalt glow sitting behind the mark so the
-       right half of the section has somewhere for the eye to land. */
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2.25rem, 4.5vw, 3.5rem);
     background:
       radial-gradient(
         46% 40% at 96% 2%,
         color-mix(in oklab, var(--color-brand-primary) 10%, transparent),
         transparent 74%
       ),
-      linear-gradient(180deg, var(--surface-alt) 0%, var(--color-brand-bg) 38%);
+      linear-gradient(180deg, var(--surface-alt) 0%, var(--color-brand-bg) 48%);
+    border-bottom: 1px solid var(--line);
   }
 
   .hero-bg {
@@ -207,17 +96,10 @@ const stats = [
     margin-inline: auto;
   }
 
-  /* Cropped hard by .hero-bg, and the mask is the point: unmasked, a 190px
-     stroke at low opacity still has a hard edge, and a hard edge behind body
-     copy reads as a stray panel rather than as ground.
-     Narrow frames crop the mark's top-right corner — the one place the 45°
-     colour seam actually shows — into the top-right of the frame, fading down
-     and to the left out of the reading column. The two-column desktop layout
-     below has the room for the other corner, and takes it. */
   .hero-ghost {
     position: absolute;
-    right: -11.9rem;
-    top: -12rem;
+    right: -11rem;
+    top: -11rem;
     opacity: 0.1;
     mask-image: radial-gradient(
       44% 62% at 100% 4%,
@@ -231,104 +113,34 @@ const stats = [
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-items: center;
-    gap: clamp(2.5rem, 5vw, 4rem);
+    gap: clamp(2rem, 5vw, 4rem);
   }
 
   .hero-h {
-    font-size: clamp(2.45rem, 6.5vw, 5rem);
+    font-size: clamp(2.5rem, 6.2vw, 5.25rem);
     font-weight: var(--fw-bold);
-    letter-spacing: -0.042em;
-    line-height: 1.01;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
     max-width: 22ch;
   }
 
   .hero-sub {
-    margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
-    max-width: 46ch;
+    margin-top: clamp(1rem, 2.2vw, 1.4rem);
+    max-width: 52ch;
     font-size: var(--fs-lede);
     line-height: 1.55;
     font-weight: var(--fw-light);
     color: color-mix(in oklab, var(--color-brand-text) 78%, transparent);
   }
 
-  /* --- the search field ------------------------------------------------- */
-
-  /* Solid border, not the dashed one the site uses to mark a dead control:
-     this one submits. */
   .hero-search {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 34rem;
-    margin-top: clamp(1.6rem, 3.2vw, 2.25rem);
-    padding: 0.4rem 0.45rem 0.4rem 1.05rem;
-    background: white;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color 0.18s var(--ease),
-      box-shadow 0.18s var(--ease);
+    margin-top: clamp(1.4rem, 3vw, 2rem);
   }
-
-  /* Focus lives on the whole field rather than the bare input inside it, so
-     the ring surrounds the control a keyboard user is actually in. */
-  .hero-search:focus-within {
-    border-color: var(--color-brand-primary);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand-primary) 20%, transparent);
-  }
-
-  .hero-search-icon {
-    flex: none;
-    width: 1.15rem;
-    height: 1.15rem;
-    color: color-mix(in oklab, var(--color-brand-text) 46%, transparent);
-  }
-
-  .hero-q {
-    flex: 1 1 auto;
-    min-width: 0;
-    appearance: none;
-    border: 0;
-    background: none;
-    padding: 0.8rem 0;
-    font-size: 1.01rem;
-  }
-
-  .hero-q:focus,
-  .hero-q:focus-visible {
-    outline: none;
-  }
-
-  .hero-q::placeholder {
-    color: color-mix(in oklab, var(--color-brand-text) 50%, transparent);
-  }
-
-  .hero-search-go {
-    flex: none;
-    padding: 0.7rem 1.4rem;
-  }
-
-  .hero-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.75rem;
-    margin-top: 1.4rem;
-    font-size: var(--fs-small);
-    font-weight: var(--fw-medium);
-  }
-
-  .hero-links a {
-    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 55%, transparent);
-  }
-
-  /* --- the right-hand column -------------------------------------------- */
 
   .hero-aside {
     display: flex;
     flex-direction: column;
-    gap: 1.6rem;
+    gap: 1.4rem;
   }
 
   .hero-note {
@@ -346,101 +158,29 @@ const stats = [
     text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 55%, transparent);
   }
 
-  /* Mobile composition: no crisp mark (the nav has one four lines above),
-     and the note carries the right-hand column's job down here instead. */
   .hero-mark {
     display: none;
   }
 
-  @media (min-width: 72rem) {
-    /* Desktop: the giant mark is anchored into the hero's bottom-right corner
-       so its own corner radius lands where the readable mark sits. The small
-       one is then nested at the big one's corner — the same shape at two
-       scales, offset rather than concentric, which is the one relationship
-       between them that reads as a decision. */
-    .hero-ghost {
-      /* Measured off the frame's right edge: the aside column is 17rem wide
-         inside the gutter, so this lands the giant mark's corner just outside
-         the readable mark's own top-left corner. */
-      right: calc(var(--gutter) - 39rem);
-      top: auto;
-      bottom: -29rem;
-      opacity: 0.18;
-      mask-image: radial-gradient(
-        21% 21% at 13% 13%,
-        black 0%,
-        color-mix(in oklab, black 44%, transparent) 46%,
-        transparent 88%
-      );
-    }
-
-    .hero-inner {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
-      align-items: end;
-    }
-
-    .hero-copy {
-      padding-bottom: 0.5rem;
-    }
-
-    .hero-mark {
-      display: block;
-    }
-
-    /* Pulled up and left so the readable mark lands inside the ghost's
-       counter rather than beside it — the two are one lockup, offset, not
-       a small copy centred on a big one. */
-    .hero-aside {
-      justify-self: end;
-      align-items: start;
-      gap: 2.4rem;
-      transform: translate(-0.5rem, -1.5rem);
-    }
-  }
-
-  @media (max-width: 34rem) {
-    .hero-links {
-      gap: 0.7rem 1.25rem;
-    }
-
-    .hero-search {
-      padding-left: 0.85rem;
-    }
-
-    .hero-q {
-      font-size: 0.97rem;
-    }
-
-    .hero-search-go {
-      padding: 0.68rem 1.05rem;
-      font-size: 0.9rem;
-    }
-
-    .hero-note {
-      max-width: 40ch;
-      margin-top: 0.4rem;
-    }
-  }
-
-  /* Three counted facts, in the same ruled strip the About page uses. */
   .hero-stats {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
-    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+    margin: clamp(1.4rem, 3vw, 2rem) 0 0;
     padding: 0;
     list-style: none;
+    max-width: 30rem;
     background: var(--line);
     border: 1px solid var(--line);
-    width: fit-content;
   }
 
   .hero-stats li {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.45rem;
+    gap: 0.2rem 0.45rem;
     background: var(--color-brand-bg);
-    padding: 0.6rem 1rem;
+    padding: 0.55rem 0.9rem;
   }
 
   .hero-stats b {
@@ -456,162 +196,41 @@ const stats = [
     font-size: var(--fs-caption);
     color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
   }
+
+  @media (min-width: 72rem) {
+    .hero-ghost {
+      right: calc(var(--gutter) - 36rem);
+      top: auto;
+      bottom: -27rem;
+      opacity: 0.22;
+      mask-image: radial-gradient(
+        21% 21% at 13% 13%,
+        black 0%,
+        color-mix(in oklab, black 44%, transparent) 46%,
+        transparent 88%
+      );
+    }
+
+    .hero-inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 16rem);
+      align-items: end;
+    }
+
+    .hero-mark {
+      display: block;
+    }
+
+    .hero-aside {
+      justify-self: end;
+      align-items: start;
+      gap: 2.2rem;
+      transform: translate(-0.5rem, -1rem);
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .hero-note {
+      max-width: 40ch;
+    }
+  }
 </style>
-
-<script>
-  import { categories } from './data';
-  import { directoryGroups } from './directory-taxonomy';
-
-  /**
-   * The search index, built at bundle time from the same two data files the
-   * page renders from. Every entry resolves to a page that exists: a category
-   * hub, or one pick's anchored section on its hub.
-   */
-  type Target = { url: string; kind: 'category' | 'pick'; terms: string[] };
-
-  const targets: Target[] = [];
-  const hubs = new Map<string, Target>();
-
-  for (const c of categories) {
-    const hub: Target = { url: c.hub, kind: 'category', terms: [c.name, c.short] };
-    targets.push(hub);
-    hubs.set(c.hub, hub);
-
-    for (const p of c.picks) {
-      targets.push({ url: `${c.hub}#${p.slug}`, kind: 'pick', terms: [p.name] });
-    }
-  }
-
-  /* The five live entries in the wall carry the standard industry name for the
-     same category ("SEO Software" for "SEO & Marketing Tools"). Those are what
-     people actually type, so they are terms on the hub they already point at. */
-  for (const group of directoryGroups) {
-    for (const entry of group.entries) {
-      const hub = entry.href ? hubs.get(entry.href) : undefined;
-      if (hub) hub.terms.push(entry.name);
-    }
-  }
-
-  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-
-  /** How well one name answers the query. 0 means it does not. */
-  function score(term: string, q: string): number {
-    const t = norm(term);
-    if (!t) return 0;
-    if (t === q) return 5;
-    if (t.startsWith(q)) return 4;
-    if (t.split(' ').some((w) => w.startsWith(q))) return 3;
-    if (t.includes(q)) return 2;
-
-    const words = q.split(' ').filter(Boolean);
-    if (words.length > 1 && words.every((w) => t.includes(w))) return 1;
-    return 0;
-  }
-
-  /** The best real destination for a query, or null if nothing matches. */
-  function resolve(raw: string): string | null {
-    const q = norm(raw);
-    if (q.length < 2) return null;
-
-    let bestUrl: string | null = null;
-    let bestScore = 0;
-    let bestKind = 0;
-    let bestLength = Infinity;
-
-    for (const target of targets) {
-      let s = 0;
-      let length = Infinity;
-
-      for (const term of target.terms) {
-        const termScore = score(term, q);
-        if (termScore > s || (termScore === s && termScore > 0 && term.length < length)) {
-          s = termScore;
-          length = term.length;
-        }
-      }
-
-      if (s === 0) continue;
-
-      /* A tie goes to the category over one of its picks — "crm" wants the
-         shortlist, not whichever pick happens to have CRM in its name — and
-         then to the shorter, more exact name. */
-      const kind = target.kind === 'category' ? 1 : 0;
-      const better =
-        s > bestScore ||
-        (s === bestScore && kind > bestKind) ||
-        (s === bestScore && kind === bestKind && length < bestLength);
-
-      if (better) {
-        bestUrl = target.url;
-        bestScore = s;
-        bestKind = kind;
-        bestLength = length;
-      }
-    }
-
-    return bestUrl;
-  }
-
-  /** Nothing matched: the wall of every category is the useful dead end. */
-  const FALLBACK = '#directory';
-
-  function go(url: string, replace: boolean) {
-    if (url.startsWith('#')) {
-      const el = document.querySelector(url);
-      if (!el) {
-        window.location.replace(`/${url}`);
-        return;
-      }
-
-      history.replaceState(null, '', url);
-
-      /* A scroll asked for while the document is still loading gets undone by
-         the browser's own scroll restoration, which is exactly the case when a
-         /?q=… URL resolves to this section. Wait for the load in that case. */
-      const jump = () => el.scrollIntoView({ block: 'start' });
-      if (document.readyState === 'complete') jump();
-      else window.addEventListener('load', () => requestAnimationFrame(jump), { once: true });
-      return;
-    }
-
-    if (replace) window.location.replace(url);
-    else window.location.assign(url);
-  }
-
-  const form = document.getElementById('hero-search') as HTMLFormElement | null;
-  const input = document.getElementById('hero-q') as HTMLInputElement | null;
-
-  if (form && input) {
-    function run() {
-      const raw = input!.value.trim();
-      if (!raw) {
-        input!.focus();
-        return;
-      }
-      go(resolve(raw) ?? FALLBACK, false);
-    }
-
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      run();
-    });
-
-    /* Enter is handled here as well as through the form's own implicit
-       submission: with the suggestion list open, a browser can spend the first
-       Enter on closing the dropdown rather than submitting the form, and the
-       key that obviously means "search" should never need pressing twice. */
-    input.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      run();
-    });
-
-    /* A shared /?q=… URL resolves the same way. Replaced, not pushed, so the
-       back button does not land on a page that redirects forward again. */
-    const queried = new URLSearchParams(window.location.search).get('q');
-    if (queried && queried.trim()) {
-      input.value = queried;
-      go(resolve(queried) ?? FALLBACK, true);
-    }
-  }
-</script>

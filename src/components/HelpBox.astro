@@ -1,0 +1,57 @@
+---
+/**
+ * The "need a hand?" panel in the sidebar. The site's one standing offer:
+ * tell the desk what you are replacing and it will point you at a page, or
+ * write one.
+ */
+interface Props {
+  title?: string;
+  body?: string;
+}
+
+const {
+  title = 'Not sure which tool fits?',
+  body = 'Tell us what you use now and what it is failing at. We will point you at the right review, or write the comparison you needed.',
+} = Astro.props;
+---
+
+<aside class="help" aria-label="Help choosing">
+  <p class="help-h">{title}</p>
+  <p class="help-b">{body}</p>
+  <p class="help-links">
+    <a href="/contact" class="tlink">Ask the reviews desk</a>
+    <a href="/how-we-pick" class="tlink">How we test</a>
+  </p>
+</aside>
+
+<style>
+  .help {
+    padding: 1.1rem 1.2rem 1.2rem;
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .help-h {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .help-b {
+    margin-top: 0.45rem;
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: color-mix(in oklab, var(--color-brand-text) 80%, transparent);
+  }
+
+  .help-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: 0.8rem;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+  }
+</style>

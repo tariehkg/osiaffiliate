@@ -1,21 +1,53 @@
 # OSI Affiliate — Brand Guide
 
-Extracted from the live homepage code (`src/components/Hero.astro`, `CategoryBrowser.astro`,
-`Stance.astro`, `CategoryDirectory.astro`, `ContributeCta.astro`, `SiteNav.astro`,
-`SiteFooter.astro`, `Mark.astro`) and the design tokens in `src/styles/theme.css` and
-`src/styles/base.css`. Every value below exists in the codebase today — nothing here is
-aspirational or invented. If a change is made to a token or a section, update this file in the
-same commit.
+Extracted from the live code (`src/components/Hero.astro`, `SiteNav.astro`, `CategoryStrip.astro`,
+`ArticleThumb.astro`, `Score.astro`, `BestOfSite.astro`, `TrustStrip.astro`, `SiteFooter.astro`,
+`Mark.astro`) and the design tokens in `src/styles/theme.css` and `src/styles/base.css`. Every
+value below exists in the codebase today — nothing here is aspirational or invented. If a change is
+made to a token or a section, update this file in the same commit.
 
 ## Brand overview
 
-OSI Affiliate is a curated software-shortlist site: five categories of business software (CRM,
-email marketing, website builders, project management, SEO tools), two to four real picks in
-each, with current pricing framed qualitatively and the reasoning shown. It exists as a direct
-answer to the two dominant patterns in this space — open marketplaces like Capterra/G2 (1,600+
-listings, disclosure as an afterthought) and vendor-sponsored "best of" content. The site's whole
-premise, stated on the homepage and in the footer, is: *we also make money from affiliate links,
-but we say which ones, and the pick we'd actually choose still comes first.*
+OSI Affiliate is a staff-written software review site: five categories of business software (CRM,
+email marketing, website builders, project management, SEO tools), a full review and an editor's
+score for every tool, one short best-of list per category, and the comparisons, alternatives lists
+and pricing guides that decide between the picks. Layout follows the editorial-review-site pattern
+(a feed of articles beside a sidebar, a "start here" grid of curated links, a staff-and-counts
+strip, a site-map footer) rather than a marketplace. The site's whole premise, stated on the
+homepage and in the footer, is: *staff who signed up for the tool did the judging, we make money
+from affiliate links, we say which ones, and a commission has never moved a score.*
+
+### Layout vocabulary (added with the editorial rebuild)
+
+- **Two columns everywhere below the hero.** `.cols` in `base.css`: the reading column and a 19rem
+  sidebar (`Sidebar.astro`) at ≥64rem, stacked below. Article pages, hubs, indexes and the
+  homepage feed all use it, so the sidebar is in the same place on every page.
+- **Category tones.** Each category owns one of five tones (`data-tone` in `base.css`: cobalt,
+  amber, navy, surface, deep), all derived from the seven tokens. Thumbnails, the category strip's
+  swatches, hub headers and sidebar category links read `--tone-*`, so a category is recognisable
+  by colour before its name is read.
+- **Typographic thumbnails** (`ArticleThumb.astro`). No stock photos: the article's kind, the tool
+  or shortlist name in Outfit at display weight, and the split O cropped into the corner, on the
+  category's tone. A guide with a real photo shows the photo.
+- **The score tile** (`Score.astro`). A rounded square (22% radius — the mark's own corner) with
+  the score in cobalt on surface. No stars, no red/green scale.
+- **Section headings** (`.sec-h`). One size, one weight, a hairline rule above with a 3rem amber
+  lead segment — the same device the footer's disclosure uses.
+- **Inverted sections.** Still two per page at most: `TrustStrip` on the homepage and the footer.
+  Comparison verdict cards use navy at panel scale, not full bleed.
+- **Motion, in three places only.** One orchestrated entrance on the homepage hero
+  (`[data-enter]`, staggered by `--enter-i`, in `base.css`); a fail-safe scroll reveal on feed
+  rows, cards and stat cells (`[data-rise]`: visible in CSS, hidden only by the Layout script for
+  elements it measured below the fold, and swept back in on any jump); and hover feedback that
+  shows what changed (a rule sliding under a nav link, a thumbnail lifting 3px, a card taking the
+  brand shadow). Score bars draw in once seen. Everything switches off under
+  `prefers-reduced-motion`.
+- **Navigation is type, not icons.** Top links carry a CSS-drawn two-line caret and a cobalt rule
+  that slides in on hover; panels are paper with one hairline, the brand shadow, a tone swatch on
+  each category header and a surface-toned "all" row at the foot. Footer link labels are short
+  (product names, "Best CRM tools") and never wrap.
+- **Not-yet-real things stay dashed.** Placeholder staff profiles and the provisional-scores note
+  use dashed borders, the same convention the old disabled email field used.
 
 The audience is a solopreneur or small-business owner replacing a specific tool, not an enterprise
 procurement team — someone who wants "the whole shortlist, not page one of forty" and can act on a

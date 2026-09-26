@@ -1,49 +1,41 @@
 ---
 /**
- * An author: avatar, name and bio.
+ * A staff member: avatar, name, role and bio.
  *
- * `variant="panel"` is the closing "who wrote this" block at the foot of a
- * post — the same surface panel the site uses for PageTrust, so it reads as
- * context rather than as another piece of the article. `variant="row"` is the
- * entry on /authors, where several sit in a ruled list.
- *
- * `postCount` (row only) is passed in by the page from published posts, so a
- * draft never shows up in the number.
+ * `variant="panel"` is the closing "who wrote this" block at the foot of an
+ * article. `variant="row"` is the entry on /about and /authors, where several
+ * sit in a ruled list. A profile marked `placeholder` is drawn dashed and
+ * says so, rather than passing an empty slot off as a person.
  */
 import { Image } from 'astro:assets';
-import type { Author } from './blog';
+import { authorUrl, type Author } from './articles';
 
 interface Props {
   author: Author;
   variant?: 'panel' | 'row';
-  postCount?: number;
-  /** Heading level for the name, so the card fits the page outline. */
+  articleCount?: number;
   as?: 'h2' | 'h3';
 }
 
-const { author, variant = 'panel', postCount, as: Heading = 'h2' } = Astro.props;
-const href = `/authors/${author.id}`;
+const { author, variant = 'panel', articleCount, as: Heading = 'h2' } = Astro.props;
+const href = authorUrl(author.id);
+const placeholder = author.data.placeholder;
 ---
 
-<div class:list={['ac', `is-${variant}`]}>
-  <Image
-    src={author.data.avatar}
-    alt={`${author.data.name} avatar`}
-    width={64}
-    height={64}
-    quality={80}
-    class="ac-avatar"
-  />
+<div class:list={['ac', `is-${variant}`, placeholder && 'is-placeholder']}>
+  <Image src={author.data.avatar} alt="" width={72} height={72} quality={80} class="ac-avatar" />
   <div class="ac-text">
     {variant === 'panel' && <p class="ac-kicker">Written by</p>}
     <Heading class="ac-name">
       <a href={href}>{author.data.name}</a>
+      <span class="ac-role">{author.data.role}</span>
+      {placeholder && <span class="ac-flag">Profile not filled in yet</span>}
     </Heading>
     <p class="ac-bio">{author.data.bio}</p>
     {
-      variant === 'row' && typeof postCount === 'number' && (
+      variant === 'row' && typeof articleCount === 'number' && (
         <p class="ac-count">
-          {postCount} {postCount === 1 ? 'post' : 'posts'}
+          {articleCount} {articleCount === 1 ? 'article' : 'articles'}
         </p>
       )
     }
@@ -53,18 +45,22 @@ const href = `/authors/${author.id}`;
 <style>
   .ac {
     display: grid;
-    grid-template-columns: 3.25rem minmax(0, 1fr);
+    grid-template-columns: 3.5rem minmax(0, 1fr);
     gap: 1.1rem;
     align-items: start;
   }
 
   .ac :global(.ac-avatar) {
-    width: 3.25rem;
-    height: 3.25rem;
+    width: 3.5rem;
+    height: 3.5rem;
     padding: 0.45rem;
     border-radius: 3px;
     border: 1px solid var(--line);
     background: var(--color-brand-bg);
+  }
+
+  .is-placeholder :global(.ac-avatar) {
+    border-style: dashed;
   }
 
   .is-panel {
@@ -80,12 +76,15 @@ const href = `/authors/${author.id}`;
   }
 
   .ac-kicker {
-    margin: 0;
     font-size: var(--fs-caption);
-    color: var(--color-brand-muted);
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
   }
 
   .ac-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.7rem;
     margin: 0.15rem 0 0;
     max-width: none;
     font-size: var(--fs-h4);
@@ -113,12 +112,35 @@ const href = `/authors/${author.id}`;
     text-decoration-color: currentColor;
   }
 
+  .ac-role {
+    font-family: var(--font-body);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-regular);
+    letter-spacing: 0;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  .ac-flag {
+    font-family: var(--font-body);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0;
+    padding: 0.1rem 0.5rem;
+    border: 1px dashed var(--line-strong);
+    border-radius: 999px;
+    color: var(--color-brand-muted);
+  }
+
   .ac-bio {
     margin-top: 0.5rem;
     max-width: 62ch;
     font-size: 0.95rem;
     line-height: 1.65;
     color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  .is-placeholder .ac-bio {
+    color: var(--color-brand-muted);
   }
 
   .ac-count {

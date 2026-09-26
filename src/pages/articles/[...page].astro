@@ -1,0 +1,182 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Layout from '../../layouts/Layout.astro';
+import CategoryStrip from '../../components/CategoryStrip.astro';
+import PageHead from '../../components/PageHead.astro';
+import ArticleFeed from '../../components/ArticleFeed.astro';
+import Pagination from '../../components/Pagination.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getArticles } from '../../components/articles';
+
+/**
+ * Every published article, newest first, ten to a page: /articles,
+ * /articles/2, … A ?q= in the URL (the no-JS fallback of every search box)
+ * filters the list client-side from the same index the boxes use.
+ */
+export const getStaticPaths = (async ({ paginate }) => {
+  const articles = await getArticles();
+  return paginate(articles, { pageSize: 10, props: { all: articles } });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { all } = Astro.props as { all: Awaited<ReturnType<typeof getArticles>> };
+const hrefFor = (n: number) => (n === 1 ? '/articles' : `/articles/${n}`);
+const path = hrefFor(page.currentPage);
+---
+
+<Layout
+  title={`All articles${page.currentPage > 1 ? `, page ${page.currentPage}` : ''} — OSI Affiliate`}
+  description={`Every review, shortlist, comparison, pricing guide and switching guide we have published, newest first${page.currentPage > 1 ? ` (page ${page.currentPage} of ${page.lastPage})` : ''}.`}
+  path={path}
+>
+  <CategoryStrip />
+  <main id="main">
+    <PageHead
+      title="All articles"
+      lede="Every review, shortlist, comparison and guide on the site, newest first. Reviews are scored; everything else says who it is for."
+    />
+
+    <section class="idx">
+      <div class="wrap">
+        <div class="cols">
+          <div class="idx-main">
+            <section class="idx-results" id="idx-results" hidden aria-live="polite">
+              <p class="idx-q">
+                Results for <b id="idx-q-term"></b>. <a href="/articles" class="tlink">Show everything</a>
+              </p>
+              <ul class="idx-hits" id="idx-hits"></ul>
+              <p class="idx-none" id="idx-none" hidden>Nothing matches that. Try a tool name, a category, or one of the shortlists in the sidebar.</p>
+            </section>
+            <div id="idx-all">
+              <ArticleFeed articles={page.data} rowAs="h2" eagerFirst={page.currentPage === 1} id="idx-feed" />
+              <Pagination page={page} hrefFor={hrefFor} />
+            </div>
+          </div>
+          <Sidebar articles={all} />
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .idx {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .idx-main {
+    min-width: 0;
+  }
+
+  .idx-results[hidden] {
+    display: none;
+  }
+
+  .idx-q {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--tint);
+    border-radius: 3px;
+    font-size: var(--fs-small);
+  }
+
+  .idx-hits {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .idx-hits :global(li) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .idx-hits :global(a) {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-h4);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .idx-hits :global(a:hover) {
+    color: var(--color-brand-primary);
+  }
+
+  .idx-hits :global(small) {
+    flex: none;
+    font-family: var(--font-body);
+    font-size: var(--fs-caption);
+    font-weight: 400;
+    color: color-mix(in oklab, var(--color-brand-text) 64%, transparent);
+  }
+
+  .idx-none {
+    margin-top: 1rem;
+    font-size: var(--fs-body);
+    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+  }
+</style>
+
+<script>
+  /* A ?q= arrives when a search box submitted without JS, or when nothing
+     resolved to a single page. Search the whole index (every hub and every
+     article, not only this page's ten rows) and list the hits in place of
+     the feed. */
+  const q = new URLSearchParams(window.location.search).get('q')?.trim();
+  if (q) {
+    type Entry = { t: string; u: string; k: string; x: string[] };
+    let index: Entry[] = [];
+    try {
+      index = JSON.parse(document.getElementById('site-index')?.textContent ?? '[]');
+    } catch {
+      index = [];
+    }
+    const kindLabel: Record<string, string> = {
+      hub: 'Category',
+      review: 'Review',
+      best: 'Best of',
+      alternatives: 'Alternatives',
+      pricing: 'Pricing guide',
+      comparison: 'Head to head',
+      guide: 'Guide',
+    };
+    const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    const nq = norm(q);
+    const words = nq.split(' ').filter(Boolean);
+    const matches = (e: Entry) => {
+      const hay = [e.t, ...e.x].map(norm);
+      return hay.some((h) => h.includes(nq)) || (words.length > 1 && words.every((w) => hay.some((h) => h.includes(w))));
+    };
+    const hits = index.filter(matches);
+
+    const results = document.getElementById('idx-results');
+    const all = document.getElementById('idx-all');
+    const list = document.getElementById('idx-hits');
+    const none = document.getElementById('idx-none');
+    const term = document.getElementById('idx-q-term');
+    if (results && all && list && none && term) {
+      term.textContent = q;
+      for (const h of hits) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = h.u;
+        a.textContent = h.t;
+        const small = document.createElement('small');
+        small.textContent = kindLabel[h.k] ?? h.k;
+        a.append(small);
+        li.append(a);
+        list.append(li);
+      }
+      none.hidden = hits.length > 0;
+      all.hidden = true;
+      results.hidden = false;
+    }
+  }
+</script>

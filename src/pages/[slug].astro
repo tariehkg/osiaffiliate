@@ -1,0 +1,21 @@
+---
+import { getEntry } from 'astro:content';
+import ArticlePage from '../components/ArticlePage.astro';
+import { getArticles } from '../components/articles';
+
+/**
+ * Every article lives at the root: /hubspot-crm-review, /best-crm-software,
+ * /hubspot-vs-pipedrive. The file name in src/content/articles/ is the URL.
+ * Static pages (the hubs, about, the indexes) take priority over this route.
+ */
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article, articles } }));
+}
+
+const { article, articles } = Astro.props;
+const author = await getEntry(article.data.author);
+if (!author) throw new Error(`Article "${article.id}" names an unknown author "${article.data.author.id}"`);
+---
+
+<ArticlePage article={article} articles={articles} author={author} />

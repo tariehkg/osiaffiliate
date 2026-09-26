@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import ArticleFeed from '../components/ArticleFeed.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getArticles, ofType } from '../components/articles';
+
+/**
+ * The shortlists: one best-of list per category, then the alternatives
+ * lists that start from a single tool.
+ */
+const articles = await getArticles();
+const best = ofType(articles, 'best');
+const alternatives = ofType(articles, 'alternatives');
+---
+
+<Layout
+  title="Best business software shortlists — OSI Affiliate"
+  description="One short, staff-tested shortlist for each category of business software, plus the alternatives lists for the tools people most often want to leave."
+  path="/best"
+>
+  <CategoryStrip />
+  <main id="main">
+    <PageHead
+      title="The shortlists"
+      lede="One list per category, kept short on purpose. Every pick on a list has its own full review, and each list opens with the table so you can compare before you read."
+    />
+
+    <section class="bp">
+      <div class="wrap">
+        <div class="cols">
+          <div class="bp-main">
+            <ArticleFeed title="Best of, by category" articles={best} rowAs="h2" eagerFirst />
+            {alternatives.length > 0 && (
+              <div class="bp-sec">
+                <ArticleFeed title="Alternatives to a tool you already use" articles={alternatives} rowAs="h2" />
+              </div>
+            )}
+          </div>
+          <Sidebar articles={articles} />
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .bp {
+    padding-block: 0 clamp(3rem, 6vw, 5rem);
+  }
+
+  .bp-main {
+    min-width: 0;
+  }
+
+  .bp-sec {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+</style>

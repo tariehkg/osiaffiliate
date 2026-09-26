@@ -1,67 +1,58 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SiteNav from '../components/SiteNav.astro';
 import Hero from '../components/Hero.astro';
-import TopRated from '../components/TopRated.astro';
-import CategoryBrowser from '../components/CategoryBrowser.astro';
-import RatingsHow from '../components/RatingsHow.astro';
-import CategoryDirectory from '../components/CategoryDirectory.astro';
-import ContributeCta from '../components/ContributeCta.astro';
-import SiteFooter from '../components/SiteFooter.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import ArticleFeed from '../components/ArticleFeed.astro';
+import Sidebar from '../components/Sidebar.astro';
+import BestOfSite from '../components/BestOfSite.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import { getArticles, getAuthors } from '../components/articles';
+import { SITE_DESCRIPTION } from '../site';
+
+/**
+ * The homepage is the feed: the latest reviews, shortlists and comparisons,
+ * newest first, beside the sidebar. Then the whole site as a grid of links,
+ * then who does the work. Nothing here is written by hand except the hero;
+ * everything else is read from the articles collection.
+ */
+const articles = await getArticles();
+const authors = await getAuthors();
+const latest = articles.slice(0, 8);
 ---
 
-<Layout
-  title="OSI Affiliate — business software shortlists, rated by the people who use them"
-  description="Five categories of business software, two to four editor-chosen picks in each, rated by readers, with the pricing shape and the reasoning shown. We say plainly which links pay us."
-  path="/"
->
-  <SiteNav />
-  <main>
-    <Hero />
-    <TopRated />
-    <CategoryBrowser />
-    <RatingsHow />
-    <CategoryDirectory />
-    <ContributeCta />
+<Layout title="OSI Affiliate — business software, reviewed and scored by staff who use it" description={SITE_DESCRIPTION} path="/">
+  <main id="main">
+    <Hero articles={articles} />
+    <CategoryStrip />
+
+    <section class="home">
+      <div class="wrap">
+        <div class="cols">
+          <div class="home-main">
+            <ArticleFeed
+              title="Latest reviews and guides"
+              articles={latest}
+              rowAs="h3"
+              eagerFirst
+              more={{ label: 'All articles', href: '/articles' }}
+            />
+          </div>
+          <Sidebar articles={articles} categories={false} />
+        </div>
+      </div>
+    </section>
+
+    <TrustStrip articles={articles} authors={authors} />
+    <BestOfSite articles={articles} />
   </main>
-  <SiteFooter />
 </Layout>
 
-<script>
-  /**
-   * Scroll reveal, deliberately fail-safe.
-   *
-   * [data-rise] elements are visible in CSS. This script's first act is to
-   * measure each one and hide ONLY the ones already below the fold — so even
-   * if the script is slow, blocked or broken, nothing a visitor can see is
-   * ever transparent. Observation starts after that measurement pass.
-   */
-  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-rise]'));
-  const fold = window.innerHeight;
-  const belowFold = items.filter((el) => el.getBoundingClientRect().top > fold * 0.92);
-
-  for (const el of belowFold) el.classList.add('rise-pending');
-
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (belowFold.length) {
-    if (reduce || !('IntersectionObserver' in window)) {
-      for (const el of belowFold) el.classList.remove('rise-pending');
-    } else {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
-            const el = entry.target as HTMLElement;
-            el.classList.add('rise-in');
-            el.classList.remove('rise-pending');
-            io.unobserve(el);
-          }
-        },
-        { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
-      );
-
-      for (const el of belowFold) io.observe(el);
-    }
+<style>
+  .home {
+    padding-block: clamp(2rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem);
   }
-</script>
+
+  .home-main {
+    min-width: 0;
+  }
+</style>

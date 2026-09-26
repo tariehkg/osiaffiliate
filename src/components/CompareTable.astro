@@ -1,17 +1,15 @@
 ---
 /**
- * The head-to-head grid.
+ * The head-to-head grid on a comparison page.
  *
  * A real <table> — the content is genuinely tabular and screen readers should
  * get the row and column relationships — drawn in the site's lattice
  * language: one hairline shared between every cell, no shadows, no radius.
  *
  * Below 52rem it re-lays itself as one block per dimension, with each cell
- * naming its own tool from `data-tool`, so nothing has to scroll sideways on
- * a phone.
+ * naming its own tool from `data-tool`, so nothing scrolls sideways.
  */
 interface Row {
-  /** What is being compared — the row header. */
   dim: string;
   a: string;
   b: string;
@@ -20,6 +18,7 @@ interface Row {
 interface Side {
   name: string;
   monogram: string;
+  href?: string;
 }
 
 interface Props {
@@ -27,175 +26,126 @@ interface Props {
   b: Side;
   rows: Row[];
   caption: string;
-  /** Section heading rendered above the table. */
   title?: string;
-  /** One paragraph framing what the table is for. */
   lede?: string;
+  id?: string;
 }
 
-const { a, b, rows, caption, title, lede } = Astro.props;
+const { a, b, rows, caption, title, lede, id = 'differences' } = Astro.props;
 ---
 
-<section class="ct" aria-labelledby={title ? 'differ' : undefined}>
-  <div class="wrap">
-    {title && <h2 id="differ">{title}</h2>}
-    {lede && <p class="ct-lede">{lede}</p>}
+<section class="ct" id={id} aria-labelledby={title ? `${id}-h` : undefined}>
+  {title && <h2 id={`${id}-h`}>{title}</h2>}
+  {lede && <p class="ct-lede">{lede}</p>}
 
-    <table>
-      <caption class="sr">{caption}</caption>
-      <thead>
-        <tr>
-          <th scope="col" class="ct-corner">Where they differ</th>
-          <th scope="col">
-            <span class="mono" aria-hidden="true">{a.monogram}</span>
-            {a.name}
-          </th>
-          <th scope="col">
-            <span class="mono" aria-hidden="true">{b.monogram}</span>
-            {b.name}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
+  <table class="ct-table" role="table">
+    <caption class="sr">{caption}</caption>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader"><span class="sr">Dimension</span></th>
         {
-          rows.map((r) => (
-            <tr>
-              <th scope="row">{r.dim}</th>
-              <td data-tool={a.name}>{r.a}</td>
-              <td data-tool={b.name}>{r.b}</td>
-            </tr>
+          [a, b].map((s) => (
+            <th scope="col" role="columnheader">
+              <span class="ct-side">
+                <span class="mono" aria-hidden="true">{s.monogram}</span>
+                {s.href ? <a href={s.href}>{s.name}</a> : s.name}
+              </span>
+            </th>
           ))
         }
-      </tbody>
-    </table>
-  </div>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      {
+        rows.map((r) => (
+          <tr role="row">
+            <th scope="row" role="rowheader">{r.dim}</th>
+            <td role="cell" data-tool={a.name}>{r.a}</td>
+            <td role="cell" data-tool={b.name}>{r.b}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
 </section>
 
 <style>
-  .ct {
-    padding-block: clamp(2rem, 4vw, 3.25rem);
-  }
-
   .ct h2 {
-    font-size: clamp(1.5rem, 3vw, 2.15rem);
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
     font-weight: 650;
   }
 
   .ct-lede {
-    margin-top: 0.7rem;
+    margin-top: 0.6rem;
     max-width: 62ch;
-    font-size: 0.99rem;
-    line-height: 1.65;
-    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
+    font-size: 0.97rem;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
   }
 
-  table {
-    margin-top: clamp(1.1rem, 2.5vw, 1.75rem);
+  .ct-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid var(--line);
-    background: var(--color-brand-bg);
-    text-align: left;
+    margin-top: 1.25rem;
+    border-collapse: collapse;
+    border: 1px solid var(--line-strong);
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
-  /* Not sticky: the nav is already sticky and gets taller when the category
-     chip strip appears, so a pinned table header ends up underneath it. Ten
-     rows do not need one. */
-  thead th {
+  .ct-table th,
+  .ct-table td {
+    padding: 0.85rem 0.9rem;
+    border: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .ct-table thead th {
     background: var(--color-brand-surface);
     font-family: var(--font-heading);
-    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  .ct-table tbody th {
+    font-family: var(--font-heading);
     font-weight: 600;
-    letter-spacing: -0.02em;
-    vertical-align: bottom;
-    padding: 0.95rem 1.1rem;
-    border-bottom: 1px solid var(--line-strong);
-    border-left: 1px solid var(--line);
+    letter-spacing: -0.01em;
+    width: 24%;
+    background: color-mix(in oklab, var(--color-brand-surface) 50%, transparent);
   }
 
-  thead th:first-child {
-    border-left: 0;
+  .ct-side {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .ct-corner {
-    font-weight: 500;
-    color: var(--color-brand-muted);
-    font-size: 0.875rem;
+  .ct-side a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.2em;
+  }
+
+  .ct-side a:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
   }
 
   .mono {
     display: inline-grid;
     place-items: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    margin-right: 0.45rem;
-    border-radius: 5px;
-    background: var(--color-brand-secondary);
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 22%;
+    background: var(--color-brand-primary);
     color: white;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    vertical-align: -0.35rem;
-  }
-
-  tbody th {
-    width: 22%;
     font-family: var(--font-heading);
-    font-size: 0.925rem;
-    font-weight: 550;
-    letter-spacing: -0.015em;
-    line-height: 1.35;
-    background: color-mix(in oklab, var(--color-brand-surface) 55%, transparent);
+    font-size: 0.75rem;
+    font-weight: 700;
   }
 
-  tbody th,
-  tbody td {
-    padding: 1rem 1.1rem;
-    border-top: 1px solid var(--line);
-    border-left: 1px solid var(--line);
-    vertical-align: top;
-    font-size: 0.93rem;
-    line-height: 1.6;
-  }
-
-  tbody th {
-    border-left: 0;
-  }
-
-  tbody td {
-    color: color-mix(in oklab, var(--color-brand-text) 86%, transparent);
-  }
-
-  tbody tr:first-child th,
-  tbody tr:first-child td {
-    border-top: 0;
-  }
-
-  /* One block per dimension on a phone: the row header becomes the heading,
-     and each value says which tool it belongs to. */
   @media (max-width: 52rem) {
-    table,
-    thead,
-    tbody,
-    tr,
-    th,
-    td {
-      display: block;
-    }
-
-    /* Matched to the specificity of the `tbody th` width rule above, which
-       would otherwise keep the row header at 22% of the block. */
-    tbody th,
-    tbody td {
-      width: auto;
-    }
-
-    table {
-      border: 0;
-    }
-
-    thead {
+    .ct-table thead {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -203,42 +153,36 @@ const { a, b, rows, caption, title, lede } = Astro.props;
       clip-path: inset(50%);
     }
 
-    tbody tr {
-      border: 1px solid var(--line);
+    .ct-table,
+    .ct-table tbody,
+    .ct-table tr,
+    .ct-table th,
+    .ct-table td {
+      display: block;
     }
 
-    tbody tr + tr {
-      margin-top: 0.75rem;
+    .ct-table tr {
+      border-top: 1px solid var(--line-strong);
     }
 
-    tbody th,
-    tbody td {
-      border-left: 0;
-      padding: 0.85rem 1rem;
+    .ct-table tbody th {
+      width: auto;
+      border: 0;
+      padding-bottom: 0.4rem;
     }
 
-    tbody th {
-      font-size: 1rem;
-      background: var(--color-brand-surface);
-      border-top: 0;
-      border-bottom: 1px solid var(--line);
+    .ct-table td {
+      border: 0;
+      padding-top: 0.35rem;
     }
 
-    tbody td {
-      border-top: 0;
-    }
-
-    tbody td + td {
-      border-top: 1px solid var(--line);
-    }
-
-    tbody td::before {
+    .ct-table td::before {
       content: attr(data-tool);
       display: block;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
       font-family: var(--font-heading);
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: var(--fs-caption);
+      font-weight: 650;
       color: var(--color-brand-primary);
     }
   }

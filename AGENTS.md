@@ -1,20 +1,45 @@
 ## Project overview
 
-OSI Affiliate is a curated software-shortlist site — five categories of business software (CRM,
-email marketing, website builders, project management, SEO tools), a short real shortlist in each,
-built for a solopreneur or small-business owner replacing a specific tool rather than an enterprise
-buyer. Stack: Astro 6 + Tailwind (v4, `@theme`) + React (for interactive islands where needed),
-deployed on Cloudflare Workers via `@astrojs/cloudflare`.
+OSI Affiliate is a staff-written software review site — five categories of business software (CRM,
+email marketing, website builders, project management, SEO tools), with a full staff review and
+score for every tool, one short best-of list per category, alternatives lists, head-to-head
+comparisons, pricing guides and switching guides. Built for a solopreneur or small-business owner
+replacing a specific tool rather than an enterprise buyer. There are no reader ratings: every score
+is an editor's score with a staff name on it. Stack: Astro 7 + Tailwind (v4, `@theme`) + React (for
+interactive islands where needed), deployed on Cloudflare Workers via `@astrojs/cloudflare`.
 
 ## Development
 
-When starting the dev server, use background mode:
+When starting the dev server, use background mode on a port that is free (4321 is often taken by
+another project on this machine):
 
 ```
-astro dev --background
+astro dev --background --port 4327
 ```
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+If it exits "before becoming ready" with a Vite `deps_ssr` error, clear `node_modules/.vite` and
+start it again.
+
+## Content model
+
+- **Every article is one markdown file** in `src/content/articles/`. The file name is the URL:
+  `hubspot-crm-review.md` is `/hubspot-crm-review`. Schema in `src/content.config.ts`.
+- `type` is one of `review`, `best`, `alternatives`, `pricing`, `comparison`, `guide`. The
+  structured parts (scores, pros/cons, picks, comparison rows, FAQs) live in frontmatter; the
+  narrative is the markdown body. `src/components/ArticlePage.astro` orders the blocks per type.
+- Staff live in `src/data/authors.json`. A profile with `placeholder: true` is drawn dashed and
+  labelled as not filled in; replace the two placeholder entries with real staff.
+- `src/components/articles.ts` (`getArticles()`) is the only way pages read the collection;
+  `draft: true` keeps an article out of everything.
+- `SCORES_PROVISIONAL` in `src/site.ts` shows a one-line note on every scored page and withholds
+  Review schema. Set it to false once the staff have set the scores themselves.
+- URLs have no trailing slash: `build.format` is `file` and `trailingSlash` is `never` in
+  `astro.config.mjs`, so `/about` is `about.html` and canonicals, the sitemap and links agree.
+  Vendor links inside markdown bodies are written as inline `<a … rel="nofollow sponsored noopener">`
+  because Astro 7's default Markdown processor takes no rehype plugins.
+- Category facts (name, URL, tone, buyer question) are in `src/components/data.ts`. Each hub page
+  (`src/pages/crm-software.astro` etc.) is three lines passing its id to `CategoryHubPage`.
 
 ## Documentation
 

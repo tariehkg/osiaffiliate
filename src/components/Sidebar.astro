@@ -1,0 +1,188 @@
+---
+import SearchBox from './SearchBox.astro';
+import HelpBox from './HelpBox.astro';
+import Score from './Score.astro';
+import { categories } from './data';
+import { articleUrl, ofType, topRated, type Article } from './articles';
+
+/**
+ * The right-hand column. Search, the help panel, the highest-scoring reviews
+ * (in the current category if there is one), the five categories and the
+ * latest guides. Anything page-specific goes in the default slot above.
+ */
+interface Props {
+  articles: Article[];
+  category?: string;
+  /** The homepage already carries the category strip; it passes false. */
+  categories?: boolean;
+}
+
+const { articles, category, categories: showCategories = true } = Astro.props;
+const top = topRated(articles, category).slice(0, 5);
+const guides = ofType(articles, 'guide').slice(0, 4);
+const cat = categories.find((c) => c.id === category);
+---
+
+<aside class="side" aria-label="Sidebar">
+  <div class="side-block">
+    <SearchBox variant="side" id={`search-side`} />
+  </div>
+
+  <slot />
+
+  <div class="side-block">
+    <HelpBox />
+  </div>
+
+  {
+    top.length > 0 && (
+      <div class="side-block">
+        <h2 class="sec-h is-quiet side-h">{cat ? `Top scored ${cat.plain} tools` : 'Top scored tools'}</h2>
+        <ol class="side-top">
+          {top.map((a) => (
+            <li>
+              <a href={articleUrl(a)}>
+                <span class="side-top-name">{a.data.product?.name}</span>
+                <span class="side-top-role">{a.data.product?.role}</span>
+              </a>
+              <Score score={a.data.product?.score ?? 0} size="sm" />
+            </li>
+          ))}
+        </ol>
+      </div>
+    )
+  }
+
+  {showCategories && (
+  <div class="side-block">
+    <h2 class="sec-h is-quiet side-h">Browse by category</h2>
+    <ul class="side-cats">
+      {
+        categories.map((c) => (
+          <li>
+            <a href={c.hub} data-tone={c.tone} aria-current={c.id === category ? 'page' : undefined}>
+              <i aria-hidden="true"></i>
+              <span>{c.name}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  )}
+
+  {
+    guides.length > 0 && (
+      <div class="side-block">
+        <h2 class="sec-h is-quiet side-h">Guides</h2>
+        <ul class="side-list">
+          {guides.map((a) => (
+            <li>
+              <a href={articleUrl(a)}>{a.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</aside>
+
+<style>
+  .side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .side-h {
+    font-size: 1.05rem;
+  }
+
+  .side-top {
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .side-top li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .side-top a {
+    display: grid;
+    gap: 0.1rem;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+  }
+
+  .side-top a:hover .side-top-name {
+    color: var(--color-brand-primary);
+  }
+
+  .side-top-name {
+    font-family: var(--font-heading);
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .side-top-role {
+    font-size: var(--fs-caption);
+    line-height: 1.35;
+    color: color-mix(in oklab, var(--color-brand-text) 62%, transparent);
+  }
+
+  .side-cats,
+  .side-list {
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .side-cats a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .side-cats a i {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
+  }
+
+  .side-cats a:hover,
+  .side-cats a[aria-current='page'] {
+    color: var(--color-brand-primary);
+  }
+
+  .side-list a {
+    display: block;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.93rem;
+    line-height: 1.4;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .side-list a:hover {
+    color: var(--color-brand-primary);
+  }
+</style>

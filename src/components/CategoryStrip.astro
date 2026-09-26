@@ -1,0 +1,111 @@
+---
+import { categories } from './data';
+
+/**
+ * The row under the header that names the five things the site covers.
+ * Every page carries it, so wherever a reader lands they can see the whole
+ * scope of the site in one line and step sideways to another category.
+ */
+interface Props {
+  /** Category id to mark as current. */
+  current?: string;
+}
+
+const { current } = Astro.props;
+---
+
+<nav class="cstrip" aria-label="Software categories">
+  <div class="wrap cstrip-in">
+    <span class="cstrip-lead">Find software</span>
+    <ul>
+      {
+        categories.map((c) => (
+          <li>
+            <a href={c.hub} aria-current={current === c.id ? 'page' : undefined} data-tone={c.tone}>
+              <i aria-hidden="true"></i>
+              {c.short}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .cstrip {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cstrip-in {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    /* The row scrolls on a phone; the fade says so. */
+    mask-image: linear-gradient(90deg, black calc(100% - 2.5rem), transparent);
+  }
+
+  @media (min-width: 60rem) {
+    .cstrip-in {
+      mask-image: none;
+    }
+  }
+
+  .cstrip-in::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cstrip-lead {
+    flex: none;
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--color-brand-text);
+    white-space: nowrap;
+  }
+
+  .cstrip ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cstrip li {
+    scroll-snap-align: start;
+  }
+
+  .cstrip a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.75rem;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: color-mix(in oklab, var(--color-brand-text) 80%, transparent);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  /* The category's tone as a small square — the same swatch its
+     thumbnails use, so the strip doubles as the legend. */
+  .cstrip a i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
+  }
+
+  .cstrip a:hover,
+  .cstrip a[aria-current='page'] {
+    color: var(--color-brand-text);
+    border-bottom-color: var(--color-brand-primary);
+  }
+</style>

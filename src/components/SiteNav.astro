@@ -1,15 +1,93 @@
 ---
 import Mark from './Mark.astro';
-import { categories as allCategories } from './data';
+import SearchBox from './SearchBox.astro';
+import { categories } from './data';
+import { articleUrl, inCategory, ofType, type Article } from './articles';
 
+/**
+ * The site header: wordmark, four menus that open into panels, search, and
+ * the one outlined action. The panels list real pages read from the articles
+ * collection, so a review appears in the menu the moment its file exists and
+ * disappears when it is marked draft.
+ *
+ * Panels open on hover and on focus-within, so a keyboard user gets the same
+ * menu; on narrow screens the whole thing folds into one <details> drawer
+ * with no script involved.
+ */
 interface Props {
-  categories?: typeof allCategories;
-  secondaryLabel?: string;
-  secondaryHref?: string;
+  articles: Article[];
 }
 
-const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHref = '/rate' } =
-  Astro.props;
+const { articles } = Astro.props;
+
+const reviews = ofType(articles, 'review');
+const best = ofType(articles, 'best');
+const alternatives = ofType(articles, 'alternatives');
+const comparisons = ofType(articles, 'comparison');
+const pricing = ofType(articles, 'pricing');
+const guides = ofType(articles, 'guide');
+
+type Link = { label: string; href: string };
+type Group = { title: string; href?: string; tone?: string; links: Link[] };
+type Menu = { id: string; label: string; href: string; allLabel: string; groups: Group[] };
+
+const toLink = (a: Article, label?: string): Link => ({ label: label ?? a.data.title, href: articleUrl(a) });
+
+const menus: Menu[] = [
+  {
+    id: 'reviews',
+    label: 'Reviews',
+    href: '/reviews',
+    allLabel: 'All reviews, ordered by score',
+    groups: categories.map((c) => ({
+      title: c.short,
+      href: c.hub,
+      tone: c.tone,
+      links: inCategory(reviews, c.id).map((a) => toLink(a, a.data.product?.name)),
+    })),
+  },
+  {
+    id: 'best',
+    label: 'Best of',
+    href: '/best',
+    allLabel: 'Every shortlist',
+    groups: [
+      {
+        title: 'The shortlists',
+        href: '/best',
+        links: best.map((a) => toLink(a, `Best ${categories.find((c) => c.id === a.data.category)?.plain ?? ''} tools`)),
+      },
+      { title: 'Alternatives', links: alternatives.map((a) => toLink(a, `${a.data.title.split(' best ')[1]?.split(' in ')[0] ?? a.data.title}`)) },
+    ],
+  },
+  {
+    id: 'compare',
+    label: 'Compare',
+    href: '/compare',
+    allLabel: 'All comparisons and pricing guides',
+    groups: [
+      { title: 'Head to head', links: comparisons.map((a) => toLink(a, a.data.title.split(':')[0])) },
+      { title: 'Pricing guides', links: pricing.map((a) => toLink(a, `${a.data.product?.name} pricing`)) },
+    ],
+  },
+  {
+    id: 'guides',
+    label: 'Guides',
+    href: '/articles',
+    allLabel: 'All articles, newest first',
+    groups: [
+      { title: 'Switching and choosing', links: guides.map((a) => toLink(a)) },
+      {
+        title: 'About the site',
+        links: [
+          { label: 'How we test and score', href: '/how-we-pick' },
+          { label: 'Affiliate disclosure', href: '/disclosure' },
+          { label: 'Meet the team', href: '/about' },
+        ],
+      },
+    ],
+  },
+];
 ---
 
 <header class="nav" id="site-nav">
@@ -18,24 +96,91 @@ const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHre
       <Mark size={30} wordmark />
     </a>
 
-    <nav class="nav-cats" aria-label="Software categories">
-      {categories.map((c) => <a href={c.hub}>{c.short}</a>)}
+    <nav class="nav-menus" aria-label="Site">
+      <ul>
+        {
+          menus.map((m) => (
+            <li class="nav-item">
+              <a href={m.href} class="nav-top" aria-expanded="false" aria-controls={`panel-${m.id}`}>
+                <span>{m.label}</span>
+                <i class="nav-caret" aria-hidden="true"></i>
+              </a>
+              <div class="nav-panel" id={`panel-${m.id}`}>
+                <div class="nav-panel-grid" data-cols={m.groups.length}>
+                  {m.groups.map((g) => (
+                    <div class="nav-group" data-tone={g.tone}>
+                      {g.href ? (
+                        <a href={g.href} class="nav-group-h">
+                          {g.tone && <i aria-hidden="true"></i>}
+                          {g.title}
+                        </a>
+                      ) : (
+                        <p class="nav-group-h">{g.title}</p>
+                      )}
+                      <ul>
+                        {g.links.map((l) => (
+                          <li>
+                            <a href={l.href}>{l.label}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <a href={m.href} class="nav-panel-all">{m.allLabel}</a>
+              </div>
+            </li>
+          ))
+        }
+        <li class="nav-item">
+          <a href="/about" class="nav-top"><span>About</span></a>
+        </li>
+      </ul>
     </nav>
 
-    <!-- One outlined action: rating a tool is the one thing a reader can do
-         here that they cannot do by reading, so it is the control that stays
-         in reach at every width. The methodology and the blog are text links
-         beside it. -->
     <div class="nav-actions">
-      <a href="/how-we-pick" class="nav-link">How we pick</a>
-      <a href="/blog" class="nav-link">Blog</a>
-      <a href={secondaryHref} class="nav-secondary">{secondaryLabel}</a>
+      <div class="nav-search"><SearchBox variant="nav" placeholder="Search…" /></div>
     </div>
-  </div>
 
-  <nav class="nav-cats-mobile" aria-label="Software categories">
-    {categories.map((c) => <a href={c.hub}>{c.short}</a>)}
-  </nav>
+    <details class="nav-drawer">
+      <summary aria-label="Menu">
+        <span class="nav-burger" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Menu</span>
+      </summary>
+      <div class="nav-drawer-body">
+        <SearchBox variant="side" placeholder="Search…" id="search-drawer" />
+        <ul class="nav-drawer-cats" aria-label="Software categories">
+          {categories.map((c) => (
+            <li>
+              <a href={c.hub} data-tone={c.tone}><i aria-hidden="true"></i>{c.short}</a>
+            </li>
+          ))}
+        </ul>
+        {
+          menus.map((m) => (
+            <details class="nav-acc">
+              <summary>{m.label}</summary>
+              <a href={m.href} class="nav-acc-all">{m.allLabel}</a>
+              {m.groups.map((g) => (
+                <div class="nav-acc-group">
+                  {g.href ? <p><a href={g.href}>{g.title}</a></p> : <p>{g.title}</p>}
+                  <ul>
+                    {g.links.map((l) => (
+                      <li>
+                        <a href={l.href}>{l.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </details>
+          ))
+        }
+        <a class="nav-acc-plain" href="/about">About</a>
+        <a class="nav-acc-plain" href="/contact">Contact</a>
+      </div>
+    </details>
+  </div>
 </header>
 
 <style>
@@ -45,34 +190,22 @@ const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHre
     z-index: 60;
     background: color-mix(in oklab, var(--color-brand-bg) 82%, transparent);
     backdrop-filter: saturate(1.4) blur(10px);
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid var(--line);
     transition:
-      border-color 0.28s var(--ease),
       box-shadow 0.28s var(--ease),
-      background-color 0.28s var(--ease),
-      backdrop-filter 0.28s var(--ease);
+      background-color 0.28s var(--ease);
   }
 
-  /* Scrolled: one hairline and a real, soft lift off the page. The old state
-     drew a 1px border and then a second 1px shadow directly under it, which
-     is two lines pretending to be depth. */
   .nav.is-scrolled {
     background: color-mix(in oklab, var(--color-brand-bg) 94%, transparent);
-    backdrop-filter: saturate(1.5) blur(16px);
-    border-bottom-color: var(--line);
     box-shadow: var(--shadow-sm);
   }
 
   .nav-bar {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 3vw, 2.5rem);
-    padding-block: 1.15rem;
-    transition: padding-block 0.25s var(--ease);
-  }
-
-  .nav.is-scrolled .nav-bar {
-    padding-block: 0.7rem;
+    gap: clamp(1rem, 2.5vw, 2rem);
+    padding-block: 0.85rem;
   }
 
   .nav-brand {
@@ -80,29 +213,220 @@ const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHre
     flex: none;
   }
 
-  .nav-cats {
+  .nav-menus {
     display: none;
-    align-items: center;
-    gap: clamp(0.85rem, 1.7vw, 1.65rem);
     margin-right: auto;
   }
 
-  .nav-cats a {
-    font-size: var(--fs-small);
-    font-weight: var(--fw-regular);
-    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
-    text-decoration: none;
-    white-space: nowrap;
-    padding-block: 0.3rem;
-    border-bottom: 2px solid transparent;
-    transition:
-      color 0.16s var(--ease),
-      border-color 0.16s var(--ease);
+  .nav-menus > ul {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .nav-cats a:hover {
+  .nav-item {
+    position: relative;
+  }
+
+  /* Top links: text with a rule that slides in under it. The caret is a
+     two-line chevron drawn in CSS, so it matches the type weight rather than
+     an icon font's. */
+  .nav-top {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.75rem;
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: color-mix(in oklab, var(--color-brand-text) 82%, transparent);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.16s var(--ease);
+  }
+
+  .nav-top span {
+    position: relative;
+  }
+
+  .nav-top span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.3em;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-brand-primary);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.22s var(--ease-out);
+  }
+
+  .nav-caret {
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-top: -0.2rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    opacity: 0.55;
+    transition:
+      transform 0.2s var(--ease),
+      opacity 0.2s var(--ease);
+  }
+
+  .nav-item:hover > .nav-top,
+  .nav-item.is-open > .nav-top {
     color: var(--color-brand-text);
-    border-bottom-color: var(--color-brand-primary);
+  }
+
+  .nav-item:hover > .nav-top span::after,
+  .nav-item.is-open > .nav-top span::after {
+    transform: scaleX(1);
+  }
+
+  .nav-item:hover > .nav-top .nav-caret,
+  .nav-item.is-open > .nav-top .nav-caret {
+    opacity: 1;
+    transform: rotate(225deg) translate(-0.1rem, -0.1rem);
+    color: var(--color-brand-primary);
+  }
+
+  /* The panel: paper, one hairline, the brand-tinted shadow. Opens on hover
+     and on focus-within so the keyboard gets the same menu. */
+  .nav-panel {
+    position: absolute;
+    top: calc(100% + 0.6rem);
+    left: 0;
+    min-width: 15rem;
+    background: var(--color-brand-bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    box-shadow: var(--shadow-brand);
+    overflow: hidden;
+    /* Closed: kept in the tree so the open transition can run, with a short
+       intent delay so a pointer crossing the bar does not flash four panels. */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 0.16s var(--ease),
+      transform 0.16s var(--ease),
+      visibility 0s linear 0.16s;
+    transition-delay: 0.09s;
+  }
+
+  .nav-panel::before {
+    /* Invisible bridge so the pointer can travel from the label to the panel. */
+    content: '';
+    position: absolute;
+    top: -0.7rem;
+    left: 0;
+    right: 0;
+    height: 0.7rem;
+  }
+
+  .nav-item:hover > .nav-panel,
+  .nav-item.is-open > .nav-panel {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.09s, 0.09s, 0s;
+  }
+
+  /* Never wider than the viewport: the reviews panel is five columns. */
+  .nav-panel {
+    max-width: calc(100vw - 2 * var(--gutter));
+    overflow-x: auto;
+  }
+
+  /* Columns are as wide as their longest link, so a panel of two-word
+     entries is not two-thirds air. */
+  .nav-panel-grid {
+    display: grid;
+    gap: 1rem 2rem;
+    padding: 1.1rem 1.25rem 1.2rem;
+  }
+
+  .nav-panel-grid[data-cols='2'] {
+    grid-template-columns: repeat(2, max-content);
+  }
+
+  .nav-panel-grid[data-cols='5'] {
+    grid-template-columns: repeat(5, max-content);
+  }
+
+  .nav-group-h {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.45rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: color-mix(in oklab, var(--color-brand-text) 64%, transparent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav-group-h i {
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
+  }
+
+  a.nav-group-h:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .nav-group ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .nav-group a {
+    display: block;
+    padding: 0.22rem 0;
+    max-width: 16rem;
+    font-size: var(--fs-small);
+    line-height: 1.35;
+    color: color-mix(in oklab, var(--color-brand-text) 82%, transparent);
+    text-decoration: none;
+    transition: color 0.14s var(--ease);
+  }
+
+  .nav-group a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .nav-panel-all {
+    display: block;
+    padding: 0.7rem 1.25rem;
+    background: var(--color-brand-surface);
+    border-top: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--color-brand-text);
+    text-decoration: none;
+  }
+
+  .nav-panel-all:hover {
+    color: var(--color-brand-primary);
   }
 
   .nav-actions {
@@ -112,104 +436,207 @@ const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHre
     margin-left: auto;
   }
 
-  /* Blog sits beside the methodology rather than among the categories: it is
-     not a category, and like "How we pick" it should never fall into the
-     mobile chip strip. Plain text so the pill stays the one outlined action. */
-  .nav-link {
-    font-size: var(--fs-small);
-    font-weight: var(--fw-regular);
-    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
-    text-decoration: none;
-    white-space: nowrap;
-    padding-block: 0.3rem;
-    border-bottom: 2px solid transparent;
-    transition:
-      color 0.16s var(--ease),
-      border-color 0.16s var(--ease);
-  }
-
-  .nav-link:hover {
-    color: var(--color-brand-text);
-    border-bottom-color: var(--color-brand-primary);
-  }
-
-  /* Shown at every width: it is the site's trust promise and should never be
-     the thing that falls off a small screen. */
-  .nav-secondary {
-    display: flex;
-    font-family: var(--font-heading);
-    font-size: 0.925rem;
-    font-weight: 500;
-    text-decoration: none;
-    white-space: nowrap;
-    padding: 0.7rem 1rem;
-    border-radius: 999px;
-    color: var(--color-brand-text);
-    border: 1px solid var(--line-strong);
-    transition:
-      border-color 0.16s var(--ease),
-      color 0.16s var(--ease);
-  }
-
-  .nav-secondary:hover {
-    border-color: var(--color-brand-primary);
-    color: var(--color-brand-primary);
-  }
-
-  /* Mobile: the five categories become one scrollable strip under the bar,
-     so nothing is hidden behind a hamburger. */
-  .nav-cats-mobile {
-    display: flex;
-    gap: 0.4rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding: 0.7rem var(--gutter);
-    border-top: 1px solid var(--line);
-    transition: padding-block 0.28s var(--ease);
-  }
-
-  .nav.is-scrolled .nav-cats-mobile {
-    padding-block: 0.5rem;
-  }
-
-  .nav-cats-mobile::-webkit-scrollbar {
+  .nav-search {
     display: none;
   }
 
-  .nav-cats-mobile a {
-    flex: none;
-    font-size: 0.82rem;
+  .nav-search :global(.sb.is-nav) {
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: 0;
+    padding-left: 0.25rem;
+    transition:
+      width 0.25s var(--ease-out),
+      border-color 0.18s var(--ease),
+      background-color 0.18s var(--ease),
+      box-shadow 0.18s var(--ease);
+  }
+
+  .nav-search :global(.sb.is-nav:focus-within) {
+    border-bottom-color: var(--color-brand-primary);
+    box-shadow: none;
+  }
+
+  @media (min-width: 80rem) {
+    .nav-search :global(.sb.is-nav:focus-within) {
+      width: 18rem;
+    }
+  }
+
+  /* --- the drawer, narrow screens only --------------------------------- */
+  .nav-drawer {
+    position: static;
+  }
+
+  .nav-drawer > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    cursor: pointer;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .nav-drawer > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-burger {
+    display: inline-grid;
+    gap: 3px;
+  }
+
+  .nav-burger i {
+    display: block;
+    width: 14px;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+
+  .nav-drawer-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding: 1rem var(--gutter) 1.5rem;
+    background: var(--color-brand-bg);
+    border-bottom: 1px solid var(--line-strong);
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .nav-acc {
+    border-top: 1px solid var(--line);
+  }
+
+  .nav-drawer-cats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 1rem;
+    margin: 0.25rem 0 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-drawer-cats a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    font-size: var(--fs-small);
     font-weight: 500;
     text-decoration: none;
-    padding: 0.35rem 0.7rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    color: color-mix(in oklab, var(--color-brand-text) 80%, transparent);
-    white-space: nowrap;
+    color: var(--color-brand-text);
   }
 
-  /* The full category row only appears once all five links and both actions
-     fit on one line. Below that, the scrollable chip strip does the job. */
-  @media (min-width: 70rem) {
-    .nav-cats {
-      display: flex;
+  .nav-drawer-cats i {
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
+  }
+
+  .nav-acc > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-heading);
+    font-size: var(--fs-body);
+    font-weight: 600;
+  }
+
+  .nav-acc > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-acc > summary::after {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.25rem;
+    border-right: 1.5px solid var(--color-brand-primary);
+    border-bottom: 1.5px solid var(--color-brand-primary);
+    transform: rotate(45deg);
+    transition: transform 0.2s var(--ease);
+  }
+
+  .nav-acc[open] > summary::after {
+    transform: rotate(225deg);
+  }
+
+  .nav-acc-group {
+    padding: 0 0 0.9rem;
+  }
+
+  .nav-acc-group p {
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+    margin-bottom: 0.35rem;
+  }
+
+  .nav-acc-group p a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .nav-acc-all {
+    display: block;
+    padding: 0.2rem 0 0.7rem;
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+  }
+
+  .nav-acc-group ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .nav-acc-group a,
+  .nav-acc-plain {
+    font-size: var(--fs-small);
+    text-decoration: none;
+    color: var(--color-brand-text);
+  }
+
+  .nav-acc-plain {
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--fs-body);
+  }
+
+  @media (min-width: 64rem) {
+    .nav-menus {
+      display: block;
     }
 
-    .nav-cats-mobile {
+    .nav-search {
+      display: block;
+    }
+
+    .nav-drawer {
       display: none;
-    }
-  }
-
-  @media (max-width: 40rem) {
-    .nav-link {
-      display: none;
-    }
-  }
-
-  @media (max-width: 30rem) {
-    .nav-secondary {
-      padding: 0.55rem 0.85rem;
-      font-size: 0.85rem;
     }
   }
 </style>
@@ -220,5 +647,39 @@ const { categories = allCategories, secondaryLabel = 'Rate a tool', secondaryHre
     const sync = () => nav.classList.toggle('is-scrolled', window.scrollY > 12);
     sync();
     window.addEventListener('scroll', sync, { passive: true });
+
+    /* One drawer open at a time on the phone, and it closes on navigation. */
+    const drawer = nav.querySelector<HTMLDetailsElement>('.nav-drawer');
+    drawer?.addEventListener('click', (ev) => {
+      if ((ev.target as HTMLElement).closest('a')) drawer.open = false;
+    });
+
+    /* Panels for the keyboard. Hover opens them in CSS; focus on a top link
+       opens its panel here (so the panel's links become reachable), Escape
+       closes it and returns focus, and leaving the item closes it. */
+    const items = Array.from(nav.querySelectorAll<HTMLElement>('.nav-item'));
+    const setOpen = (item: HTMLElement, open: boolean) => {
+      item.classList.toggle('is-open', open);
+      item.querySelector<HTMLElement>('.nav-top')?.setAttribute('aria-expanded', String(open));
+    };
+    const closeAll = () => items.forEach((i) => setOpen(i, false));
+
+    for (const item of items) {
+      if (!item.querySelector('.nav-panel')) continue;
+      item.addEventListener('focusin', () => {
+        closeAll();
+        setOpen(item, true);
+      });
+      item.addEventListener('focusout', (ev) => {
+        const next = ev.relatedTarget as Node | null;
+        if (!next || !item.contains(next)) setOpen(item, false);
+      });
+      item.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape') {
+          setOpen(item, false);
+          item.querySelector<HTMLElement>('.nav-top')?.focus();
+        }
+      });
+    }
   }
 </script>

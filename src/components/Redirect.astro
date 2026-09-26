@@ -1,0 +1,29 @@
+---
+/**
+ * A page that only forwards to another. Used to keep old URLs alive after
+ * the rebuild: each one renders a tiny document with a canonical pointing at
+ * the new page, a meta refresh, and a link for anyone whose browser waits.
+ */
+import { absoluteUrl } from '../site';
+
+interface Props {
+  to: string;
+}
+
+const { to } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moved</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={absoluteUrl(to)} />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+  </head>
+  <body>
+    <p>This page has moved to <a href={to}>{absoluteUrl(to)}</a>.</p>
+  </body>
+</html>

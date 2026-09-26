@@ -1,0 +1,200 @@
+---
+import ArticleThumb from './ArticleThumb.astro';
+import Score from './Score.astro';
+import { getEntry } from 'astro:content';
+import { articleUrl, authorUrl, categoryOf, formatDate, readingMinutes, typeLabel, type Article } from './articles';
+
+/**
+ * One article in a feed: thumbnail, kind, title, byline, excerpt, and the
+ * score if it is a review. The homepage, the article index and the hubs are
+ * all lists of these, so a change here changes every feed.
+ *
+ * `compact` drops the thumbnail and the excerpt for sidebar lists.
+ */
+interface Props {
+  article: Article;
+  compact?: boolean;
+  /** Heading level for the title, so the row fits the page outline. */
+  as?: 'h2' | 'h3';
+  eager?: boolean;
+}
+
+const { article, compact = false, as: Heading = 'h3', eager = false } = Astro.props;
+const d = article.data;
+const author = await getEntry(d.author);
+const cat = categoryOf(article);
+const href = articleUrl(article);
+const minutes = readingMinutes(article.body);
+---
+
+<article class:list={['row', compact && 'is-compact']} data-rise={compact ? undefined : ''}>
+  {
+    !compact && (
+      <a href={href} class="row-thumb" tabindex="-1" aria-hidden="true">
+        <ArticleThumb article={article} size="md" eager={eager} />
+      </a>
+    )
+  }
+
+  <div class="row-body">
+    <p class="row-tags">
+      <span class="row-kind">{typeLabel[d.type]}</span>
+      {cat && <a href={cat.hub} class="row-cat">{cat.short}</a>}
+    </p>
+
+    <Heading class="row-h">
+      <a href={href}>{d.title}</a>
+    </Heading>
+
+    <p class="meta">
+      {author && <a href={authorUrl(author.id)}>{author.data.name}</a>}
+      <time datetime={d.pubDate.toISOString()}>{formatDate(d.pubDate)}</time>
+      {!compact && <span>{minutes} min read</span>}
+    </p>
+
+    {!compact && <p class="row-x">{d.description}</p>}
+  </div>
+
+  {d.type === 'review' && d.product?.score !== undefined && (
+    <div class="row-score">
+      <Score score={d.product.score} size={compact ? 'sm' : 'md'} />
+    </div>
+  )}
+</article>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+    gap: 0.75rem 0.9rem;
+    padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .row-thumb {
+    display: block;
+    align-self: start;
+  }
+
+  /* On a phone the excerpt runs under the tile, full width. */
+  .row-x {
+    grid-column: 1 / -1;
+  }
+
+  .row:hover .row-h a {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .row-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-caption);
+  }
+
+  .row-kind {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    background: var(--tint);
+    color: var(--color-brand-primary);
+  }
+
+  .row-cat {
+    color: color-mix(in oklab, var(--color-brand-text) 62%, transparent);
+    text-decoration: none;
+  }
+
+  .row-cat:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .row-h {
+    margin-top: 0.5rem;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 650;
+    letter-spacing: -0.025em;
+    line-height: 1.18;
+    max-width: 30ch;
+  }
+
+  .row-h a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.14em;
+    transition:
+      color 0.16s var(--ease),
+      text-decoration-color 0.16s var(--ease);
+  }
+
+  .row-h a:hover {
+    color: var(--color-brand-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .row .meta {
+    margin-top: 0.5rem;
+  }
+
+  .row-x {
+    margin-top: 0;
+    max-width: 62ch;
+    font-size: 0.97rem;
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 76%, transparent);
+  }
+
+  .row-score {
+    align-self: start;
+    padding-top: 0.2rem;
+  }
+
+  /* Compact rows: title and byline only, tighter rhythm. */
+  .is-compact {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: 0.8rem;
+    gap: 0.5rem 0.9rem;
+  }
+
+  .is-compact .row-h {
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .is-compact .row-tags {
+    display: none;
+  }
+
+  .is-compact .meta {
+    margin-top: 0.3rem;
+  }
+
+  @media (min-width: 44rem) {
+    .row:not(.is-compact) {
+      grid-template-columns: 15rem minmax(0, 1fr) auto;
+      gap: 0.9rem 1.25rem;
+    }
+
+    .row-x {
+      grid-column: 2;
+      margin-top: 0.7rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .row:not(.is-compact) {
+      grid-template-columns: 17rem minmax(0, 1fr) auto;
+      gap: 1rem 1.75rem;
+    }
+
+    .row-thumb {
+      grid-column: auto;
+    }
+  }
+</style>

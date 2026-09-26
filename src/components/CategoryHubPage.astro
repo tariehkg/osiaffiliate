@@ -1,0 +1,172 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from './CategoryStrip.astro';
+import DisclosureNote from './DisclosureNote.astro';
+import ProvisionalNote from './ProvisionalNote.astro';
+import ArticleRow from './ArticleRow.astro';
+import ReviewCard from './ReviewCard.astro';
+import ArticleFeed from './ArticleFeed.astro';
+import Sidebar from './Sidebar.astro';
+import Faq from './Faq.astro';
+import { categoryById } from './data';
+import { getArticles, articleUrl, inCategory, ofType, topRated } from './articles';
+import { breadcrumbLd, itemListLd } from './seo';
+
+/**
+ * A category hub: the shortlist first, then every review in the category as
+ * a card, then the comparisons and pricing guides, then the guides. Each of
+ * the five hub pages is a three-line file that passes its id here.
+ */
+interface Props {
+  id: string;
+}
+
+const cat = categoryById(Astro.props.id);
+if (!cat) throw new Error(`CategoryHubPage: no category "${Astro.props.id}"`);
+
+const all = await getArticles();
+const mine = inCategory(all, cat.id);
+const best = ofType(mine, 'best')[0];
+const reviews = topRated(all, cat.id);
+const compare = [...ofType(mine, 'comparison'), ...ofType(mine, 'alternatives'), ...ofType(mine, 'pricing')];
+const guides = ofType(mine, 'guide');
+const faqs = best?.data.faqs.slice(0, 5) ?? [];
+
+const title = `${cat.name} software: reviews, shortlist and comparisons`;
+const description = `Every ${cat.noun.replace(/^an? /, '')} we have reviewed and scored, the shortlist for a small business, and the head-to-head comparisons and pricing guides for the category.`;
+
+const jsonld = [
+  breadcrumbLd([{ label: 'Home', href: '/' }, { label: cat.name, href: cat.hub }]),
+  itemListLd(`${cat.name} reviews`, reviews.map((r) => ({ name: r.data.product!.name, url: articleUrl(r) }))),
+  // The FAQ is shown here for convenience, but its schema belongs to the
+  // best-of article it comes from; marking it up twice would be duplicate.
+];
+---
+
+<Layout title={`${title} — OSI Affiliate`} description={description} path={cat.hub} jsonld={jsonld}>
+  <CategoryStrip current={cat.id} />
+  <main id="main" class="hub">
+    <header class="hub-head" data-tone={cat.tone}>
+      <div class="wrap">
+        <p class="hub-kicker">{cat.name}</p>
+        <h1 class="hub-h">{cat.question}</h1>
+        <p class="hub-lede">
+          {reviews.length} {cat.plain} tools reviewed and scored by our staff, one shortlist for a
+          solopreneur or a small team, and the comparisons that decide between them.
+        </p>
+        <DisclosureNote />
+        <div class="hub-prov"><ProvisionalNote /></div>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="cols hub-cols">
+        <div class="hub-main">
+          {best && (
+            <section aria-label="The shortlist">
+              <h2 class="sec-h">The shortlist</h2>
+              <ArticleRow article={best} as="h3" eager />
+            </section>
+          )}
+
+          {reviews.length > 0 && (
+            <section class="hub-sec" aria-label="Reviews">
+              <h2 class="sec-h">Every {cat.plain} tool we have reviewed</h2>
+              <div class="hub-grid">
+                {reviews.map((r) => <ReviewCard review={r} />)}
+              </div>
+            </section>
+          )}
+
+          {compare.length > 0 && (
+            <div class="hub-sec">
+              <ArticleFeed title="Compare and price" articles={compare} />
+            </div>
+          )}
+
+          {guides.length > 0 && (
+            <div class="hub-sec">
+              <ArticleFeed title="Guides" articles={guides} />
+            </div>
+          )}
+
+          {faqs.length > 0 && <div class="hub-faq"><Faq faqs={faqs} /></div>}
+        </div>
+
+        <Sidebar articles={all} category={cat.id} />
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .hub-head {
+    padding-block: clamp(2.25rem, 5vw, 3.75rem) clamp(1.75rem, 3.5vw, 2.75rem);
+    background: linear-gradient(180deg, var(--tone-soft) 0%, var(--color-brand-bg) 100%);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hub-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: color-mix(in oklab, var(--color-brand-text) 70%, transparent);
+  }
+
+  .hub-kicker::before {
+    content: '';
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
+  }
+
+  .hub-h {
+    margin-top: 0.75rem;
+    font-size: clamp(1.85rem, 4.4vw, 2.95rem);
+    font-weight: 700;
+    letter-spacing: -0.038em;
+    line-height: 1.04;
+    max-width: 30ch;
+  }
+
+  .hub-lede {
+    margin-top: clamp(1rem, 2vw, 1.35rem);
+    max-width: 58ch;
+    font-size: clamp(1.01rem, 1.3vw, 1.14rem);
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
+  }
+
+  .hub-prov {
+    margin-top: 1rem;
+  }
+
+  .hub-cols {
+    padding-block: clamp(2rem, 4vw, 3rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .hub-main {
+    min-width: 0;
+  }
+
+  .hub-sec {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .hub-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hub-faq :global(.wrap) {
+    padding-inline: 0;
+  }
+
+</style>

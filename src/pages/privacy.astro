@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import Doc from '../components/Doc.astro';
+
+/**
+ * Privacy, written for what the site actually is: static pages with no
+ * accounts, no forms and no analytics script of its own. If any of that
+ * changes, this page changes in the same commit.
+ */
+---
+
+<Layout
+  title="Privacy — OSI Affiliate"
+  description="What OSI Affiliate collects about visitors (very little), what the hosting provider logs, and what happens when you follow a vendor link."
+  path="/privacy"
+>
+  <CategoryStrip />
+  <main id="main">
+    <PageHead
+      title="Privacy"
+      lede="This site is a set of static pages. There are no accounts, no comment forms and no newsletter, so there is very little to tell you, and all of it is below."
+    />
+
+    <Doc>
+      <section>
+        <h2>What we collect</h2>
+        <p>
+          Nothing directly. The site sets no cookies of its own and runs no analytics script of its
+          own. The search box works inside your browser and sends nothing to us.
+        </p>
+      </section>
+
+      <section>
+        <h2>What the host logs</h2>
+        <p>
+          The site is served by Cloudflare, which keeps standard web server logs (the address a
+          request came from, the page requested, the time, and the browser's user-agent string) for
+          security and to keep the site up. Those logs are Cloudflare's, held under
+          <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare's privacy policy</a>,
+          and we do not use them to identify visitors.
+        </p>
+      </section>
+
+      <section>
+        <h2>Vendor links</h2>
+        <p>
+          When you follow a link to a vendor's site, you leave this one. Some of those links carry
+          an affiliate tag, which tells the vendor the visit came from here so that a commission can
+          be paid if you sign up; the tag does not identify you to us, and what the vendor collects
+          from then on is covered by the vendor's own policy. The
+          <a href="/disclosure">affiliate disclosure</a> says which links these are.
+        </p>
+      </section>
+
+      <section>
+        <h2>Email</h2>
+        <p>
+          If you email the desk, we keep the message for as long as it is useful for answering it
+          and for correcting the page it was about. We do not add you to any list.
+        </p>
+      </section>
+
+      <section>
+        <h2>Changes</h2>
+        <p>
+          If the site starts collecting anything it does not collect today, this page will say so
+          before it happens. Questions go to the <a href="/contact">contact page</a>.
+        </p>
+      </section>
+    </Doc>
+  </main>
+</Layout>

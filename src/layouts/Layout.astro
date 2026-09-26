@@ -2,9 +2,13 @@
 import '../styles/global.css';
 import { SITE_NAME, absoluteUrl } from '../site';
 import { organizationLd, websiteLd } from '../components/seo';
+import { getArticles, buildSearchIndex } from '../components/articles';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 /**
- * The document shell every page uses.
+ * The document shell every page uses. The nav and footer live here too, so a
+ * page is only ever its own <main>.
  *
  * Everything a search engine reads about a page is set here from props, so a
  * page cannot ship without a canonical, a description or Open Graph tags:
@@ -15,17 +19,20 @@ import { organizationLd, websiteLd } from '../components/seo';
  *    absolute URL on the production domain, without a trailing slash.
  *  - `jsonld` is any number of schema.org objects; Organization and WebSite
  *    are added on every page so the site is always identified.
- *  - `image` is the OG image path; defaults to the site card in /public.
+ *
+ * The search index is rendered once here as JSON: every search box on the
+ * page reads it, so the nav, the hero and the sidebar all resolve the same
+ * query to the same page.
  */
 interface Props {
   title: string;
   description?: string;
   path?: string;
   image?: string;
-  /** "website" for hubs and lists, "article" for posts and product pages. */
+  /** "website" for hubs and lists, "article" for reviews and guides. */
   type?: 'website' | 'article';
   noindex?: boolean;
-  jsonld?: Record<string, unknown>[];
+  jsonld?: (Record<string, unknown> | null)[];
 }
 
 const {
@@ -40,7 +47,12 @@ const {
 
 const canonical = absoluteUrl(path);
 const ogImage = absoluteUrl(image);
-const blocks = [organizationLd(), websiteLd(), ...jsonld];
+const blocks = [organizationLd(), websiteLd(), ...jsonld.filter(Boolean)];
+
+const articles = await getArticles();
+const index = buildSearchIndex(articles);
+/* `<` escaped so nothing in a title can close the script element. */
+const indexJson = JSON.stringify(index).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -69,8 +81,75 @@ const blocks = [organizationLd(), websiteLd(), ...jsonld];
     <meta name="twitter:image" content={ogImage} />
 
     {blocks.map((b) => <script type="application/ld+json" set:html={JSON.stringify(b)} />)}
+    <script type="application/json" id="site-index" set:html={indexJson} />
   </head>
   <body>
+    <a href="#main" class="skip">Skip to content</a>
+    <SiteNav articles={articles} />
     <slot />
+    <SiteFooter articles={articles} />
+
+    <script>
+      /**
+       * Scroll reveal, deliberately fail-safe. [data-rise] elements are
+       * visible in CSS. The first act here is to measure each one and hide
+       * ONLY the ones already below the fold, so a slow or broken script can
+       * never blank anything a visitor can see. Score bars (.sb) use the same
+       * observer to draw in.
+       */
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const fold = window.innerHeight;
+      const rises = Array.from(document.querySelectorAll<HTMLElement>('[data-rise]')).filter(
+        (el) => el.getBoundingClientRect().top > fold * 0.92,
+      );
+      const bars = Array.from(document.querySelectorAll<HTMLElement>('.sbars')).filter(
+        (el) => el.getBoundingClientRect().top > fold,
+      );
+
+      if (!reduce && 'IntersectionObserver' in window) {
+        const pending = new Set<HTMLElement>([...rises, ...bars]);
+        for (const el of rises) el.classList.add('rise-pending');
+        for (const el of bars) el.classList.add('is-unseen');
+
+        const show = (el: HTMLElement) => {
+          el.classList.add('rise-in');
+          el.classList.remove('rise-pending', 'is-unseen');
+          pending.delete(el);
+          io.unobserve(el);
+        };
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) show(entry.target as HTMLElement);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        for (const el of pending) io.observe(el);
+
+        /* A jump (End key, an anchor link, a fast fling) can carry an element
+           past the viewport without it ever intersecting. Anything that is
+           now above the fold line is shown on the next scroll, so nothing can
+           be left invisible above the reader. */
+        let queued = false;
+        const sweep = () => {
+          queued = false;
+          const line = window.innerHeight;
+          for (const el of pending) {
+            if (el.getBoundingClientRect().top < line) show(el);
+          }
+          if (!pending.size) window.removeEventListener('scroll', onScroll);
+        };
+        const onScroll = () => {
+          if (!queued) {
+            queued = true;
+            requestAnimationFrame(sweep);
+          }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('hashchange', onScroll);
+      }
+    </script>
   </body>
 </html>

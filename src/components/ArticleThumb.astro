@@ -1,0 +1,160 @@
+---
+import { Image } from 'astro:assets';
+import { typeLabel, thumbTitle, toneOf, type Article } from './articles';
+
+/**
+ * The thumbnail every article carries in a feed, a menu or a card.
+ *
+ * Most articles have no photo, and a stock photo of a laptop would say
+ * nothing anyway. So the thumbnail is set in type: the article's kind as a
+ * small line, the tool or shortlist as the big words, on the category's own
+ * colour, with the split O cropped into the corner. Every feed on the site
+ * then reads as one system, and a category is recognisable by colour before
+ * the title is read.
+ *
+ * A guide with a real photo (`image` in its frontmatter) shows the photo.
+ */
+interface Props {
+  article: Article;
+  /** Drives the srcset sizes for a photo; the tile scales with its box. */
+  size?: 'sm' | 'md' | 'lg';
+  eager?: boolean;
+  class?: string;
+}
+
+const { article, size = 'md', eager = false, class: cls = '' } = Astro.props;
+const d = article.data;
+const title = thumbTitle(article);
+const long = title.length > 18;
+const year = d.pubDate.getUTCFullYear();
+
+const widths = { sm: [160, 320], md: [300, 600], lg: [720, 1440] }[size];
+const sizes = { sm: '160px', md: '(min-width: 44rem) 300px, 40vw', lg: '(min-width: 64rem) 720px, 100vw' }[size];
+---
+
+{
+  d.image ? (
+    <Image
+      src={d.image.src}
+      alt={d.image.alt}
+      width={widths[0]}
+      height={Math.round(widths[0] * 0.625)}
+      widths={widths}
+      sizes={sizes}
+      quality={80}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+      decoding={eager ? 'sync' : undefined}
+      class:list={['th', 'th-photo', cls]}
+    />
+  ) : (
+    <div class:list={['th', 'th-tile', cls]} data-tone={toneOf(article)} aria-hidden="true">
+      <svg class="th-ghost" viewBox="0 0 32 32" fill="none" focusable="false">
+        <path
+          d="M6.672 25.328 A4 4 0 0 1 5.5 22.5 V9.5 A4 4 0 0 1 9.5 5.5 H22.5 A4 4 0 0 1 25.328 6.672 A4 4 0 0 1 26.5 9.5 V22.5 A4 4 0 0 1 22.5 26.5 H9.5 A4 4 0 0 1 6.672 25.328"
+          stroke="currentColor"
+          stroke-width="6"
+        />
+      </svg>
+      <span class="th-kicker">
+        {typeLabel[d.type]}
+        {(d.type === 'best' || d.type === 'review' || d.type === 'alternatives') && <em>{year}</em>}
+      </span>
+      <span class:list={['th-title', long && 'is-long']}>{title}</span>
+      {d.product && d.type === 'review' && <span class="th-mono">{d.product.monogram}</span>}
+    </div>
+  )
+}
+
+<style>
+  .th {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .th-photo {
+    object-fit: cover;
+    height: auto;
+  }
+
+  .th-tile {
+    position: relative;
+    container-type: inline-size;
+    background:
+      linear-gradient(135deg, color-mix(in oklab, var(--tone-fg) 9%, transparent) 0%, transparent 55%),
+      var(--tone-bg);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tone-fg) 10%, transparent);
+    color: var(--tone-fg);
+    padding: 7% 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .th-ghost {
+    position: absolute;
+    right: -30%;
+    top: -34%;
+    width: 92%;
+    height: auto;
+    color: var(--tone-ghost);
+    opacity: 0.16;
+  }
+
+  .th-kicker {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--font-heading);
+    font-size: clamp(0.62rem, 4.6cqw, 0.95rem);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    opacity: 0.85;
+  }
+
+  .th-kicker em {
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .th-title {
+    position: relative;
+    font-family: var(--font-heading);
+    font-size: clamp(0.95rem, 11.5cqw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    max-width: 92%;
+  }
+
+  .th-title.is-long {
+    font-size: clamp(0.8rem, 7.4cqw, 1.7rem);
+    letter-spacing: -0.025em;
+  }
+
+  /* The vendor's two-letter monogram sits with the kicker, small and set in
+     the tone's foreground: a typographic stand-in, never a copy of a logo. */
+  @container (max-width: 12rem) {
+    .th-mono {
+      display: none;
+    }
+  }
+
+  .th-mono {
+    position: absolute;
+    right: 8%;
+    bottom: 8%;
+    font-family: var(--font-heading);
+    font-size: clamp(0.7rem, 5cqw, 1rem);
+    font-weight: 600;
+    padding: 0.15em 0.45em;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    opacity: 0.8;
+  }
+</style>

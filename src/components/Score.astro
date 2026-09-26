@@ -1,0 +1,89 @@
+---
+import { fmtScore } from './articles';
+
+/**
+ * The editor's score, out of five.
+ *
+ * A rounded square, because that is the shape of the mark: a score tile on a
+ * review row and the O in the wordmark are the same geometry at two sizes.
+ * The number is set in cobalt on paper; no stars, no colour scale, so a 3.9
+ * and a 4.6 are read as numbers rather than felt as green and red.
+ */
+interface Props {
+  score: number;
+  size?: 'sm' | 'md' | 'lg';
+  /** Caption under the tile (lg only). */
+  label?: string;
+  class?: string;
+}
+
+const { score, size = 'sm', label, class: cls = '' } = Astro.props;
+---
+
+<span class:list={['score', `is-${size}`, cls]}>
+  <span class="sr">Editor's score {fmtScore(score)} out of 5</span>
+  <span class="score-tile" aria-hidden="true">
+    <b>{fmtScore(score)}</b>
+    <small>/5</small>
+  </span>
+  {label && size === 'lg' && <span class="score-label">{label}</span>}
+</span>
+
+<style>
+  .score {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    flex: none;
+  }
+
+  .score-tile {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.1em;
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 22%;
+    font-family: var(--font-heading);
+    color: var(--color-brand-primary);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  .score-tile b {
+    font-weight: 700;
+  }
+
+  .score-tile small {
+    font-size: 0.5em;
+    font-weight: 500;
+    color: color-mix(in oklab, var(--color-brand-text) 66%, transparent);
+  }
+
+  .is-sm .score-tile {
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 1.05rem;
+  }
+
+  .is-md .score-tile {
+    width: 3.6rem;
+    height: 3.6rem;
+    font-size: 1.5rem;
+  }
+
+  .is-lg .score-tile {
+    width: 5.25rem;
+    height: 5.25rem;
+    font-size: 2.2rem;
+    border-width: 2px;
+  }
+
+  .score-label {
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, var(--color-brand-text) 62%, transparent);
+    text-align: center;
+  }
+</style>

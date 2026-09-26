@@ -1,0 +1,78 @@
+---
+import { Image } from 'astro:assets';
+import { authorUrl, formatDate, type Author } from './articles';
+
+/**
+ * Who wrote it and when. Sits under every article title so the staff name
+ * is the second thing read, not the last: the whole site's claim is that a
+ * person on staff did the work.
+ */
+interface Props {
+  author: Author;
+  published: Date;
+  updated?: Date;
+  minutes?: number;
+}
+
+const { author, published, updated, minutes } = Astro.props;
+---
+
+<p class="by">
+  <Image src={author.data.avatar} alt="" width={36} height={36} quality={80} class="by-avatar" />
+  <span class="by-text">
+    <span class="by-who">
+      <a href={authorUrl(author.id)}>{author.data.name}</a>
+      <span class="by-role">{author.data.role}</span>
+    </span>
+    <span class="meta">
+      <time datetime={published.toISOString()}>{formatDate(published)}</time>
+      {updated && <span>Updated {formatDate(updated)}</span>}
+      {minutes && <span>{minutes} min read</span>}
+    </span>
+  </span>
+</p>
+
+<style>
+  .by {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .by :global(.by-avatar) {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0.3rem;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+    background: var(--color-brand-bg);
+  }
+
+  .by-text {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .by-who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: var(--fs-small);
+  }
+
+  .by-who a {
+    font-weight: 600;
+    color: var(--color-brand-text);
+    text-decoration: none;
+  }
+
+  .by-who a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .by-role {
+    font-size: var(--fs-caption);
+    color: color-mix(in oklab, var(--color-brand-text) 64%, transparent);
+  }
+</style>

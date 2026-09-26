@@ -1,0 +1,100 @@
+---
+import { articleUrl, fmtScore, type Article } from './articles';
+
+/**
+ * The list a reader in a hurry wants: every pick in order, one line each,
+ * with the score. Links go to the full reviews.
+ */
+interface Props {
+  picks: { review: Article; bestFor: string }[];
+  title?: string;
+}
+
+const { picks, title = 'Our picks at a glance' } = Astro.props;
+---
+
+<section class="qp" aria-label={title}>
+  <p class="qp-h">{title}</p>
+  <ol>
+    {
+      picks.map(({ review, bestFor }) => {
+        const p = review.data.product!;
+        return (
+          <li>
+            <a href={articleUrl(review)}>{p.name}</a>
+            <span class="qp-for">best for {bestFor.toLowerCase()}</span>
+            {p.score !== undefined && <span class="qp-score">{fmtScore(p.score)}/5</span>}
+          </li>
+        );
+      })
+    }
+  </ol>
+</section>
+
+<style>
+  .qp {
+    padding: 1.1rem 1.25rem 1.2rem;
+    background: var(--color-brand-surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .qp-h {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .qp ol {
+    margin: 0.6rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: pick;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .qp li {
+    counter-increment: pick;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.5rem;
+    font-size: 0.97rem;
+    line-height: 1.5;
+  }
+
+  .qp li::before {
+    content: counter(pick) '.';
+    width: 1.4rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-brand-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .qp a {
+    font-weight: 600;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-brand-primary) 45%, transparent);
+    text-underline-offset: 0.2em;
+  }
+
+  .qp a:hover {
+    color: var(--color-brand-primary);
+  }
+
+  .qp-for {
+    color: color-mix(in oklab, var(--color-brand-text) 72%, transparent);
+  }
+
+  .qp-score {
+    margin-left: auto;
+    font-family: var(--font-heading);
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-brand-primary);
+  }
+</style>

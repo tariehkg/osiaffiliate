@@ -1,17 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import SiteNav from '../components/SiteNav.astro';
-import CategoryHub from '../components/CategoryHub.astro';
-import SiteFooter from '../components/SiteFooter.astro';
-import { categoryPageMeta } from '../components/category-page';
-
-const meta = categoryPageMeta('crm');
+import CategoryHubPage from '../components/CategoryHubPage.astro';
 ---
 
-<Layout {...meta}>
-  <SiteNav />
-  <main>
-    <CategoryHub id="crm" />
-  </main>
-  <SiteFooter />
-</Layout>
+<CategoryHubPage id="crm" />

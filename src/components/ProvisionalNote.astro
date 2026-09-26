@@ -1,0 +1,34 @@
+---
+import { SCORES_PROVISIONAL } from '../site';
+
+/**
+ * One line, shown on any page with a score while SCORES_PROVISIONAL is on.
+ * Dashed, like every other "not final yet" control on the site. Renders
+ * nothing once the flag is off, so no page needs editing that day.
+ */
+---
+
+{
+  SCORES_PROVISIONAL && (
+    <p class="prov">
+      Scores on this page are provisional until our staff testing round is complete.
+      <a href="/how-we-pick" class="tlink">How we score</a>
+    </p>
+  )
+}
+
+<style>
+  .prov {
+    max-width: 62ch;
+    padding: 0.5rem 0 0.5rem 0.9rem;
+    border-left: 2px dashed var(--line-strong);
+    font-size: var(--fs-caption);
+    line-height: 1.5;
+    color: var(--color-brand-muted);
+  }
+
+  .prov a {
+    margin-left: 0.3rem;
+    font-weight: var(--fw-medium);
+  }
+</style>
