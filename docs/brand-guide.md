@@ -26,9 +26,14 @@ from affiliate links, we say which ones, and a commission has never moved a scor
   amber, navy, surface, deep), all derived from the seven tokens. Thumbnails, the category strip's
   swatches, hub headers and sidebar category links read `--tone-*`, so a category is recognisable
   by colour before its name is read.
-- **Typographic thumbnails** (`ArticleThumb.astro`). No stock photos: the article's kind, the tool
-  or shortlist name in Outfit at display weight, and the split O cropped into the corner, on the
-  category's tone. A guide with a real photo shows the photo.
+- **Cover tiles set in type** (`ArticleThumb.astro`). No stock photos, no logo crops, no
+  monograms: on the category's tone, a kind chip and the year along the top, the subject in
+  Outfit 700 along the bottom with one fact under it ("Editor's score", "4 tools tested and
+  compared", the plan line), and one large light-weight figure in the band on the right that is
+  the article's own number: the score on a review, the count on a shortlist or alternatives list,
+  an italic "vs" on a head to head. The ground is a faint ruled grid, the lattice the tables use,
+  fading out under the words. A guide with a real photo shows the photo. Review ledger rows carry
+  no tile at all (the score already sits on the row); a tone swatch marks the category instead.
 - **The score tile** (`Score.astro`). A rounded square (22% radius — the mark's own corner) with
   the score in cobalt on surface. No stars, no red/green scale.
 - **Section headings** (`.sec-h`). One size, one weight, a hairline rule above with a 3rem amber

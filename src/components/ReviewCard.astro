@@ -1,7 +1,6 @@
 ---
-import ArticleThumb from './ArticleThumb.astro';
 import Score from './Score.astro';
-import { articleUrl, type Article } from './articles';
+import { articleUrl, toneOf, type Article } from './articles';
 
 /**
  * A review as a card: thumbnail, tool name, what it is for, how you can
@@ -17,12 +16,9 @@ const p = review.data.product!;
 const href = articleUrl(review);
 ---
 
-<article class="rc" data-rise>
-  <a href={href} class="rc-thumb" tabindex="-1" aria-hidden="true">
-    <ArticleThumb article={review} size="sm" />
-  </a>
+<article class="rc" data-rise data-tone={toneOf(review)}>
   <div class="rc-body">
-    <Heading class="rc-h"><a href={href}>{p.name}</a></Heading>
+    <Heading class="rc-h"><i class="rc-swatch" aria-hidden="true"></i><a href={href}>{p.name}</a></Heading>
     <p class="rc-role">{p.role}</p>
     <p class="rc-plan">{p.plan}</p>
   </div>
@@ -35,21 +31,28 @@ const href = articleUrl(review);
   .rc {
     position: relative;
     display: grid;
-    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.9rem;
     padding: 0.85rem 0;
     border-top: 1px solid var(--line);
   }
 
-  .rc-thumb {
-    display: block;
-    align-self: start;
-  }
-
   .rc-h {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     font-size: 1.05rem;
     font-weight: 650;
     letter-spacing: -0.02em;
+  }
+
+  .rc-swatch {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 2px;
+    background: var(--tone-bg);
+    border: 1px solid color-mix(in oklab, var(--color-brand-text) 18%, transparent);
   }
 
   .rc-h a {
@@ -69,6 +72,7 @@ const href = articleUrl(review);
 
   .rc-role {
     margin-top: 0.25rem;
+    padding-left: 1.3rem;
     font-size: var(--fs-small);
     line-height: 1.45;
     color: color-mix(in oklab, var(--color-brand-text) 74%, transparent);
@@ -76,6 +80,7 @@ const href = articleUrl(review);
 
   .rc-plan {
     margin-top: 0.35rem;
+    padding-left: 1.3rem;
     font-size: var(--fs-caption);
     color: color-mix(in oklab, var(--color-brand-text) 64%, transparent);
   }

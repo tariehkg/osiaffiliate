@@ -1,22 +1,23 @@
 ---
 import { Image } from 'astro:assets';
-import { typeLabel, thumbTitle, toneOf, type Article } from './articles';
+import { typeLabel, thumbTitle, toneOf, categoryOf, fmtScore, type Article } from './articles';
 
 /**
- * The thumbnail every article carries in a feed, a menu or a card.
+ * The cover every article carries in a feed, a menu or a card.
  *
- * Most articles have no photo, and a stock photo of a laptop would say
- * nothing anyway. So the thumbnail is set in type: the article's kind as a
- * small line, the tool or shortlist as the big words, on the category's own
- * colour, with the split O cropped into the corner. Every feed on the site
- * then reads as one system, and a category is recognisable by colour before
- * the title is read.
+ * Set in type only, on the category's colour: the kind of article and the
+ * year along the top, the subject in Outfit at display weight along the
+ * bottom with one fact under it, and one large figure on the right that is
+ * the article's own number — the editor's score on a review, the count of
+ * tools on a shortlist or an alternatives list, "vs" on a head to head.
+ * Nothing on the tile imitates a logo, ours or a vendor's.
  *
- * A guide with a real photo (`image` in its frontmatter) shows the photo.
+ * The ground is a fine ruled grid, the lattice the site's tables use, kept
+ * faint so the words always read first. A guide with a real photo shows the
+ * photo.
  */
 interface Props {
   article: Article;
-  /** Drives the srcset sizes for a photo; the tile scales with its box. */
   size?: 'sm' | 'md' | 'lg';
   eager?: boolean;
   class?: string;
@@ -27,6 +28,41 @@ const d = article.data;
 const title = thumbTitle(article);
 const long = title.length > 18;
 const year = d.pubDate.getUTCFullYear();
+const cat = categoryOf(article);
+
+/* The figure on the right and the fact line under the title. */
+let figure = '';
+let figureSuffix = '';
+let note = '';
+
+switch (d.type) {
+  case 'review':
+    if (d.product?.score !== undefined) {
+      figure = fmtScore(d.product.score);
+      figureSuffix = '/5';
+      note = "Editor's score";
+    } else {
+      note = d.product?.plan ?? '';
+    }
+    break;
+  case 'best':
+    figure = String(d.picks.length);
+    note = `${d.picks.length} tools tested and compared`;
+    break;
+  case 'alternatives':
+    figure = String(d.picks.length);
+    note = `${d.picks.length} alternatives compared`;
+    break;
+  case 'comparison':
+    figure = 'vs';
+    note = 'Head to head';
+    break;
+  case 'pricing':
+    note = d.product?.plan ?? 'Pricing guide';
+    break;
+  default:
+    note = cat?.short ?? 'Guide';
+}
 
 const widths = { sm: [160, 320], md: [300, 600], lg: [720, 1440] }[size];
 const sizes = { sm: '160px', md: '(min-width: 44rem) 300px, 40vw', lg: '(min-width: 64rem) 720px, 100vw' }[size];
@@ -48,20 +84,24 @@ const sizes = { sm: '160px', md: '(min-width: 44rem) 300px, 40vw', lg: '(min-wid
       class:list={['th', 'th-photo', cls]}
     />
   ) : (
-    <div class:list={['th', 'th-tile', cls]} data-tone={toneOf(article)} aria-hidden="true">
-      <svg class="th-ghost" viewBox="0 0 32 32" fill="none" focusable="false">
-        <path
-          d="M6.672 25.328 A4 4 0 0 1 5.5 22.5 V9.5 A4 4 0 0 1 9.5 5.5 H22.5 A4 4 0 0 1 25.328 6.672 A4 4 0 0 1 26.5 9.5 V22.5 A4 4 0 0 1 22.5 26.5 H9.5 A4 4 0 0 1 6.672 25.328"
-          stroke="currentColor"
-          stroke-width="6"
-        />
-      </svg>
-      <span class="th-kicker">
-        {typeLabel[d.type]}
-        {(d.type === 'best' || d.type === 'review' || d.type === 'alternatives') && <em>{year}</em>}
+    <div class:list={['th', 'th-tile', `is-${d.type}`, cls]} data-tone={toneOf(article)} aria-hidden="true">
+      <span class="th-top">
+        <span class="th-kind">{typeLabel[d.type]}</span>
+        <span class="th-year">{d.type === 'guide' ? cat?.short : year}</span>
       </span>
-      <span class:list={['th-title', long && 'is-long']}>{title}</span>
-      {d.product && d.type === 'review' && <span class="th-mono">{d.product.monogram}</span>}
+
+      <span class="th-foot">
+        <span class="th-words">
+          <span class:list={['th-title', long && 'is-long']}>{title}</span>
+          {note && <span class="th-note">{note}</span>}
+        </span>
+        {figure && (
+          <span class="th-figure">
+            {figure}
+            {figureSuffix && <small>{figureSuffix}</small>}
+          </span>
+        )}
+      </span>
     </div>
   )
 }
@@ -83,78 +123,146 @@ const sizes = { sm: '160px', md: '(min-width: 44rem) 300px, 40vw', lg: '(min-wid
   .th-tile {
     position: relative;
     container-type: inline-size;
-    background:
-      linear-gradient(135deg, color-mix(in oklab, var(--tone-fg) 9%, transparent) 0%, transparent 55%),
-      var(--tone-bg);
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tone-fg) 10%, transparent);
-    color: var(--tone-fg);
-    padding: 7% 8%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 6.5% 7%;
+    color: var(--tone-fg);
+    /* Flat colour under a faint ruled grid that fades out toward the words. */
+    background-image:
+      linear-gradient(200deg, transparent 30%, var(--tone-bg) 70%),
+      repeating-linear-gradient(90deg, color-mix(in oklab, var(--tone-fg) 9%, transparent) 0 1px, transparent 1px 12.5%),
+      repeating-linear-gradient(180deg, color-mix(in oklab, var(--tone-fg) 9%, transparent) 0 1px, transparent 1px 20%),
+      linear-gradient(var(--tone-bg), var(--tone-bg));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tone-fg) 12%, transparent);
+    font-family: var(--font-heading);
   }
 
-  .th-ghost {
-    position: absolute;
-    right: -30%;
-    top: -34%;
-    width: 92%;
-    height: auto;
-    color: var(--tone-ghost);
-    opacity: 0.16;
-  }
-
-  .th-kicker {
-    position: relative;
+  /* --- top line: kind and year ---------------------------------------- */
+  .th-top {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    font-family: var(--font-heading);
-    font-size: clamp(0.62rem, 4.6cqw, 0.95rem);
+    align-items: center;
+    gap: 0.5rem;
+    font-size: clamp(0.58rem, 4.4cqw, 0.9rem);
     font-weight: 500;
-    letter-spacing: 0.01em;
-    opacity: 0.85;
+    line-height: 1;
   }
 
-  .th-kicker em {
-    font-style: normal;
+  .th-kind {
+    padding: 0.35em 0.7em;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--tone-fg) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tone-fg) 18%, transparent);
+  }
+
+  .th-year {
     font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+  }
+
+  /* --- foot: the words, full width; the figure sits in the band above --- */
+  .th-foot {
+    display: grid;
+    gap: 0.35em;
+  }
+
+  .th-words {
+    display: grid;
+    gap: 0.35em;
+    min-width: 0;
   }
 
   .th-title {
-    position: relative;
-    font-family: var(--font-heading);
-    font-size: clamp(0.95rem, 11.5cqw, 2.6rem);
+    font-size: clamp(0.95rem, 11cqw, 2.5rem);
     font-weight: 700;
-    line-height: 1.02;
+    line-height: 1;
     letter-spacing: -0.035em;
     text-wrap: balance;
-    max-width: 92%;
   }
 
   .th-title.is-long {
-    font-size: clamp(0.8rem, 7.4cqw, 1.7rem);
+    font-size: clamp(0.8rem, 7.2cqw, 1.65rem);
     letter-spacing: -0.025em;
+    line-height: 1.05;
   }
 
-  /* The vendor's two-letter monogram sits with the kicker, small and set in
-     the tone's foreground: a typographic stand-in, never a copy of a logo. */
+  .th-note {
+    font-family: var(--font-body);
+    font-size: clamp(0.55rem, 4.2cqw, 0.85rem);
+    font-weight: 500;
+    opacity: 0.82;
+  }
+
+  /* The one big number. Set light so it reads as a figure beside the title
+     rather than a second headline, with its unit tucked small. */
+  .th-figure {
+    position: absolute;
+    right: 7%;
+    top: 47%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: baseline;
+    font-size: clamp(1.6rem, 21cqw, 4.6rem);
+    font-weight: 300;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.92;
+  }
+
+  .th-figure small {
+    font-size: 0.34em;
+    font-weight: 500;
+    letter-spacing: 0;
+    opacity: 0.75;
+    margin-left: 0.1em;
+  }
+
+  .is-comparison .th-figure {
+    font-size: clamp(1.3rem, 15cqw, 3.4rem);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* Medium-small tiles: the fact line and the year go, the title stays. */
   @container (max-width: 12rem) {
-    .th-mono {
+    .th-note,
+    .th-year {
       display: none;
     }
   }
 
-  .th-mono {
-    position: absolute;
-    right: 8%;
-    bottom: 8%;
-    font-family: var(--font-heading);
-    font-size: clamp(0.7rem, 5cqw, 1rem);
-    font-weight: 600;
-    padding: 0.15em 0.45em;
-    border: 1px solid currentColor;
-    border-radius: 3px;
-    opacity: 0.8;
+  /* Tiny tiles (ledger rows): the figure alone, centred, because words
+     would not fit. The row beside the tile carries the name. */
+  @container (max-width: 8rem) {
+    .th-top,
+    .th-words {
+      display: none;
+    }
+
+    .th-foot {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .th-figure {
+      position: static;
+      transform: none;
+      font-size: 34cqw;
+      font-weight: 400;
+    }
+
+    .is-pricing .th-foot::before,
+    .is-guide .th-foot::before {
+      content: '';
+      width: 26cqw;
+      height: 26cqw;
+      border-radius: 22%;
+      background: color-mix(in oklab, var(--tone-fg) 16%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tone-fg) 24%, transparent);
+    }
   }
 </style>
