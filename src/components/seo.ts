@@ -162,7 +162,6 @@ export function articleLd(a: {
   authorName: string;
   authorPath: string;
   authorIsPerson: boolean;
-  image?: string;
 }) {
   return {
     '@context': 'https://schema.org',
@@ -178,6 +177,5 @@ export function articleLd(a: {
       url: absoluteUrl(a.authorPath),
     },
     publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    ...(a.image ? { image: a.image.startsWith('http') ? a.image : absoluteUrl(a.image) } : {}),
   };
 }

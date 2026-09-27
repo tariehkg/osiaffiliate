@@ -22,18 +22,30 @@ from affiliate links, we say which ones, and a commission has never moved a scor
 - **Two columns everywhere below the hero.** `.cols` in `base.css`: the reading column and a 19rem
   sidebar (`Sidebar.astro`) at ≥64rem, stacked below. Article pages, hubs, indexes and the
   homepage feed all use it, so the sidebar is in the same place on every page.
-- **Category tones.** Each category owns one of five tones (`data-tone` in `base.css`: cobalt,
-  amber, navy, surface, deep), all derived from the seven tokens. Thumbnails, the category strip's
-  swatches, hub headers and sidebar category links read `--tone-*`, so a category is recognisable
-  by colour before its name is read.
-- **Cover tiles set in type** (`ArticleThumb.astro`). No stock photos, no logo crops, no
-  monograms: on the category's tone, a kind chip and the year along the top, the subject in
-  Outfit 700 along the bottom with one fact under it ("Editor's score", "4 tools tested and
-  compared", the plan line), and one large light-weight figure in the band on the right that is
-  the article's own number: the score on a review, the count on a shortlist or alternatives list,
-  an italic "vs" on a head to head. The ground is a faint ruled grid, the lattice the tables use,
-  fading out under the words. A guide with a real photo shows the photo. Review ledger rows carry
-  no tile at all (the score already sits on the row); a tone swatch marks the category instead.
+- **Category tones, at wayfinding scale only.** Each category owns one of five tones (`data-tone`
+  in `base.css`: cobalt, amber, navy, surface, deep), all derived from the seven tokens. The
+  category strip's swatches, hub headers, and sidebar/nav/footer category links read `--tone-*`,
+  so a category is recognisable by colour before its name is read — but only at swatch-dot and
+  wash scale. Every tone is a real, sufficiently dark or saturated colour — none of the five is
+  ever the page's own near-white paper (`--color-brand-surface`, `--color-brand-bg`) standing in
+  undressed as a "tone". `surface` (Project Management) is a cool slate derived from
+  `--color-brand-muted`, not the paper token its name recalls from before the fix; `--tone-soft`
+  still washes toward the page for hub-header backgrounds, where the text colour is fixed and
+  never reads `--tone-fg`.
+- **Cover tiles set in type, one colour, not the category's** (`CoverTile.astro`, used by
+  `ArticleThumb.astro` for every article — reviews, best-of, comparisons, alternatives, pricing and
+  guides alike). No stock photos, no logo crops, no monograms, no kind chip or year: the subject in
+  Outfit 700, centred, with one fact beneath it in Inter ("Editor's score", "4 tools tested and
+  compared", the plan line) — one type scale for both, only the size stepping down past 18
+  characters so a long title never reads as a different typeface. Every tile is the same navy
+  (`--color-brand-secondary`), white text — deliberately not the category's tone: five tones
+  cycling down a feed of bold full-bleed tiles read as busy rather than organised, and cobalt is
+  reserved (see Do's and don'ts) from ever being a full-bleed wash. The ground is a faint ruled
+  grid, the lattice the tables use, with a soft pool of navy centred behind the words so the grid
+  never crosses them. Review ledger rows carry no tile at all (the score already sits on the row);
+  a tone swatch marks the category instead. `CoverTile` takes plain `title`/`note` props (no
+  `Article`, no tone), so `/design-system` carries a live "cover tile maker" — type a title and a
+  fact, see the exact tile a real article would get, rendered by the same component.
 - **The score tile** (`Score.astro`). A rounded square (22% radius — the mark's own corner) with
   the score in cobalt on surface. No stars, no red/green scale.
 - **Section headings** (`.sec-h`). One size, one weight, a hairline rule above with a 3rem amber
@@ -244,32 +256,17 @@ the production-hardening pass done on this project.
 
 ## Image treatment
 
-The marketing pages are still built from typography, color and one shared SVG mark
-(`Mark.astro`), with no photography. The blog is the one place photos appear: each post's
-featured image, shown by `PostList.astro` (the lead photo and ledger thumbnails) and on
-`src/pages/blog/[id].astro` (the wide hero). Author avatars (`AuthorCard.astro`) currently use
-the brand mark itself (`src/assets/images/authors/osi-affiliate.svg`), because the site uses no
-personal bylines. Every photo follows the same surface and card system as the rest of the site,
-so it doesn't look like a foreign element dropped onto the page:
-
-- **Source and licence:** photos are CC0 from Wikimedia Commons, stored in
-  `src/assets/images/blog/` and credited in each post's `featuredImage.credit`, which is shown
-  under the hero.
-- **Cropping:** 3:2 in lists and on small screens; a 21:9 letterbox for the post hero from
-  `44rem` up, so the title and the opening paragraph still share the first screen. Crops are
-  done with CSS `aspect-ratio` + `object-fit: cover`, not by re-cutting the file.
-- **Corner radius:** `2–4px`, matching cards and panels elsewhere (not fully square, not
-  heavily rounded). Use the same radius as the container it sits in.
-- **Border:** a 1px hairline in `--line` (or `--line-strong` if it needs to read as a distinct
-  object on a busy background), the same edge treatment every card/panel/table on the site uses.
-- **Shadow:** if an image needs to lift off the page, use `--shadow-brand` (cobalt-tinted), not a
-  plain gray shadow — consistent with the "don't" above.
-- **No filters, overlays, or duotones exist in the current system** — if a future design needs one
-  (e.g. a scrim behind text on a hero photo), it should be built from the existing tokens
-  (e.g. a `linear-gradient` into `--color-brand-secondary`) rather than a new arbitrary color, the
-  same way the Hero and Stance background gradients are built today.
-- **Dimensions:** always set `width`/`height` explicitly (required by the image-handling rules in
-  `CLAUDE.md`) rather than letting an image's intrinsic ratio drive layout.
+**No stock photography anywhere on the site — not the marketing pages, not article covers.** An
+earlier pass put a CC0 Wikimedia photo behind three guide articles; those images and the
+`image` field that carried them (`content.config.ts`, `ArticleThumb.astro`, `ArticlePage.astro`)
+are gone. Every article's cover is `CoverTile.astro` — typography and a tone, no exceptions — and
+the rest of the site is built from typography, color and one shared SVG mark (`Mark.astro`).
+Author avatars (`AuthorCard.astro`) use the brand mark or a dashed placeholder
+(`src/assets/images/authors/`), never a personal photo, because the site uses no personal
+bylines. If a future page genuinely needs a real photo, it still has to earn its place inside the
+existing surface and card system (the corner radius, hairline border and `--shadow-brand`
+everything else uses) rather than getting dropped in as a foreign element — but the default,
+and the only thing currently in the codebase, is no photo at all.
 
 ## Ratings
 

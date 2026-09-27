@@ -48,7 +48,7 @@ const path = hrefFor(page.currentPage);
               <p class="idx-none" id="idx-none" hidden>Nothing matches that. Try a tool name, a category, or one of the shortlists in the sidebar.</p>
             </section>
             <div id="idx-all">
-              <ArticleFeed articles={page.data} rowAs="h2" eagerFirst={page.currentPage === 1} id="idx-feed" />
+              <ArticleFeed articles={page.data} rowAs="h2" id="idx-feed" />
               <Pagination page={page} hrefFor={hrefFor} />
             </div>
           </div>

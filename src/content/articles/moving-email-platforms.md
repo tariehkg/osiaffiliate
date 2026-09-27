@@ -7,10 +7,6 @@ type: guide
 tags:
   - Email marketing
   - Switching tools
-image:
-  src: ../../assets/images/blog/email-mailboxes.jpg
-  alt: Two banks of numbered metal mailboxes set against a patterned white breeze-block wall.
-  credit: Photo by Jerry Kiesewetter, CC0, via Wikimedia Commons
 draft: false
 category: email
 ---

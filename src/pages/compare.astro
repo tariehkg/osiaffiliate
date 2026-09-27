@@ -32,7 +32,7 @@ const pricing = ofType(articles, 'pricing');
       <div class="wrap">
         <div class="cols">
           <div class="cp-main">
-            <ArticleFeed title="Head to head" articles={comparisons} rowAs="h2" eagerFirst />
+            <ArticleFeed title="Head to head" articles={comparisons} rowAs="h2" />
             {alternatives.length > 0 && <div class="cp-sec"><ArticleFeed title="Alternatives to a tool you already use" articles={alternatives} rowAs="h2" /></div>}
             {pricing.length > 0 && <div class="cp-sec"><ArticleFeed title="Pricing guides" articles={pricing} rowAs="h2" /></div>}
           </div>

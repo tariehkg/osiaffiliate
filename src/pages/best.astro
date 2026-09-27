@@ -31,7 +31,7 @@ const alternatives = ofType(articles, 'alternatives');
       <div class="wrap">
         <div class="cols">
           <div class="bp-main">
-            <ArticleFeed title="Best of, by category" articles={best} rowAs="h2" eagerFirst />
+            <ArticleFeed title="Best of, by category" articles={best} rowAs="h2" />
             {alternatives.length > 0 && (
               <div class="bp-sec">
                 <ArticleFeed title="Alternatives to a tool you already use" articles={alternatives} rowAs="h2" />

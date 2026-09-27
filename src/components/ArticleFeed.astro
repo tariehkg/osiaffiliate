@@ -13,18 +13,16 @@ interface Props {
   compact?: boolean;
   /** Heading level for each row's title. */
   rowAs?: 'h2' | 'h3';
-  /** Mark the first thumbnail as above the fold. */
-  eagerFirst?: boolean;
   id?: string;
 }
 
-const { title, articles, more, compact = false, rowAs = 'h3', eagerFirst = false, id } = Astro.props;
+const { title, articles, more, compact = false, rowAs = 'h3', id } = Astro.props;
 ---
 
 <section class="feed" id={id} aria-label={title}>
   {title && <h2 class="sec-h">{title}</h2>}
   <div class="feed-list">
-    {articles.map((a, i) => <ArticleRow article={a} compact={compact} as={rowAs} eager={eagerFirst && i === 0} />)}
+    {articles.map((a) => <ArticleRow article={a} compact={compact} as={rowAs} />)}
   </div>
   {
     more && (

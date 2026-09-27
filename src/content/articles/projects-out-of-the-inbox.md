@@ -7,10 +7,6 @@ type: guide
 tags:
   - Project management
   - Small teams
-image:
-  src: ../../assets/images/blog/pm-desk-notes.jpg
-  alt: A laptop seen from above on a pale wooden desk, next to a cup of black coffee, two pencils, a pad of sticky notes and a few crumpled paper notes.
-  credit: Photo by Lauren Mancke, CC0, via Wikimedia Commons
 draft: false
 category: pm
 ---

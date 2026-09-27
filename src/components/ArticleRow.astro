@@ -16,10 +16,9 @@ interface Props {
   compact?: boolean;
   /** Heading level for the title, so the row fits the page outline. */
   as?: 'h2' | 'h3';
-  eager?: boolean;
 }
 
-const { article, compact = false, as: Heading = 'h3', eager = false } = Astro.props;
+const { article, compact = false, as: Heading = 'h3' } = Astro.props;
 const d = article.data;
 const author = await getEntry(d.author);
 const cat = categoryOf(article);
@@ -31,7 +30,7 @@ const minutes = readingMinutes(article.body);
   {
     !compact && (
       <a href={href} class="row-thumb" tabindex="-1" aria-hidden="true">
-        <ArticleThumb article={article} size="md" eager={eager} />
+        <ArticleThumb article={article} />
       </a>
     )
   }

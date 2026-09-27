@@ -344,11 +344,14 @@ section[id],
   --tone-soft: color-mix(in oklab, var(--color-brand-secondary) 8%, var(--color-brand-bg));
 }
 
+/* A true colour, not the page's own paper tone — every tone reads at a
+   glance, even this one. A cool slate, neutral against the four louder
+   tones either side of it. */
 [data-tone='surface'] {
-  --tone-bg: var(--color-brand-surface);
-  --tone-fg: var(--color-brand-text);
-  --tone-ghost: var(--color-brand-primary);
-  --tone-soft: var(--color-brand-surface);
+  --tone-bg: color-mix(in oklab, var(--color-brand-muted) 82%, black);
+  --tone-fg: white;
+  --tone-ghost: var(--color-brand-accent);
+  --tone-soft: color-mix(in oklab, var(--color-brand-muted) 10%, var(--color-brand-bg));
 }
 
 [data-tone='deep'] {

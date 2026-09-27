@@ -73,7 +73,7 @@ const product = z.object({
  */
 const articles = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
-  schema: ({ image }) =>
+  schema: () =>
     z.object({
       title: z.string(),
       description: z.string(),
@@ -88,13 +88,6 @@ const articles = defineCollection({
       draft: z.boolean().default(false),
       /** One or two lede paragraphs rendered above the structured blocks. */
       intro: z.array(z.string()).default([]),
-      image: z
-        .object({
-          src: image(),
-          alt: z.string(),
-          credit: z.string().optional(),
-        })
-        .optional(),
       product: product.optional(),
       /** best / alternatives: the reviews this list is made of, in order. */
       picks: z.array(z.object({ review: z.string(), bestFor: z.string() })).default([]),

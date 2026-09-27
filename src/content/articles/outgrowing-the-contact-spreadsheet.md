@@ -7,10 +7,6 @@ type: guide
 tags:
   - CRM
   - Switching tools
-image:
-  src: ../../assets/images/blog/crm-address-book.jpg
-  alt: An open address book with alphabet tabs lying on a wooden desk beside a laptop, a pen, sticky notes and a highlighter.
-  credit: Photo by Pixel.la Free Stock Photos, CC0, via Wikimedia Commons
 draft: false
 category: crm
 ---

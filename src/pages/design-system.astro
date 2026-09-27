@@ -12,6 +12,7 @@ import ProsCons from '../components/ProsCons.astro';
 import FitList from '../components/FitList.astro';
 import SummaryBox from '../components/SummaryBox.astro';
 import ArticleThumb from '../components/ArticleThumb.astro';
+import CoverTile from '../components/CoverTile.astro';
 import ArticleRow from '../components/ArticleRow.astro';
 import ArticleFeed from '../components/ArticleFeed.astro';
 import ReviewCard from '../components/ReviewCard.astro';
@@ -146,14 +147,46 @@ const sections = [
           <section class="ds-sec">
             <h2>ArticleThumb</h2>
             <code>src/components/ArticleThumb.astro</code>
-            <p class="ds-note">One tile per article type, on the category's tone. A guide with a photo shows the photo.</p>
+            <p class="ds-note">One tile per article type, on the category's tone. Every article gets one — the site never uses a stock photo as a cover.</p>
             <div class="ds-thumbs">
               {[review, best, comparison, ofType(articles, 'alternatives')[0], ofType(articles, 'pricing')[0], guide].filter(Boolean).map((a) => (
                 <div>
-                  <ArticleThumb article={a!} size="md" />
+                  <ArticleThumb article={a!} />
                   <small>{typeLabel[a!.data.type]}</small>
                 </div>
               ))}
+            </div>
+          </section>
+
+          <section class="ds-sec">
+            <h2>Cover tile maker</h2>
+            <code>src/components/CoverTile.astro</code>
+            <p class="ds-note">
+              Every cover above is this one component: a title and one fact, always on the same
+              navy — the site's one full-bleed dark colour, the same one the footer and the stance
+              block use. Not the category's tone: five tones cycling down a feed of bold tiles read
+              as busy, not organised. Category colour still does its job at wayfinding scale — the
+              swatches in the nav, the sidebar and the hub headers — just not on the tile itself.
+            </p>
+            <p class="ds-note">
+              Type a title and a fact and this renders exactly what a real article's tile would
+              look like. To make it real: the title comes from the article's <code>product.name</code>{' '}
+              (or its <code>title</code>, for a guide) in its markdown frontmatter.
+            </p>
+            <div class="ds-maker">
+              <div class="ds-maker-fields">
+                <label>
+                  Title
+                  <input id="tm-title" type="text" value="Best CRM" maxlength="40" />
+                </label>
+                <label>
+                  Fact
+                  <input id="tm-note" type="text" value="4 tools tested and compared" maxlength="60" />
+                </label>
+              </div>
+              <div id="tm-preview" class="ds-maker-preview">
+                <CoverTile title="Best CRM" note="4 tools tested and compared" />
+              </div>
             </div>
           </section>
 
@@ -336,7 +369,79 @@ const sections = [
     color: var(--color-brand-muted);
   }
 
+  .ds-maker {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .ds-maker-fields {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .ds-maker-fields label {
+    display: grid;
+    gap: 0.3rem;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: color-mix(in oklab, var(--color-brand-text) 78%, transparent);
+  }
+
+  .ds-maker-fields input,
+  .ds-maker-fields select {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--color-brand-bg);
+    color: var(--color-brand-text);
+  }
+
+  .ds-maker-fields input:focus-visible,
+  .ds-maker-fields select:focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 1px;
+  }
+
+  .ds-maker-preview {
+    max-width: 19rem;
+  }
+
+  @media (min-width: 34rem) {
+    .ds-maker {
+      grid-template-columns: minmax(0, 16rem) minmax(0, 19rem);
+      align-items: start;
+    }
+  }
+
   .ds-faq :global(.wrap) {
     padding-inline: 0;
   }
 </style>
+
+<script>
+  /* The cover tile maker on this page: types straight into the same
+     markup CoverTile.astro renders, so the preview is never a second
+     implementation drifting from the real thing. */
+  const titleInput = document.getElementById('tm-title') as HTMLInputElement | null;
+  const noteInput = document.getElementById('tm-note') as HTMLInputElement | null;
+  const preview = document.getElementById('tm-preview');
+  const titleEl = preview?.querySelector<HTMLElement>('.th-title');
+  const noteEl = preview?.querySelector<HTMLElement>('.th-note');
+
+  function render() {
+    if (!titleEl || !noteEl || !titleInput || !noteInput) return;
+    const title = titleInput.value.trim() || 'Title';
+    titleEl.textContent = title;
+    titleEl.classList.toggle('is-long', title.length > 18);
+
+    const note = noteInput.value.trim();
+    noteEl.textContent = note;
+    noteEl.style.display = note ? '' : 'none';
+  }
+
+  titleInput?.addEventListener('input', render);
+  noteInput?.addEventListener('input', render);
+</script>

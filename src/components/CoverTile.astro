@@ -1,0 +1,102 @@
+---
+/**
+ * The typographic cover tile: a title, one fact beneath it, always on the
+ * same navy — the site's one existing full-bleed dark colour (the footer,
+ * the stance block). This is the whole visual recipe behind `ArticleThumb`
+ * — every article's cover, with no exceptions and no stock photos —
+ * pulled out so a one-off tile (the maker on `/design-system`) can render
+ * the exact same thing a real article would, from plain props instead of
+ * an `Article`.
+ *
+ * Deliberately one colour, not the category's tone: five tones cycling
+ * down a feed of bold full-bleed tiles read as busy rather than organised.
+ * Category colour still does its job at wayfinding scale — the swatches
+ * in the nav, the sidebar and the hub headers — just not here.
+ */
+interface Props {
+  /** The big word or two. Long titles (>18 characters) step down a size
+   * and wrap rather than overflow. */
+  title: string;
+  /** The one fact under the title. Omit it on very narrow tiles. */
+  note?: string;
+  class?: string;
+}
+
+const { title, note = '', class: cls = '' } = Astro.props;
+const long = title.length > 18;
+---
+
+<div class:list={['th', 'th-tile', cls]} aria-hidden="true">
+  <span class="th-words">
+    <span class:list={['th-title', long && 'is-long']}>{title}</span>
+    {note && <span class="th-note">{note}</span>}
+  </span>
+</div>
+
+<style>
+  .th {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .th-tile {
+    position: relative;
+    container-type: inline-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10% 9%;
+    color: white;
+    text-align: center;
+    /* Flat navy under a faint ruled grid, with a soft centred pool that
+       keeps the grid from crossing the words. */
+    background-image:
+      radial-gradient(62% 58% at 50% 50%, var(--color-brand-secondary) 40%, transparent 100%),
+      repeating-linear-gradient(90deg, color-mix(in oklab, white 9%, transparent) 0 1px, transparent 1px 12.5%),
+      repeating-linear-gradient(180deg, color-mix(in oklab, white 9%, transparent) 0 1px, transparent 1px 20%),
+      linear-gradient(var(--color-brand-secondary), var(--color-brand-secondary));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, white 12%, transparent);
+    font-family: var(--font-heading);
+  }
+
+  .th-words {
+    display: grid;
+    gap: 0.5em;
+    justify-items: center;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* One scale for every title: only the size steps down for a long one,
+     so a short and a long title never read as two different typefaces. */
+  .th-title {
+    font-size: clamp(1.05rem, 13cqw, 3rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .th-title.is-long {
+    font-size: clamp(0.85rem, 8.6cqw, 2.4rem);
+  }
+
+  .th-note {
+    font-family: var(--font-body);
+    font-size: clamp(0.6rem, 4.6cqw, 0.95rem);
+    font-weight: 500;
+    opacity: 0.78;
+  }
+
+  /* Tiles too narrow for a fact line and a title to both sit comfortably
+     (mobile feed rows): the title alone, centred. */
+  @container (max-width: 11rem) {
+    .th-note {
+      display: none;
+    }
+  }
+</style>

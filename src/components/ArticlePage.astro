@@ -1,6 +1,5 @@
 ---
 import { render } from 'astro:content';
-import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import CategoryStrip from './CategoryStrip.astro';
 import Byline from './Byline.astro';
@@ -125,13 +124,8 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
       <div class="cols art-cols">
         <div class="art-main">
           <div class="art-open">
-            <div class:list={['art-thumb', !d.image && 'is-tile']}>
-              {d.image ? (
-                <Image src={d.image.src} alt={d.image.alt} width={720} height={450} widths={[480, 720, 1440]} sizes="(min-width: 64rem) 720px, 100vw" quality={80} loading="eager" fetchpriority="high" decoding="sync" class="art-photo" />
-              ) : (
-                <ArticleThumb article={article} size="md" eager />
-              )}
-              {d.image?.credit && <p class="art-credit">{d.image.credit}</p>}
+            <div class="art-thumb">
+              <ArticleThumb article={article} />
             </div>
             <div class="art-intro">
               {d.intro.map((p) => <p>{p}</p>)}
@@ -301,21 +295,9 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
   }
 
   @media (max-width: 43.9375rem) {
-    .art-thumb.is-tile {
+    .art-thumb {
       display: none;
     }
-  }
-
-  .art-thumb :global(.art-photo) {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-  }
-
-  .art-credit {
-    margin-top: 0.4rem;
-    font-size: var(--fs-caption);
-    color: var(--color-brand-muted);
   }
 
   .art-intro p {
