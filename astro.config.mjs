@@ -37,7 +37,7 @@ export default defineConfig({
       filter: (page) =>
         !page.includes('/design-system') &&
         !/\/(rate|blog)(\/|$)/.test(page) &&
-        !/\/(crm-software|email-marketing-software|website-builders|project-management-software|home-services-software)\/[^/]+/.test(page) &&
+        !/\/(crm-software|marketing-software|website-builders|project-management-software|home-services-software)\/[^/]+/.test(page) &&
         !placeholderAuthors.some((path) => page.endsWith(path) || page.endsWith(`${path}/`)),
     }),
   ],

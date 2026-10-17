@@ -44,7 +44,7 @@ export const categories: Category[] = [
     plain: 'marketing',
     name: 'Marketing & Automation',
     noun: 'a marketing tool',
-    hub: '/email-marketing-software',
+    hub: '/marketing-software',
     question: 'What gets your message out, and what follows up while you sleep?',
     tone: 'amber',
     aliases: ['email marketing', 'email', 'automation', 'newsletters'],

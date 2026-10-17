@@ -104,4 +104,4 @@ A lasting free plan that lets you build a list, design a landing page and send n
 - **[AWeber](/aweber-review)** — long-running, simple list tooling with human support. Free plan available.
 - **[ActiveCampaign](/activecampaign-review)** — the deepest automation builder of the three. Free trial, then paid by contacts.
 
-See the full [Marketing & Automation shortlist](/email-marketing-software) for how they compare side by side.
+See the full [Marketing & Automation shortlist](/marketing-software) for how they compare side by side.

@@ -167,7 +167,7 @@ Leave every blank result as a test you haven't run. The worksheet's value is tha
 
 **Choose ActiveCampaign** when a branched nurture or behavior-triggered follow-up is central, you know which automation tier you need, and you can accept Plus or Pro pricing with the contact and add-on quotes on top. **Stay or reconsider** if you are already on ActiveCampaign and your current workflows work. Compare your actual renewal quote against the work and risk of rebuilding automations, remapping integrations, and verifying what exits cleanly, including suppression state, fields, tags and notes. Use that comparison to judge your switching costs; whether it saves money or is worth the risk depends on your situation. **Investigate another tool** when you only send newsletters, have no in-house automation owner, or your concern is avoiding a migration you can already see coming.
 
-For the newsletter-only reader, [GetResponse](/getresponse-review) and [AWeber](/aweber-review) are the two related review destinations on this site worth opening next. The [Marketing & Automation shortlist](/email-marketing-software) is the right place to compare the category side by side.
+For the newsletter-only reader, [GetResponse](/getresponse-review) and [AWeber](/aweber-review) are the two related review destinations on this site worth opening next. The [Marketing & Automation shortlist](/marketing-software) is the right place to compare the category side by side.
 
 ## How we researched this review / Affiliate disclosure
 

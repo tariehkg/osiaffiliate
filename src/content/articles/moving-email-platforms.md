@@ -43,6 +43,6 @@ A new sending account has no history with inbox providers, so check with your ne
 
 ## Which platform to move to
 
-That depends on what you're moving away from. Our [email marketing shortlist](/email-marketing-software) covers three very different shapes: [GetResponse](/getresponse-review) bundles email with pages and funnels, [AWeber](/aweber-review) keeps sending deliberately simple, and [ActiveCampaign](/activecampaign-review) is built for people who really will build branching automations. If you're choosing between the first two, [we compared them directly](/getresponse-vs-aweber).
+That depends on what you're moving away from. Our [Marketing & Automation shortlist](/marketing-software) covers three very different shapes: [GetResponse](/getresponse-review) bundles email with pages and funnels, [AWeber](/aweber-review) keeps sending deliberately simple, and [ActiveCampaign](/activecampaign-review) is built for people who really will build branching automations. If you're choosing between the first two, [we compared them directly](/getresponse-vs-aweber).
 
 Whichever you pick, the checklist above stays the same.

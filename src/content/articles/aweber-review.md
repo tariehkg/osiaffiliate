@@ -106,4 +106,4 @@ A lasting free plan for a small list that includes sending, sign-up forms, a lan
 - **[GetResponse](/getresponse-review)** — email plus landing pages and funnels in one account. Free plan available.
 - **[ActiveCampaign](/activecampaign-review)** — the deepest automation builder of the three. Free trial, then paid by contacts.
 
-See the full [Marketing & Automation shortlist](/email-marketing-software) for how they compare side by side.
+See the full [Marketing & Automation shortlist](/marketing-software) for how they compare side by side.
