@@ -32,7 +32,7 @@ const reviews = ofType(articles, 'review').length;
       <section>
         <h2>What the site is</h2>
         <p>
-          OSI Affiliate covers {categories.length} categories of business software: {categories.map((c) => c.name).join(", ")}. In each one we
+          OSI Affiliate covers {categories.length} categories of business software: {categories.map((c) => c.name).reduce((s, n, i, all) => (i === 0 ? n : i === all.length - 1 ? `${s} and ${n}` : `${s}, ${n}`), "")}. In each one we
           review and score the tools a solopreneur or a team under twenty is actually choosing
           between, and once the reviews are in we keep one short shortlist and write the
           comparisons that decide between the picks. There are {reviews} review pages on the site today. Pages identify their authoring desk and evidence; older scores remain labelled as provisional.

@@ -38,7 +38,7 @@ interface Props {
 const {
   title,
   description = '',
-  path = Astro.url.pathname,
+  path = Astro.url.pathname.replace(/\.html$/, ''),
   image = '/og.png',
   type = 'website',
   noindex = false,
