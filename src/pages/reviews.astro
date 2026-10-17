@@ -20,14 +20,14 @@ const total = groups.reduce((n, g) => n + g.reviews.length, 0);
 
 <Layout
   title="All software reviews — OSI Affiliate"
-  description={`${total} business software tools reviewed and scored by our staff, grouped by category and ordered by score.`}
+  description={`${total} business software tools reviewed by our editorial team and grouped by category.`}
   path="/reviews"
 >
   <CategoryStrip />
   <main id="main">
     <PageHead
       title="Every tool we have reviewed"
-      lede={`${total} tools across ${groups.length} categories, each with a full staff review, a score out of five on the same five criteria, and a plain reason to skip it.`}
+      lede={`${total} tools across ${groups.length} categories, with editorial reviews that explain fit, costs, limits and reasons to skip a tool. Reviews with scores are ordered first.`}
     >
       <div class="rv-prov"><ProvisionalNote /></div>
     </PageHead>

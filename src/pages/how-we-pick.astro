@@ -5,211 +5,54 @@ import PageHead from '../components/PageHead.astro';
 import Doc from '../components/Doc.astro';
 import ProvisionalNote from '../components/ProvisionalNote.astro';
 import { breadcrumbLd } from '../components/seo';
-
-/**
- * The methodology. Written as a set of rules the desk can be held to, not
- * as reassurance. Every claim here is one the site can keep today.
- */
-const criteria = [
-  {
-    name: 'Ease of use',
-    what: 'How quickly a new user is doing real work, how much has to be learned first, and whether the everyday screens (the pipeline, the editor, the board) stay out of the way once learned.',
-  },
-  {
-    name: 'Features',
-    what: 'Whether the core job of the category is covered on the plan a small business would actually buy. A feature that only exists one tier up counts against, not for.',
-  },
-  {
-    name: 'Value for money',
-    what: 'What the paid tiers buy relative to the free tier or trial, how the bill grows with seats or contacts, and how it compares with the other tools on the same shortlist. We judge the shape of the pricing, not a figure that will be out of date next quarter.',
-  },
-  {
-    name: 'Support and docs',
-    what: 'The help centre, the channels a small plan gets, how long a real question took to answer during testing, and whether the answer was right.',
-  },
-  {
-    name: 'Fit for small business',
-    what: 'How well the tool fits a solo operator or a team under twenty, which is who this site is written for. An excellent enterprise product can score low here and that is the point.',
-  },
-];
 ---
 
-<Layout
-  title="How we test, score and pick — OSI Affiliate"
-  description="How OSI Affiliate reviews business software: who does the testing, the five criteria every tool is scored on, how the score is calculated, what a vendor can and cannot pay for, and how the site makes money."
-  path="/how-we-pick"
-  jsonld={[breadcrumbLd([{ label: 'Home', href: '/' }, { label: 'How we test', href: '/how-we-pick' }])]}
->
+<Layout title="How We Research and Choose Software — OSI Affiliate" description="Our approach to software research: primary pricing and documentation, evidence limits, practical comparisons, account tests when documented, and affiliate disclosure." path="/how-we-pick" jsonld={[breadcrumbLd([{ label: 'Home', href: '/' }, { label: 'How we research and pick', href: '/how-we-pick' }])]}>
   <CategoryStrip />
   <main id="main">
-    <PageHead
-      title="How we test, score and pick"
-      lede="Every review on this site is written by a member of our staff who signed up for the tool and ran it against the same five criteria. This page is the whole method, including the parts that limit it."
-    >
-      <div class="hw-prov"><ProvisionalNote /></div>
-    </PageHead>
-
+    <PageHead title="How we research and pick" lede="A recommendation should explain its evidence, its price assumptions and its limits. This is the standard we use for software buying guides." />
     <Doc>
       <section>
-        <h2>How a review is made</h2>
+        <h2>Identify what was actually checked</h2>
+        <p>Reading documentation, following a public demo and testing an account establish different things. Each article should identify the work performed and its date. A screenshot of a vendor’s guided tour is labelled as a vendor demo; it does not prove that an import, email or automation succeeded in our own account.</p>
+        <p>Our <a href="/best-crm-software">small-business CRM comparison</a> uses vendor documentation and US pricing checked on 16 October 2026, an inspected public Close demo, and original buyer worksheets. It does not claim four-product account testing or measured usability.</p>
+      </section>
+      <section>
+        <h2>Build a comparison around the buyer’s job</h2>
         <ol>
-          <li>
-            <b>We choose what to review by what small businesses actually buy.</b> A tool earns a
-            review by being one a reader is likely to be choosing between, not by asking for one.
-            Vendors cannot buy a review, and a vendor asking for one does not move it up the queue.
-          </li>
-          <li>
-            <b>A staff member signs up for a fresh account.</b> The free plan or the trial, exactly
-            as a reader would get it. Where a vendor offers a demo account instead, we say so on the
-            page, because a demo is not the product a reader will be paying for.
-          </li>
-          <li>
-            <b>We run the tool against the five criteria below.</b> The same five on every review,
-            in every category, so two reviews can be read side by side. Notes are taken as we go:
-            what worked, what was confusing, what only appeared after an upgrade prompt.
-          </li>
-          <li>
-            <b>We ask support a real question.</b> One that a new small-business user would ask, on
-            the channel the plan we are on actually gets. We record how long the answer took and
-            whether it was right.
-          </li>
-          <li>
-            <b>We read the pricing page, not the press release.</b> Every plan line on the site is
-            checked against the vendor's own current pricing page. We describe the shape of the
-            pricing rather than quoting figures, because the figures change and a stale number is
-            worse than none.
-          </li>
-          <li>
-            <b>A second member of staff reads it before it goes up.</b> They check every factual
-            claim against the product and every score against the notes. Where they disagree with
-            the reviewer, the disagreement goes in the review.
-          </li>
-          <li>
-            <b>We keep it current.</b> Pricing pages and product updates are re-checked, and the
-            review's updated date changes only when something in it did.
-          </li>
+          <li><b>Define the decision.</b> Identify the buyer, market and required workflow before choosing a shortlist. A tool outside a bounded comparison has not been shown to be inferior.</li>
+          <li><b>Check primary sources.</b> Use the vendor’s pricing, plan, support and export documentation for what it offers. A vendor’s superiority claim is not independent proof.</li>
+          <li><b>Price the usable plan.</b> Separate annual equivalents from monthly payments, identify feature gates and required fees, and state unverified seat minimums or promotional terms.</li>
+          <li><b>Separate facts from judgement.</b> A documented feature can support a conditional trial recommendation. It cannot establish an ease-of-use, speed or reliability winner without suitable direct work.</li>
+          <li><b>Provide something the reader can use.</b> Calculations, comparison criteria and a repeatable trial checklist should help a buyer verify the choice in their own situation.</li>
+          <li><b>Check the finished article.</b> Reconcile recommendations, prices, links and captions against the supporting evidence. Editing checks do not turn a researched guide into a product test.</li>
         </ol>
       </section>
-
       <section>
-        <h2>The five criteria</h2>
-        <p>
-          Each is scored from one to five, in whole and half points, by the reviewer. The overall
-          score is the mean of the five, to one decimal, with equal weight: we do not tune the
-          weights per category, because the point of a shared scale is that it is shared.
-        </p>
-        <ul>
-          {criteria.map((c) => (
-            <li>
-              <b>{c.name}.</b> {c.what}
-            </li>
-          ))}
-        </ul>
+        <h2>When we describe account testing</h2>
+        <p>A hands-on claim needs a record of the account and plan, date, task, observed result and important limitations. A support-response claim needs the actual question, channel and response. Watching someone else’s demonstration or reading their review does not supply those records.</p>
+        <p>Usability, performance and migration outcomes stay unmeasured unless the article documents direct work. An available export is not proof that a different system can restore every relationship, attachment or conversation.</p>
       </section>
-
       <section>
-        <h2>What the scores mean</h2>
-        <ul>
-          <li>
-            <b>4.5 and above.</b> We would choose it ourselves for the job it is on the shortlist
-            for, and the reasons to skip it are about fit, not quality.
-          </li>
-          <li>
-            <b>4.0 to 4.4.</b> A good tool with a real caveat. Most of the shortlist lives here, and
-            the review's "skip it if" line is the part to read.
-          </li>
-          <li>
-            <b>3.5 to 3.9.</b> Right for a narrow set of readers. It is on the site because that set
-            exists, not because it is a safe default.
-          </li>
-          <li>
-            <b>Below 3.5.</b> We would not put it on a shortlist. It may still have a review, so
-            that the reasons are written down somewhere.
-          </li>
-        </ul>
-        <div class="doc-inset">
-          <p>
-            <b>A score is one reviewer's judgement, checked by a second.</b> It is not an average of
-            reader ratings, because the site does not collect any, and it is not a measurement. Two
-            honest reviewers can land half a point apart on the same tool. That is why every review
-            shows the five criteria and the notes behind them, not only the number.
-          </p>
-        </div>
+        <h2>Shortlists and scores</h2>
+        <p>A shortlist explains who each product fits, the required plan, the reason to skip it and what to verify next. It need not have a universal winner or a numerical score.</p>
+        <p>Some older review pages carry provisional scores. These are identified as provisional and should not be read as measured performance or verified test results. We withhold Review rating markup while those scores are provisional. The researched CRM guide is unscored.</p>
+        <ProvisionalNote />
+        <p>Where supported scoring is introduced, its criteria, method and evidence should be visible. We do not collect reader ratings or present editorial scores as reader consensus.</p>
       </section>
-
       <section>
-        <h2>How shortlists are made</h2>
-        <p>
-          A best-of list starts from the reviews. We take every tool we have reviewed in the
-          category, order them by score, and then decide the list by fit: a shortlist for a small
-          business does not need the highest-scoring enterprise tool on it. Lists stay short, two to
-          five picks, and a tool comes off a list when it stops earning the slot, not when a better
-          affiliate rate appears.
-        </p>
-        <p>
-          An alternatives list starts from one tool and the reasons readers give for leaving it,
-          then lists the reviewed tools that answer those reasons. A head-to-head compares two tools
-          on the dimensions that actually change the decision, and ends with a straight answer about
-          which to pick.
-        </p>
+        <h2>Sources, images and updates</h2>
+        <p>Original account screenshots, vendor-demo captures and conceptual illustrations must be distinguishable. Images support the explanation; they do not establish testing on their own.</p>
+        <p>Exact prices carry a market, billing basis and access date. We update a review date when substantive checking or revision occurs. A date change alone does not make old evidence current. Check current terms with the vendor before buying.</p>
       </section>
-
       <section>
-        <h2>What we do not do</h2>
-        <ul>
-          <li>
-            <b>We do not take payment for a review, a position or a score.</b> Vendors cannot
-            sponsor a shortlist, buy a higher slot, or pay to change a word of an entry.
-          </li>
-          <li>
-            <b>We do not publish reader ratings.</b> Every score on the site is a staff score with a
-            name on it. We may add reader feedback one day; when we do, it will be labelled as such
-            and kept separate from the editor's score.
-          </li>
-          <li>
-            <b>We do not invent figures.</b> No testing-hours counter, no "trusted by" number, no
-            price we have not read on the vendor's page that week. Every count on the site is
-            computed from what is actually published.
-          </li>
-          <li>
-            <b>We do not use vendor-supplied copy or screenshots.</b> What a page says about a tool
-            is what the reviewer saw in their own account.
-          </li>
-        </ul>
+        <h2>Affiliate links</h2>
+        <p>Some vendor links may earn a commission if you sign up, at no extra cost to you. A commercial relationship must not determine a recommendation, order or caveat. The article includes its disclosure, and our <a href="/disclosure">full affiliate disclosure</a> explains the business model.</p>
       </section>
-
-      <section>
-        <h2>How we make money</h2>
-        <p>
-          Affiliate commissions. Some of the vendor links on this site carry an affiliate tag, and if
-          you sign up through one, the vendor pays us a commission at no extra cost to you. That is
-          the whole business model, and it is stated on every page that has a vendor link, at body
-          size, directly under the title.
-        </p>
-        <p>
-          Commissions differ between vendors, and we know what they are. The way we keep that from
-          moving a score is structural: the reviewer scores the tool before anyone looks at the
-          programme, the second reader checks the score against the notes, and a tool with no
-          affiliate programme at all is reviewed and listed the same way. The
-          <a href="/disclosure">affiliate disclosure</a> has the full statement.
-        </p>
-      </section>
-
       <section>
         <h2>Corrections</h2>
-        <p>
-          If a review is wrong about a fact, a pricing line has gone stale, or a "skip it if" is
-          unfair to your experience, <a href="/contact">tell the desk</a>. Factual corrections are
-          made on the page, with the updated date changed, and a correction that changes a score
-          changes the score.
-        </p>
+        <p>If a price has changed, a source does not support a claim or an evidence label is unclear, <a href="/contact">contact the desk</a>. A consequential correction should update the affected recommendations, calculations and review date as well as the sentence itself.</p>
       </section>
     </Doc>
   </main>
 </Layout>
-
-<style>
-  .hw-prov {
-    margin-top: 1rem;
-  }
-</style>

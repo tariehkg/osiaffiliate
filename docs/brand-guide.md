@@ -9,7 +9,7 @@ made to a token or a section, update this file in the same commit.
 ## Brand overview
 
 OSI Affiliate is a staff-written software review site: five categories of business software (CRM,
-email marketing, website builders, project management, SEO tools), a full review and an editor's
+marketing, website builders, project management, home services), a full review and an editor's
 score for every tool, one short best-of list per category, and the comparisons, alternatives lists
 and pricing guides that decide between the picks. Layout follows the editorial-review-site pattern
 (a feed of articles beside a sidebar, a "start here" grid of curated links, a staff-and-counts
@@ -35,7 +35,7 @@ from affiliate links, we say which ones, and a commission has never moved a scor
 - **Cover tiles set in type, one colour, not the category's** (`CoverTile.astro`, used by
   `ArticleThumb.astro` for every article — reviews, best-of, comparisons, alternatives, pricing and
   guides alike). No stock photos, no logo crops, no monograms, no kind chip or year: the subject in
-  Outfit 700, centred, with one fact beneath it in Inter ("Editor's score", "4 tools tested and
+  Outfit 700, centred, with one fact beneath it in Inter ("Editor's score", "4 tools
   compared", the plan line) — one type scale for both, only the size stepping down past 18
   characters so a long title never reads as a different typeface. Every tile is the same navy
   (`--color-brand-secondary`), white text — deliberately not the category's tone: five tones
@@ -307,8 +307,8 @@ and a control that does not work is styled so it looks like it does not work.
 
 ## Directory pages
 
-The five category pages (`src/pages/*-software.astro`, `website-builders.astro`,
-`seo-marketing-tools.astro`, rendered by `src/components/CategoryHub.astro`) and the product
+The five category pages (`src/pages/*-software.astro` and `website-builders.astro`, each
+rendered by `src/components/CategoryHubPage.astro`) and the product
 pages (`src/pages/[hub]/[slug].astro`) share one anatomy, so a reader who has learned one has
 learned them all.
 
@@ -348,3 +348,18 @@ learned them all.
 Rule for a new directory component: it joins the ledger, not a card grid. Rows share edges,
 depth is a hairline, and any state the reader can change (a filter, an open answer, a vote) is
 a real form control before it is a script.
+
+
+## Researched long-form articles and buyer tools (16 October 2026)
+
+Narrative guides keep the recommendation and comparison table near the opening. Detailed evidence-method and disclosure notes sit at the end of the article. They do not inherit scored review blocks or imply account testing. The CRM guide uses original conceptual illustrations and attributed vendor-demo screenshots in the body, rendered through `RichArticleBody.astro` and Astro Image with explicit dimensions, quality80 and responsive widths. Feed covers continue to use CoverTile. `CrmCostCalculator.astro` reuses the brand tokens, paper/surface panels and shared Button component; it runs locally and is also available at `/crm-cost-calculator`. No new palette or fonts were added.
+
+
+## Single-product review and pilot tool (16 October 2026)
+
+Unscored narrative reviews use the same responsive-media body as researched guides, with review-specific accessible table labels and no inherited score/verdict blocks. ActiveCampaign uses a conceptual hero and accurately captioned public vendor-demo screenshots. `ActiveCampaignPlanChecker.astro` follows the established brand-token paper/surface treatment and shared Button; workflow eligibility, user quotes and cost estimates are separate. The tool runs locally, exports a blank-result CSV pilot worksheet and links to a static checklist if JavaScript is unavailable. It is also available at `/activecampaign-plan-checker`.
+
+
+## Head-to-head email comparison tool (16 October 2026)
+
+`EmailComparisonChecker.astro` extends the paper/surface buyer-tool pattern with the shared Button and existing tokens. Separate billable counts, manually selected plans and feature/send warnings prevent a cheap but ineligible plan from becoming an automatic winner. The same browser-local rules drive the article, `/getresponse-aweber-checker` and the exported CSV. GetResponse annual estimates remain distinct from AWeber published annual totals. A static pilot worksheet works without JavaScript. Branded conceptual art and captioned public pricing/help screenshots use optimized Astro Image; the narrative comparison suppresses inherited scored blocks.

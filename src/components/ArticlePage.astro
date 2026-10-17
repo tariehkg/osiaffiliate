@@ -1,5 +1,7 @@
 ---
 import { render } from 'astro:content';
+import { getImage } from 'astro:assets';
+import RichArticleBody from './RichArticleBody.astro';
 import Layout from '../layouts/Layout.astro';
 import CategoryStrip from './CategoryStrip.astro';
 import Byline from './Byline.astro';
@@ -39,6 +41,9 @@ interface Props {
 
 const { article, articles, author } = Astro.props;
 const d = article.data;
+const isNarrative = d.presentation === 'narrative';
+const hero = d.media.find((image) => image.id === 'hero');
+const socialImage = hero ? await getImage({ src: hero.src, width: 1200, height: 630, fit: 'cover', quality: 80, format: 'webp' }) : undefined;
 const { Content, headings } = await render(article);
 const cat = categoryOf(article);
 const path = articleUrl(article);
@@ -52,19 +57,19 @@ const picks = d.picks
 const sideA = d.compare ? byId(articles, d.compare.a) : undefined;
 const sideB = d.compare ? byId(articles, d.compare.b) : undefined;
 
-const showsScores = d.type === 'review' || d.type === 'best' || d.type === 'alternatives' || d.type === 'comparison';
-const hasVendorLinks = d.type !== 'guide';
+const showsScores = !isNarrative && (d.type === 'review' || d.type === 'best' || d.type === 'alternatives' || d.type === 'comparison');
+const hasVendorLinks = !isNarrative && d.type !== 'guide';
 
 /* "In this article": the fixed blocks first, then the markdown h2s, then the FAQ. */
 const fixed: { text: string; slug: string }[] = [];
-if (d.type === 'review' && d.product) {
+if (!isNarrative && d.type === 'review' && d.product) {
   fixed.push({ text: `${d.product.name} in short`, slug: 'summary' });
   fixed.push({ text: 'Pros and cons', slug: 'pros-cons' });
   fixed.push({ text: `Is ${d.product.name} for you?`, slug: 'fit' });
   fixed.push({ text: 'How we scored it', slug: 'scores' });
 }
-if ((d.type === 'best' || d.type === 'alternatives') && picks.length) fixed.push({ text: 'The shortlist at a glance', slug: 'overview' });
-if (d.type === 'comparison' && d.compare) fixed.push({ text: 'Where they differ', slug: 'differences' }, { text: 'Which one to pick', slug: 'verdict' });
+if (!isNarrative && (d.type === 'best' || d.type === 'alternatives') && picks.length) fixed.push({ text: 'The shortlist at a glance', slug: 'overview' });
+if (!isNarrative && d.type === 'comparison' && d.compare) fixed.push({ text: 'Where they differ', slug: 'differences' }, { text: 'Which one to pick', slug: 'verdict' });
 const toc = [
   ...fixed,
   ...headings.filter((h) => h.depth === 2).map((h) => ({ text: h.text, slug: h.slug })),
@@ -82,6 +87,7 @@ const jsonld = [
   articleLd({
     title: d.title,
     description: d.description,
+    image: socialImage?.src,
     path,
     published: d.pubDate,
     updated: d.updatedDate,
@@ -97,13 +103,13 @@ const jsonld = [
           : null,
       ]
     : []),
-  ...(picks.length ? [itemListLd(d.title, picks.map((p) => ({ name: p.review.data.product!.name, url: articleUrl(p.review) })))] : []),
+  ...(d.shortlist.length ? [itemListLd(d.title, d.shortlist)] : picks.length ? [itemListLd(d.title, picks.map((p) => ({ name: p.review.data.product!.name, url: articleUrl(p.review) })))] : []),
 ];
 
 const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.id !== article.id).slice(0, 4);
 ---
 
-<Layout title={`${d.title} — OSI Affiliate`} description={d.description} path={path} type="article" jsonld={jsonld}>
+<Layout title={`${d.seoTitle ?? d.title} — OSI Affiliate`} description={d.description} path={path} image={socialImage?.src} type="article" jsonld={jsonld}>
   <CategoryStrip current={cat?.id} />
   <main id="main" class="art">
     <div class="wrap">
@@ -123,10 +129,10 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
 
       <div class="cols art-cols">
         <div class="art-main">
-          <div class="art-open">
-            <div class="art-thumb">
+          <div class:list={["art-open", { "art-open-narrative": isNarrative }]}>
+            {!isNarrative && <div class="art-thumb">
               <ArticleThumb article={article} />
-            </div>
+            </div>}
             <div class="art-intro">
               {d.intro.map((p) => <p>{p}</p>)}
               {d.intro.length === 0 && <p>{d.description}</p>}
@@ -136,7 +142,7 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
           {hasVendorLinks && <DisclosureNote links={d.type === 'review' || d.type === 'pricing'} />}
           {showsScores && <div class="art-prov"><ProvisionalNote /></div>}
 
-          <div class="art-blocks">
+          {!isNarrative && <div class="art-blocks">
             {d.type === 'review' && d.product && (
               <>
                 <div id="summary" class="art-block">
@@ -215,15 +221,15 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
                 </dl>
               </div>
             )}
-          </div>
+          </div>}
 
           <Prose class="art-prose">
-            <Content />
+            {isNarrative ? <RichArticleBody html={article.rendered?.html ?? ''} media={d.media} tableLabels={article.id === 'getresponse-vs-aweber' ? ['GetResponse and AWeber plan capabilities', 'GetResponse and AWeber comparable plan pricing'] : d.category === 'crm' ? ['CRM shortlist comparison', 'CRM team cost comparison'] : d.type === 'review' ? [`${d.product?.name ?? 'Software'} plan capabilities`, `${d.product?.name ?? 'Software'} pricing examples`] : []} /> : <Content />}
           </Prose>
 
           {d.faqs.length > 0 && <div class="art-faq"><Faq faqs={d.faqs} /></div>}
 
-          {d.type === 'review' && d.product && (
+          {!isNarrative && d.type === 'review' && d.product && (
             <div class="art-close">
               <p>
                 <b>Our verdict on {d.product.name}.</b> {d.product.verdict}
@@ -243,7 +249,7 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
           )}
         </div>
 
-        <Sidebar articles={articles} category={cat?.id}>
+        <Sidebar articles={articles} category={cat?.id} scores={!isNarrative}>
           <Toc items={toc} />
           {(d.type === 'best' || d.type === 'alternatives') && picks.length > 0 && <QuickPicks picks={picks} />}
         </Sidebar>
@@ -288,6 +294,10 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
     grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem 1.75rem;
     align-items: start;
+  }
+
+  .art-open-narrative .art-intro {
+    grid-column: 1 / -1;
   }
 
   .art-thumb {

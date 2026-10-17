@@ -36,7 +36,7 @@ faqs:
     a: "Notion is built on that idea and can hold the brief, the task list and the notes as one object. ClickUp has docs too, inside a much bigger product. Asana is a task tool first, so keep your documents where they are and link to them."
 ---
 
-This page is for a small team or solo operator who needs the work kept organised without the tool becoming the work. There are three picks, chosen by our editors and weighted for how much upkeep each needs rather than how many features it ships. Each carries a reason to skip it, and readers rate every pick so you can see how they hold up.
+This page is for a small team or solo operator who needs the work kept organised without the tool becoming the work. There are three picks, chosen by our editors and weighted for how much upkeep each needs rather than how many features it ships. Each carries a reason to skip it, and each has its own full staff review.
 
 ## What is project management software?
 

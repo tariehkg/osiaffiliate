@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import CrmCostCalculator from '../components/CrmCostCalculator.astro';
+import Prose from '../components/Prose.astro';
+import { breadcrumbLd } from '../components/seo';
+---
+
+<Layout title="CRM Cost Calculator: Your Team’s First-Year Cost — OSI Affiliate" description="Calculate a CRM budget for your team, including seats, billing, onboarding and usage. Compare six documented plans or enter your own quote." path="/crm-cost-calculator" jsonld={[breadcrumbLd([{label: 'Home', href: '/'}, {label: 'CRM software', href: '/crm-software'}, {label: 'CRM cost calculator', href: '/crm-cost-calculator'}])]}>
+  <CategoryStrip current="crm" />
+  <main id="main">
+    <PageHead title="What will your CRM actually cost?" lede="A seat price leaves out the rest of the purchase. Estimate your team’s first-year cost, then replace the public examples with your actual quote." />
+    <div class="wrap pb-16">
+      <CrmCostCalculator id="crm-budget" headingLevel={2} />
+      <Prose>
+        <h2>Read the quote, then check the plan</h2>
+        <p>The examples use US public pricing checked on 16 October 2026. Calling, SMS and other unentered extras are not included. HubSpot Sales Hub Professional includes its required $1,500 initial onboarding fee; monthly payments still carry an annual commitment. Paid-seat minimums need confirmation with each vendor.</p>
+        <p>Plans offer different capabilities. Our <a href="/best-crm-software">CRM shortlist for small businesses</a> explains the email-sync, automation and export boundaries behind these prices.</p>
+        <p>Verify current rates at <a href="https://www.pipedrive.com/en/pricing" rel="noopener">Pipedrive</a>, <a href="https://www.zoho.com/en-us/crm/zohocrm-pricing.html" rel="noopener">Zoho CRM</a>, <a href="https://close.com/pricing" rel="noopener">Close</a> and <a href="https://www.hubspot.com/pricing/sales" rel="noopener">HubSpot Sales Hub</a>.</p>
+      </Prose>
+    </div>
+  </main>
+</Layout>

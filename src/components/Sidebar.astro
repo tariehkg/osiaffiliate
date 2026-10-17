@@ -15,10 +15,12 @@ interface Props {
   category?: string;
   /** The homepage already carries the category strip; it passes false. */
   categories?: boolean;
+  /** Unscored research guides do not imply a tested ranking in their sidebar. */
+  scores?: boolean;
 }
 
-const { articles, category, categories: showCategories = true } = Astro.props;
-const top = topRated(articles, category).slice(0, 5);
+const { articles, category, categories: showCategories = true, scores = true } = Astro.props;
+const top = topRated(articles, category).filter((article) => article.data.product?.score !== undefined).slice(0, 5);
 const guides = ofType(articles, 'guide').slice(0, 4);
 const cat = categories.find((c) => c.id === category);
 ---
@@ -35,9 +37,9 @@ const cat = categories.find((c) => c.id === category);
   </div>
 
   {
-    top.length > 0 && (
+    scores && top.length > 0 && (
       <div class="side-block">
-        <h2 class="sec-h is-quiet side-h">{cat ? `Top scored ${cat.plain} tools` : 'Top scored tools'}</h2>
+        <h2 class="sec-h is-quiet side-h">{cat ? `Top scored ${cat.plain} ${top.length === 1 ? 'tool' : 'tools'}` : 'Top scored tools'}</h2>
         <ol class="side-top">
           {top.map((a) => (
             <li>

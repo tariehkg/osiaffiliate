@@ -9,7 +9,7 @@ import { categories } from '../components/data';
 import { getArticles, getAuthors, ofType } from '../components/articles';
 import { breadcrumbLd } from '../components/seo';
 
-const authors = await getAuthors();
+const authors = (await getAuthors()).filter((author) => !author.data.placeholder);
 const articles = await getArticles();
 const count = (id: string) => articles.filter((a) => a.data.author.id === id).length;
 const reviews = ofType(articles, 'review').length;
@@ -34,9 +34,8 @@ const reviews = ofType(articles, 'review').length;
         <p>
           OSI Affiliate covers {categories.length} categories of business software: {categories.map((c) => c.name).join(", ")}. In each one we
           review and score the tools a solopreneur or a team under twenty is actually choosing
-          between, keep one short shortlist, and write the comparisons that decide between the
-          picks. There are {reviews} full reviews on the site today, and every one has a staff name
-          on it.
+          between, and once the reviews are in we keep one short shortlist and write the
+          comparisons that decide between the picks. There are {reviews} review pages on the site today. Pages identify their authoring desk and evidence; older scores remain labelled as provisional.
         </p>
         <p>
           It is written for the owner replacing a specific tool, not for a procurement team. So
@@ -50,10 +49,7 @@ const reviews = ofType(articles, 'review').length;
         <p>
           The site began as a set of shortlists: two to four picks per category, with the reasoning
           shown and the affiliate model stated on the page instead of buried in it. That premise has
-          not changed. What changed is who does the judging. Shortlists on their own are an opinion;
-          a review is an opinion with the work shown. So the site now runs on staff reviews: a
-          member of the desk signs up for the tool, tests it against the same five criteria as every
-          other tool, and writes down what they found.
+          not changed. A useful guide shows the work behind its judgement: the sources checked, the plan required, the limits of the evidence and the practical questions still to test. Documentation research, public demos and account testing are identified separately.
         </p>
         <p>
           The <a href="/how-we-pick">methodology page</a> is the full method, including its limits.
@@ -63,30 +59,17 @@ const reviews = ofType(articles, 'review').length;
       <section>
         <h2>How we work</h2>
         <ul>
-          <li>
-            <b>Everyone on the desk has used the category of tool they review</b> in a business of
-            their own or for a client, before reviewing it here.
-          </li>
-          <li>
-            <b>We test in our own accounts</b>, on the plan a reader would buy, and the review says
-            when a vendor gave us a demo account instead.
-          </li>
-          <li>
-            <b>Every review is read by a second member of staff</b> before it is published, and
-            disagreements go in the review rather than being smoothed over.
-          </li>
-          <li>
-            <b>We say plainly which links pay us.</b> The disclosure is on every page with a vendor
-            link, at body size, and a commission has never moved a score or a position.
-          </li>
+          <li><b>We compare the required job and plan.</b> Feature names matter less than the workflow they enable and the bill a small team would receive.</li>
+          <li><b>We state the evidence basis.</b> Reading documentation and inspecting a vendor demo do not establish product-account testing. Hands-on claims require actual task records.</li>
+          <li><b>We check recommendations against sources.</b> Prices, limits, calculations, images and links must support the decision the article asks a reader to make.</li>
+          <li><b>We identify affiliate links.</b> A commercial relationship must not decide inclusion, position or the reason to skip a product.</li>
         </ul>
       </section>
 
       <section>
         <h2>Meet the desk</h2>
         <p>
-          The people who write, test and check what is published here. A profile marked as not
-          filled in yet is exactly that: a slot on the desk waiting for its person.
+          The publication’s authoring desk. We publish organizational authorship rather than presenting unfilled staff profiles as verified reviewers.
         </p>
         <div class="about-team">
           {authors.map((a) => <AuthorCard author={a} variant="row" articleCount={count(a.id)} as="h3" />)}

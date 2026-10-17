@@ -9,20 +9,22 @@
 export type Tone = 'cobalt' | 'amber' | 'navy' | 'surface' | 'deep';
 
 export interface Category {
-  id: 'crm' | 'email' | 'sites' | 'pm' | 'seo';
+  id: 'crm' | 'email' | 'sites' | 'pm' | 'home';
   /** Nav label — short. */
   short: string;
   /** Full category name. */
   name: string;
   /** Plain-English noun for running copy: "a CRM", "an email marketing tool". */
   noun: string;
-  /** The category word as it reads mid-sentence: "CRM", "email marketing", "SEO". */
+  /** The category word as it reads mid-sentence: "CRM", "marketing", "home services". */
   plain: string;
   hub: string;
   /** The buyer question this category answers, in plain language. */
   question: string;
   /** Which of the site's five colour tones the category's thumbnails take. */
   tone: Tone;
+  /** Extra search terms for the hub: old names, the trades it covers. */
+  aliases?: string[];
 }
 
 export const categories: Category[] = [
@@ -38,13 +40,14 @@ export const categories: Category[] = [
   },
   {
     id: 'email',
-    short: 'Email Marketing',
-    plain: 'email marketing',
-    name: 'Email Marketing & Automation',
-    noun: 'an email marketing tool',
+    short: 'Marketing',
+    plain: 'marketing',
+    name: 'Marketing & Automation',
+    noun: 'a marketing tool',
     hub: '/email-marketing-software',
-    question: 'What sends the emails, and what follows up while you sleep?',
+    question: 'What gets your message out, and what follows up while you sleep?',
     tone: 'amber',
+    aliases: ['email marketing', 'email', 'automation', 'newsletters'],
   },
   {
     id: 'sites',
@@ -67,14 +70,15 @@ export const categories: Category[] = [
     tone: 'surface',
   },
   {
-    id: 'seo',
-    short: 'SEO Tools',
-    plain: 'SEO',
-    name: 'SEO & Marketing Tools',
-    noun: 'an SEO tool',
-    hub: '/seo-marketing-tools',
-    question: 'What tells you why you are not being found, and what to fix?',
+    id: 'home',
+    short: 'Home Services',
+    plain: 'home services',
+    name: 'Home Services',
+    noun: 'a home services tool',
+    hub: '/home-services-software',
+    question: 'What books the jobs, quotes them, and gets you paid on time?',
     tone: 'deep',
+    aliases: ['field service', 'scheduling', 'quoting', 'invoicing', 'trades', 'contractors'],
   },
 ];
 

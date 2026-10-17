@@ -1,0 +1,133 @@
+---
+import Button from './Button.astro';
+interface Props { id?:string; headingLevel?:2|3; }
+const {id='email-compare',headingLevel=3}=Astro.props;
+const field=(name:string)=>`${id}-${name}`;
+const Heading=headingLevel===2?'h2':'h3';
+const ResultHeading=headingLevel===2?'h3':'h4';
+---
+<section data-email-comparison class="my-8 min-w-0 rounded border border-brand-muted/30 bg-brand-bg p-5 sm:p-6" aria-labelledby={field('heading')}>
+  <Heading id={field('heading')} class="!mt-0 !text-2xl">What would these plans cost for your list?</Heading>
+  <p class="!mt-3 !text-sm">Compare paid plans using separate billable counts, your send forecast and the requirements below. Start with the article’s plan table; the cheapest price does not establish that a plan fits.</p>
+  <form novalidate class="mt-5 min-w-0">
+    <fieldset class="min-w-0">
+      <legend class="sr-only">Plans and billable counts</legend>
+      <div class="grid min-w-0 gap-5 sm:grid-cols-2">
+        <div class="min-w-0">
+          <label for={field('gr-plan')} class="block text-sm font-semibold">GetResponse plan</label>
+          <select id={field('gr-plan')} name="grPlan" class="ga-input"><option>Starter</option><option>Marketer</option><option>Creator</option></select>
+          <label for={field('gr-contacts')} class="mt-4 block text-sm font-semibold">GetResponse billable contacts</label>
+          <input id={field('gr-contacts')} name="grContacts" type="number" min="1" max="1000000" step="1" required value="1000" class="ga-input" />
+          <p class="!mt-2 !text-xs text-brand-muted">Check list memberships and the billing month’s additions and status changes. This may differ from unique people.</p>
+        </div>
+        <div class="min-w-0">
+          <label for={field('aw-plan')} class="block text-sm font-semibold">AWeber plan</label>
+          <select id={field('aw-plan')} name="awPlan" class="ga-input"><option>Lite</option><option>Plus</option></select>
+          <label for={field('aw-contacts')} class="mt-4 block text-sm font-semibold">AWeber billable subscribers</label>
+          <input id={field('aw-contacts')} name="awContacts" type="number" min="1" max="1000000" step="1" required value="1000" class="ga-input" />
+          <p class="!mt-2 !text-xs text-brand-muted">Current help excludes unsubscribes. Confirm duplicate-list and other account-specific rules before copying the other count.</p>
+        </div>
+      </div>
+      <div class="mt-5 grid min-w-0 gap-5 sm:grid-cols-2">
+        <div><label for={field('billing')} class="block text-sm font-semibold">Public pricing basis</label><select id={field('billing')} name="billing" class="ga-input"><option value="annual">Annual payment</option><option value="monthly">Monthly payments for 12 months</option></select></div>
+        <div><label for={field('sends')} class="block text-sm font-semibold">Email sends per month</label><input id={field('sends')} name="sends" type="number" min="0" max="1000000000" step="1" required value="8000" class="ga-input" /><p class="!mt-2 !text-xs text-brand-muted">Include newsletters and automation emails, not just the number of subscribers.</p></div>
+      </div>
+    </fieldset>
+    <details class="mt-5 rounded border border-brand-muted/30 p-4">
+      <summary class="cursor-pointer font-semibold">Check workflow and feature requirements</summary>
+      <div class="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
+        <div><label for={field('workflows')} class="block text-sm font-semibold">Workflows needed</label><input id={field('workflows')} name="workflows" type="number" min="0" max="1000" step="1" required value="1" class="ga-input" /></div>
+        <div><label for={field('elements')} class="block text-sm font-semibold">Elements in largest GetResponse workflow</label><input id={field('elements')} name="grElements" type="number" min="1" max="1000" step="1" required value="4" class="ga-input" /><p class="!mt-2 !text-xs text-brand-muted">Count conditions, actions and filters using GetResponse’s rules. This is not an AWeber step comparison.</p></div>
+        <div><label for={field('users')} class="block text-sm font-semibold">Users needing access</label><input id={field('users')} name="users" type="number" min="1" max="1000" step="1" required value="1" class="ga-input" /></div>
+        <div><label for={field('pages')} class="block text-sm font-semibold">Landing pages needed</label><input id={field('pages')} name="pages" type="number" min="0" max="1000" step="1" required value="1" class="ga-input" /></div>
+      </div>
+      <label class="mt-4 flex items-start gap-3 text-sm"><input name="emailTests" type="checkbox" class="mt-1 accent-brand-primary" />Campaign email A/B tests</label>
+      <label class="mt-3 flex items-start gap-3 text-sm"><input name="branding" type="checkbox" class="mt-1 accent-brand-primary" />Remove the email provider’s badge</label>
+      <label class="mt-3 flex items-start gap-3 text-sm"><input name="behavioral" type="checkbox" class="mt-1 accent-brand-primary" />Behavior-based workflow rules</label>
+      <label class="mt-3 flex items-start gap-3 text-sm"><input name="webinar" type="checkbox" class="mt-1 accent-brand-primary" />A working webinar-hosting route</label>
+      <p class="!mt-3 !text-xs text-brand-muted">Only the stated limits are checked. Verify exact conditions, integrations, saved segments and external-service eligibility before buying.</p>
+    </details>
+    <details class="mt-4 rounded border border-brand-muted/30 p-4">
+      <summary class="cursor-pointer font-semibold">Add compatible quotes and other costs</summary>
+      <p class="!mt-3 !text-xs text-brand-muted">An optional whole-account monthly equivalent replaces the public base price. It does not change plan entitlements. Enter annual quotes divided by 12; exclude amounts already included in the quote from extras.</p>
+      <div class="mt-4 grid min-w-0 gap-5 sm:grid-cols-2">
+        <div class="min-w-0">
+          <label for={field('gr-quote')} class="block text-sm font-semibold">GetResponse quote, monthly equivalent USD</label><input id={field('gr-quote')} name="grQuote" type="number" min="0" max="10000000" step="0.01" placeholder="Optional whole account" class="ga-input" />
+          <label for={field('gr-extras')} class="mt-4 block text-sm font-semibold">GetResponse monthly extras USD</label><input id={field('gr-extras')} name="grExtras" type="number" min="0" max="10000000" step="0.01" required value="0" class="ga-input" />
+          <label for={field('gr-setup')} class="mt-4 block text-sm font-semibold">GetResponse one-time setup USD</label><input id={field('gr-setup')} name="grSetup" type="number" min="0" max="10000000" step="0.01" required value="0" class="ga-input" />
+        </div>
+        <div class="min-w-0">
+          <label for={field('aw-quote')} class="block text-sm font-semibold">AWeber quote, monthly equivalent USD</label><input id={field('aw-quote')} name="awQuote" type="number" min="0" max="10000000" step="0.01" placeholder="Optional whole account" class="ga-input" />
+          <label for={field('aw-extras')} class="mt-4 block text-sm font-semibold">AWeber monthly extras USD</label><input id={field('aw-extras')} name="awExtras" type="number" min="0" max="10000000" step="0.01" required value="0" class="ga-input" />
+          <label for={field('aw-setup')} class="mt-4 block text-sm font-semibold">AWeber one-time setup USD</label><input id={field('aw-setup')} name="awSetup" type="number" min="0" max="10000000" step="0.01" required value="0" class="ga-input" />
+        </div>
+      </div>
+    </details>
+    <p data-ga-error role="alert" class="!mt-4 !text-sm font-semibold"></p>
+    <Button variant="line" class="ga-export mt-2 max-w-full !whitespace-normal disabled:cursor-not-allowed disabled:opacity-50">Download comparison worksheet</Button>
+  </form>
+  <div class="mt-6 grid min-w-0 gap-5 min-[60rem]:grid-cols-2">
+    <div data-ga-gr class="min-w-0 rounded border border-brand-muted/25 bg-brand-surface p-5" aria-live="polite">
+      <ResultHeading class="!mt-0 !text-xl">GetResponse</ResultHeading>
+      <p data-ga-status class="!mt-3 !text-sm font-semibold"></p>
+      <dl class="!mt-4 grid gap-3 !text-sm">
+        <div><dt>Selected capacity preset</dt><dd data-ga-band class="!ml-0 font-semibold"></dd></div>
+        <div><dt>First year: base + entered costs</dt><dd><output data-ga-year class="!text-3xl font-bold text-brand-primary"></output></dd></div>
+        <div><dt>Later year, same entered costs</dt><dd data-ga-ongoing class="!ml-0 font-semibold"></dd></div>
+        <div><dt>Monthly email allowance</dt><dd data-ga-sends class="!ml-0 font-semibold"></dd></div>
+      </dl>
+      <p data-ga-basis class="!mt-4 !text-xs text-brand-muted"></p>
+      <ul data-ga-issues class="!mt-4 !pl-5 !text-sm"></ul>
+      <ul data-ga-notes class="!mt-3 !pl-5 !text-xs text-brand-muted"></ul>
+    </div>
+    <div data-ga-aw class="min-w-0 rounded border border-brand-muted/25 bg-brand-surface p-5" aria-live="polite">
+      <ResultHeading class="!mt-0 !text-xl">AWeber</ResultHeading>
+      <p data-ga-status class="!mt-3 !text-sm font-semibold"></p>
+      <dl class="!mt-4 grid gap-3 !text-sm">
+        <div><dt>Selected capacity preset</dt><dd data-ga-band class="!ml-0 font-semibold"></dd></div>
+        <div><dt>First year: base + entered costs</dt><dd><output data-ga-year class="!text-3xl font-bold text-brand-primary"></output></dd></div>
+        <div><dt>Later year, same entered costs</dt><dd data-ga-ongoing class="!ml-0 font-semibold"></dd></div>
+        <div><dt>Monthly email allowance</dt><dd data-ga-sends class="!ml-0 font-semibold"></dd></div>
+      </dl>
+      <p data-ga-basis class="!mt-4 !text-xs text-brand-muted"></p>
+      <ul data-ga-issues class="!mt-4 !pl-5 !text-sm"></ul>
+      <ul data-ga-notes class="!mt-3 !pl-5 !text-xs text-brand-muted"></ul>
+    </div>
+  </div>
+  <p class="!mt-5 !text-xs text-brand-muted">US regular public prices and scoped limits checked 16 October 2026. GetResponse annual bases are calculated from displayed monthly equivalents; AWeber annual bases use published annual totals. First year adds monthly extras ×12 and setup; later year omits setup. Taxes, unentered usage/transaction/processor fees, services and renewal changes are excluded. Entries stay in this browser; downloads contain your assumptions and blank pilot results, not completed product tests.</p>
+  <noscript><p>Use the article’s plan tables and <a href="/downloads/email-comparison-pilot-worksheet.csv">download the blank comparison pilot worksheet</a> without JavaScript.</p></noscript>
+</section>
+<script>
+  import {emailComparison,comparisonCsv,type ComparisonInputs,type SideResult} from '../data/email-comparison-rules';
+  document.querySelectorAll<HTMLElement>('[data-email-comparison]').forEach(root=>{
+    const form=root.querySelector('form')!;
+    const controls=(name:string)=>form.querySelector<HTMLInputElement|HTMLSelectElement>(`[name="${name}"]`)!;
+    const number=(name:string)=>Number(controls(name).value);
+    const quote=(name:string)=>controls(name).value===''?null:number(name);
+    const checked=(name:string)=>(controls(name)as HTMLInputElement).checked;
+    const inputs=():ComparisonInputs=>({grPlan:controls('grPlan').value as ComparisonInputs['grPlan'],awPlan:controls('awPlan').value as ComparisonInputs['awPlan'],billing:controls('billing').value as ComparisonInputs['billing'],grContacts:number('grContacts'),awContacts:number('awContacts'),sends:number('sends'),workflows:number('workflows'),grElements:number('grElements'),users:number('users'),pages:number('pages'),emailTests:checked('emailTests'),branding:checked('branding'),behavioral:checked('behavioral'),webinar:checked('webinar'),grQuote:quote('grQuote'),awQuote:quote('awQuote'),grExtras:number('grExtras'),awExtras:number('awExtras'),grSetup:number('grSetup'),awSetup:number('awSetup')});
+    const error=root.querySelector<HTMLElement>('[data-ga-error]')!;const button=root.querySelector<HTMLButtonElement>('.ga-export')!;
+    const money=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'});const count=new Intl.NumberFormat('en-US');
+    const valid=()=>[...form.querySelectorAll<HTMLInputElement>('input[type="number"]')].every(el=>el.validity.valid&&(!el.required||el.value!==''));
+    const write=(side:Element,name:string,value:string)=>{side.querySelector<HTMLElement>(`[data-ga-${name}]`)!.textContent=value;};
+    const list=(side:Element,name:string,values:string[])=>{const ul=side.querySelector(`[data-ga-${name}]`)!;ul.replaceChildren(...values.map(value=>{const li=document.createElement('li');li.textContent=value;return li;}));};
+    const render=(vendor:'gr'|'aw',result:SideResult|null)=>{
+      const side=root.querySelector(`[data-ga-${vendor}]`)!;
+      if(!result){for(const name of ['status','band','year','ongoing','sends','basis'])write(side,name,name==='status'?'Fix the inputs above':'—');list(side,'issues',[]);list(side,'notes',[]);return;}
+      write(side,'status',result.issues.length?'Review the selected plan and limits':'No selected limit conflict detected');
+      write(side,'band',result.band===null?'Quote required':`${count.format(result.band)} capacity`);
+      write(side,'year',result.year===null?'Quote required':money.format(result.year));
+      write(side,'ongoing',result.ongoing===null?'Quote required':money.format(result.ongoing));
+      write(side,'sends',vendor==='gr'?'Advertised unlimited; policy applies':result.allowance===null?'Confirm in quote':`${count.format(result.allowance)} sends${result.over?' — forecast exceeds allowance':''}`);
+      write(side,'basis',result.basis);list(side,'issues',result.issues);list(side,'notes',result.notes);
+    };
+    const update=()=>{const result=valid()?emailComparison(inputs()):{valid:false as const};error.textContent=result.valid?'':'Use whole-number counts within the stated ranges and non-negative costs with no more than two decimal places.';button.disabled=!result.valid;render('gr',result.valid?result.gr:null);render('aw',result.valid?result.aw:null);};
+    form.addEventListener('input',update);form.addEventListener('change',update);form.addEventListener('submit',event=>event.preventDefault());
+    button.addEventListener('click',()=>{if(!valid())return;const csv=comparisonCsv(inputs());if(csv===null)return;const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='getresponse-aweber-comparison.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+    update();
+  });
+</script>
+<style>
+  .ga-input { display:block; width:100%; min-width:0; margin-top:0.5rem; border:1px solid color-mix(in oklab,var(--color-brand-muted)50%,transparent); border-radius:3px; background:var(--color-brand-bg); padding:0.75rem; font-size:0.9375rem; }
+  .ga-input:focus-visible { outline:2px solid var(--color-brand-primary); outline-offset:3px; }
+</style>

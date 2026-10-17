@@ -6,7 +6,7 @@ category: email
 author: reviews-desk
 pubDate: 2026-09-09
 tags:
-  - "Email Marketing & Automation"
+  - "Marketing & Automation"
   - "Pricing"
   - "GetResponse"
 intro:

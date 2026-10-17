@@ -1,7 +1,7 @@
 ## Project overview
 
 OSI Affiliate is a staff-written software review site — five categories of business software (CRM,
-email marketing, website builders, project management, SEO tools), with a full staff review and
+marketing, website builders, project management, home services), with a full staff review and
 score for every tool, one short best-of list per category, alternatives lists, head-to-head
 comparisons, pricing guides and switching guides. Built for a solopreneur or small-business owner
 replacing a specific tool rather than an enterprise buyer. There are no reader ratings: every score
@@ -14,10 +14,10 @@ When starting the dev server, use background mode on a port that is free (4321 i
 another project on this machine):
 
 ```
-astro dev --background --port 4327
+npx astro dev --background --port 4327
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Manage the background server with `npx astro dev stop`, `npx astro dev status`, and `npx astro dev logs`.
 If it exits "before becoming ready" with a Vite `deps_ssr` error, clear `node_modules/.vite` and
 start it again.
 

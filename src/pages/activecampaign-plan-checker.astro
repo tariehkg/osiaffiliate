@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import ActiveCampaignPlanChecker from '../components/ActiveCampaignPlanChecker.astro';
+import Prose from '../components/Prose.astro';
+import { breadcrumbLd } from '../components/seo';
+---
+<Layout title="ActiveCampaign Plan Checker & Pilot Worksheet — OSI Affiliate" description="Match your workflow to ActiveCampaign's plan gates, check contact and send capacity, estimate quoted costs and download a pilot worksheet." path="/activecampaign-plan-checker" jsonld={[breadcrumbLd([{label: 'Home', href: '/'}, {label: 'Email marketing software', href: '/email-marketing-software'}, {label: 'ActiveCampaign plan checker', href: '/activecampaign-plan-checker'}])]}>
+  <CategoryStrip current="email" />
+  <main id="main">
+    <PageHead title="Map your ActiveCampaign workflow to a plan" lede="Name the workflow you need, then check its plan, users, contact capacity and send budget before moving your list." />
+    <div class="wrap pb-16">
+      <ActiveCampaignPlanChecker id="ac-pilot" headingLevel={2} />
+      <Prose>
+        <h2>Use the result to plan your pilot</h2>
+        <p>The checker uses documented Starter, Plus and Pro workflow gates and US Email pricing checked on 16 October 2026. It does not evaluate every feature or enterprise requirement. Additional users and Enhanced CRM need compatible quotes; a price entry does not establish entitlement.</p>
+        <p>Our <a href="/activecampaign-review">ActiveCampaign review</a> explains the trial-to-paid distinction, contact-billing rules and export checks. You can also <a href="/downloads/activecampaign-pilot-checklist.csv">download the blank pilot checklist</a> without using the interactive tool.</p>
+        <p>Verify <a href="https://www.activecampaign.com/pricing" rel="nofollow sponsored noopener">current ActiveCampaign plans and pricing</a> and the exact terms of your quote before buying.</p>
+      </Prose>
+    </div>
+  </main>
+</Layout>

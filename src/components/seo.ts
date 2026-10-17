@@ -68,7 +68,7 @@ export function itemListLd(name: string, items: ListedItem[]) {
       '@type': 'ListItem',
       position: i + 1,
       name: p.name,
-      url: absoluteUrl(p.url),
+      url: /^https?:\/\//.test(p.url) ? p.url : absoluteUrl(p.url),
     })),
   };
 }
@@ -156,6 +156,7 @@ export function faqPageLd(faqs: Faq[]) {
 export function articleLd(a: {
   title: string;
   description: string;
+  image?: string;
   path: string;
   published: Date;
   updated?: Date;
@@ -167,6 +168,7 @@ export function articleLd(a: {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: a.title,
+    ...(a.image ? { image: absoluteUrl(a.image) } : {}),
     description: a.description,
     url: absoluteUrl(a.path),
     datePublished: a.published.toISOString(),

@@ -6,7 +6,7 @@ category: email
 author: reviews-desk
 pubDate: 2026-08-04
 tags:
-  - "Email Marketing & Automation"
+  - "Marketing & Automation"
   - "Review"
   - "GetResponse"
 product:
@@ -85,9 +85,9 @@ GetResponse made the list because it collapses three subscriptions into one acco
 
 The automation builder is genuinely capable without demanding a week of study, and the free plan is real enough to build and send from while you are still working out whether the business needs any of this.
 
-- **Lead capture end to end.** Lead capture end to end is where GetResponse earns its place on our Email Marketing & Automation shortlist.
-- **One tool, one bill.** One tool, one bill is where GetResponse earns its place on our Email Marketing & Automation shortlist.
-- **Solo marketers.** Solo marketers is where GetResponse earns its place on our Email Marketing & Automation shortlist.
+- **Lead capture end to end.** Lead capture end to end is where GetResponse earns its place on our Marketing & Automation shortlist.
+- **One tool, one bill.** One tool, one bill is where GetResponse earns its place on our Marketing & Automation shortlist.
+- **Solo marketers.** Solo marketers is where GetResponse earns its place on our Marketing & Automation shortlist.
 
 ## Where it falls short
 
@@ -104,4 +104,4 @@ A lasting free plan that lets you build a list, design a landing page and send n
 - **[AWeber](/aweber-review)** — long-running, simple list tooling with human support. Free plan available.
 - **[ActiveCampaign](/activecampaign-review)** — the deepest automation builder of the three. Free trial, then paid by contacts.
 
-See the full [Email Marketing & Automation shortlist](/email-marketing-software) for how they compare side by side.
+See the full [Marketing & Automation shortlist](/email-marketing-software) for how they compare side by side.

@@ -1,154 +1,152 @@
 ---
-title: "4 best CRM software for small business in 2026 (tested and compared)"
-description: "Four CRMs shortlisted by our editors for small businesses, each with a reason to skip it. Every pick has a full staff review."
-type: best
-category: crm
-author: reviews-desk
-pubDate: 2026-09-24
+title: "Best CRM software for small business: 4 picks by how you sell"
+seoTitle: "Best CRM Software for Small Business (2026): 4 Picks"
+description: "Compare 4 CRMs for small business by plan limits, team costs and data export. Use our CRM cost calculator and downloadable trial kit."
+type: "best"
+category: "crm"
+author: "reviews-desk"
+pubDate: "2026-09-24"
+updatedDate: "2026-10-16"
 featured: true
-tags:
-  - "CRM & Sales"
-  - "Best of"
-intro:
-  - "Four CRMs made the list. One is free to start, one is built for people who live in a pipeline, one is for teams who sell by phone, and one only makes sense if you are already on monday.com."
-  - "Every one of these can store a contact and a deal. The reason to choose between them is what happens on the days nobody feels like updating the CRM."
-picks:
-  - review: "hubspot-crm-review"
-    bestFor: "Starting at zero cost"
-  - review: "pipedrive-review"
-    bestFor: "Outbound and follow-up sales"
-  - review: "close-review"
-    bestFor: "Inside sales teams"
-  - review: "monday-crm-review"
-    bestFor: "Existing monday.com teams"
-faqs:
-  - q: "Do I need a CRM if I use a spreadsheet?"
-    a: "Not until the spreadsheet starts losing you money. The moment two people are editing it, or a lead goes quiet because nobody owned the follow-up, you have outgrown it. A CRM adds reminders, email history and a clear next action, which is exactly what a spreadsheet cannot do."
-  - q: "Is free CRM software good enough for a small business?"
-    a: "Often, yes, for a while. HubSpot CRM’s free tier is the most usable we found, and you can run a real sales process on it before paying. The catch is that the jump to paid is a real step, so know what sits behind it before you build your process around a free plan."
-  - q: "What is the easiest CRM for a small business to learn?"
-    a: "Pipedrive is the quickest to make sense of if your work is a pipeline, because it opens on deals and asks what happens next. HubSpot CRM is broader and takes longer to settle into, but its basics are straightforward. Whichever you pick, the real learning curve is the habit of updating it, not the interface."
-  - q: "What is the difference between a CRM and email marketing software?"
-    a: "A CRM tracks individual relationships and deals: who said what, what stage they are at, what happens next. Email marketing software sends campaigns and automated sequences to lists. Some tools do both, HubSpot CRM among them, but if you only need one, buy one."
-  - q: "Should a solopreneur use a CRM?"
-    a: "If you sell anything that takes more than one conversation, yes. A CRM for one person is mostly a follow-up machine, so the free tier on HubSpot CRM or a light pipeline in Pipedrive covers it. Skip it if every sale is a single self-serve checkout with no follow-up."
-  - q: "How long does it take to set up a CRM?"
-    a: "For a small business, an afternoon to import contacts and define your pipeline stages, then a few weeks of using it before it feels natural. Keep the first version simple: a handful of stages and one owner per deal. Most CRM setups fail from too much structure, not too little."
-  - q: "Can I switch CRMs later without losing my data?"
-    a: "Contacts and deals move reasonably well, because every pick here can export them. What moves badly is the history: email threads, notes and activity rarely come across cleanly. That is why choosing for where you will be in two years matters more than picking the cheapest option today."
+presentation: "narrative"
+tags: ["CRM & Sales", "Best of", "Small business CRM", "CRM costs"]
+intro: ["Buying somewhere to store contacts is a different decision from buying the follow-up workflow your team needs. Pipedrive makes the distinction concrete: Lite covers lead, calendar, and pipeline management; full email sync and automation begin at Growth. Choose on the entry price without checking that boundary and you can budget for a contact record while still leaving the follow-up to memory.", "A small team whose daily job is moving deals forward with email and dated next actions should start its evaluation with Pipedrive Growth. A budget-first team of up to three people should check Zoho CRM's free and Standard limits first. HubSpot deserves a look when you want a shared customer record that can grow into marketing and support; its free starting point is limited to two users. Close earns a trial when calling is the center of the sales motion, not an occasional activity."]
+shortlist: [{"name": "Pipedrive", "url": "https://www.pipedrive.com/en/pricing"}, {"name": "HubSpot", "url": "https://www.hubspot.com/products/crm"}, {"name": "Zoho CRM", "url": "https://www.zoho.com/en-us/crm/zohocrm-pricing.html"}, {"name": "Close", "url": "https://close.com/pricing"}]
+media: [{"id": "hero", "src": "../../assets/images/articles/crm/best-crm-small-business-hero.webp", "alt": "Conceptual illustration of contacts moving through a sales pipeline, with a calendar and follow-up task.", "eager": true}, {"id": "cost", "src": "../../assets/images/articles/crm/crm-full-cost-illustration.webp", "alt": "Layered cards representing the seat, billing-term and add-on costs behind a CRM subscription.", "eager": false}, {"id": "mapping", "src": "../../assets/images/articles/crm/close-vendor-demo-field-mapping.jpg", "alt": "Screenshot from Close's public vendor-guided import demo showing field mapping and validation controls.", "eager": false, "caption": "Close's public vendor-guided import demo illustrates field mapping and validation; inspected October 16, 2026. No actual import performed."}, {"id": "duplicates", "src": "../../assets/images/articles/crm/close-vendor-demo-duplicate-detection.jpg", "alt": "Screenshot from Close's public guided import demo showing duplicate-detection choices for existing Leads.", "eager": false, "caption": "Close’s vendor-authored public guided demo shows choices for matching existing Leads; inspected October 16, 2026. No actual import performed; outcomes not tested."}]
 ---
 
-This page is for a small-business owner or a two-person sales team choosing a CRM once and getting back to work. There are four picks, chosen by our editors rather than pulled from a database, and each one carries a reason to skip it. Readers rate every pick, so you can see how the shortlist holds up for people like you.
+## The four picks at a glance
 
-## What is CRM software?
+Customer relationship management (CRM) software keeps a shared customer and deal record, rather than just an address book. A pipeline is the set of named stages a deal moves through, from first call to won or lost. A seat is a user license; check which actions that license permits. A workflow is a rule that turns an event, such as a deal changing stage, into an action, such as creating a follow-up task.
 
-A CRM, or customer relationship management tool, is the place where your leads and customers live. It holds each contact, what you have said to them, what they are worth as a deal and what is supposed to happen next. For a small business the point is not reporting. It is making sure nobody who asked for a quote gets forgotten because the note was in someone’s inbox.
+| Product | Best fit | Start here | Decisive limit |
+| --- | --- | --- | --- |
+| **Pipedrive** | Sales follow-up with email and automation | 14-day trial, no card; **Growth** is the full-email-sync tier | Lite's lower entry price does not include Growth's full email sync and automation |
+| **HubSpot** | A small shared customer platform that may grow into marketing/support | Free CRM, up to 2 users and 1,000 contacts | Free stops at two users; paid workflow scope depends on the tier |
+| **Zoho CRM** | A budget-first team of up to three | Free, up to 3 users; **Standard** adds email integration and pipelines | Start with Standard if the documented Gmail/Outlook/Zoho Mail integration is required |
+| **Close** | Calling-heavy sales | Trial, no card; **Essentials** for team calling/email/SMS | Calling and SMS usage cost extra; workflows need the Growth jump |
 
-The tools come in roughly three shapes. Pipeline-first CRMs, like Pipedrive, open on stages and deals and are built around the next action. All-in-one platforms, like HubSpot CRM, put marketing, sales and support on one customer record and grow with you. Then there are CRMs with a specialism built in, such as Close, which folds calling and SMS into the record for teams who sell by phone.
+<!-- media:hero -->
 
-There is a fourth shape worth naming: the CRM that comes as part of a work platform you already use. monday CRM is the example on this list. It is rarely the best CRM judged on its own, but if your projects already run on monday.com, having sales tracked next to delivery in the same login is a real advantage.
+## Pipedrive: for teams whose job is moving deals forward
 
-## What to look for
+Pipedrive gets a slot because its documented lead, calendar, and pipeline tools address deal tracking, with a specific upgrade boundary for email and automation. The entry tier, **Lite** at $14 per seat per month billed annually or $24 monthly, covers lead, calendar, and pipeline management. Lite is worth evaluating if manual deal tracking is the task; it is not the Growth workflow described here.
 
-- **A pipeline you will update.** A CRM only works if the people using it keep it current. Look for a deal view that shows the next action first, because that is the part reps update without being asked.
-- **Email logging without extra steps.** If every email has to be copied in by hand, it will not be. Check whether the tool captures email against the contact automatically, or at least from a click inside your inbox.
-- **Reminders and follow-up tasks.** The failure mode of small-business sales is silence after the first reply. A task tied to a deal, with a date, is the cheapest fix there is.
-- **Usable free tier or trial.** You will not know if a CRM fits until real contacts are in it. A free plan or a proper trial lets you run a month of actual work before you commit.
-- **Room for marketing and support.** If you can imagine sending campaigns or answering support tickets from the same record next year, choose a tool that already has those modules, so you are not migrating twice.
-- **Calling and texting built in.** Only matters if you sell by phone, but then it matters a lot. A dialer inside the CRM means the call and the note happen in the same place.
-- **Fits your existing tools.** A CRM lives next to your inbox, calendar and whatever runs your projects. Check the integrations you need are native rather than promised.
+For full email sync and automated follow-up, budget for **Growth**, $39 per seat per month annually or $49 monthly. Growth is where <a href="https://www.pipedrive.com/en/pricing" rel="nofollow sponsored noopener">Pipedrive's pricing</a> documents full email sync and tracking, automations, nurture sequences, forecast reports, and the meeting scheduler. The headline Lite price is not the quote for that job.
 
-## The 4 best CRM tools, reviewed
+The practical distinction is **email tracking versus full email sync**. Tracking concerns message engagement, such as opens; full email sync brings mailbox conversations into the CRM. Growth documents both. During your pilot, check which messages attach to the right record and what another user can see; the feature label is not proof that your account is configured correctly.
 
-## 1. HubSpot CRM: best for starting at zero cost
+Try Pipedrive when you have a defined sale with stages, more than one person touches a deal, and the next action matters more than a broader customer platform.
 
-HubSpot is on this list because its free tier is the most usable free CRM we found, not because it is the cheapest way to end up paying. You get contacts, companies, deals, a pipeline, email tracking and forms without a card, and you can run a real sales process on that for a long time.
+If an ongoing subscription is out of the question, start with one of the documented free allowances below. If marketing and support are part of the purchase, compare the broader platform and its full quote rather than treating this sales subscription as that budget. If you are weighing Pipedrive against HubSpot specifically, our [HubSpot vs Pipedrive comparison](/hubspot-vs-pipedrive) walks through that platform choice in more detail.
 
-It earns its slot for a second reason: it is one record of the customer that marketing and support can both work from later. If you can imagine wanting email campaigns, a help desk or a chat widget attached to the same contact next year, starting here saves you a migration.
+## HubSpot: for a small shared customer platform
 
-Best for a one-to-ten-person business that wants a system of record now and might grow into marketing automation. Worth knowing before you commit: the jump from free to paid tiers is a real step, seats and contact tiers both push the bill, and the features that make HubSpot pleasant tend to sit one tier above the one you are on.
+HubSpot's appeal is the single record that can carry sales, marketing, and support later. Its <a href="https://www.hubspot.com/products/crm" rel="nofollow sponsored noopener">free CRM</a> allows up to two users and 1,000 contacts, with no expiry and no credit card. For a solo owner or a two-person team evaluating whether a CRM is worth the routine, that is a low-risk on-ramp.
 
-**HubSpot CRM pros**
+A third user exceeds the documented free allowance. Automation needs a separate check against the exact action you want to perform. HubSpot's Starter tier does include workflows, but they are restricted: the live <a href="https://www.hubspot.com/pricing/sales" rel="nofollow sponsored noopener">Sales Hub pricing</a> comparison shows Starter capped at 50 workflows with limited triggers and actions, versus 300 fully customizable workflows on Professional. It is not "no automation"; it is a narrower set of rules that may or may not cover your process.
 
-- Starting at zero cost
-- One customer record
-- Growing into marketing
+The paid path matters here more than the free one. Sales Hub Professional lists at $90 per seat per month with annual billing, or $100 per month paid monthly under an annual commitment, plus a required one-time $1,500 onboarding fee. That is a different purchase from a lean sales tool, and moving to Professional needs its own budget decision. Starter also displays promotional offers of $7 per seat per month with annual billing or $10 with monthly billing, next to a $20 reference price. Eligibility, duration, and renewal terms were not captured, so we do not treat either offer as a standard rate. Our [HubSpot pricing explainer](/hubspot-crm-pricing) covers the seat and hub structure in more depth.
 
-**HubSpot CRM cons**
+HubSpot is worth evaluating when you want departments to share one customer record. Its free allowance gives up to two users a way to begin that evaluation.
 
-- You only want a pipeline
-- Budget-sensitive upgrades
+Skip the free route if three people need to edit records from day one. Skip Professional if your required workflow needs that tier and its cost or contract is beyond your budget. Quote your exact seat route before adopting.
 
-A genuinely usable free CRM: contacts, companies, deals, a pipeline, email tracking and forms, with no card required. [Read our full HubSpot CRM review](/hubspot-crm-review) or <a href="https://www.hubspot.com" rel="nofollow sponsored noopener" target="_blank">visit hubspot.com</a>.
+## Zoho CRM: for a budget-first team of three
 
-## 2. Pipedrive: best for outbound and follow-up sales
+Zoho earns its place on a specific, documented fact: the <a href="https://www.zoho.com/en-us/crm/zohocrm-pricing.html" rel="nofollow sponsored noopener">free edition is for up to three users</a>, where HubSpot's free tier stops at two. For a small team deciding between paying from month one or staying free a little longer, that third seat is the difference.
 
-Pipedrive is the pick for people whose day is a pipeline. It opens on stages and deals rather than a dashboard, and its whole structure pushes one question at you: what is the next action on this deal, and when.
+The free edition includes follow-up reminders, workflow automation with limits, ten email templates, and data import and export. But do not treat those features as confirmation of a free integrated inbox. The US pricing page documents email integration with Gmail, Outlook, or Zoho Mail on **Standard**, $14 per user per month annually or $20 monthly, along with multiple sales pipelines and built-in calling. If that integration is essential, use Standard as your initial budget assumption and verify your actual inbox connection in the pilot.
 
-That focus is the reason it made the list over several broader tools. Reps update it because updating it is how they see their own work, which is the only reliability test a CRM really has.
+The tradeoff is that the free-user allowance does not settle whether the free features cover your process. Give one person responsibility for checking the reminders, required rules, and email path before choosing on price. We have not measured setup effort or demonstrated that Zoho is harder to configure than the other picks.
 
-Best for a small sales team — two people or twenty — where someone is responsible for a number and the process is mostly outbound or follow-up driven. It is a paid tool from the start; there is a trial, but no permanent free plan to hide in.
+That makes Zoho worth evaluating when the three-user free allowance matters and you want a low-cost paid path to email integration. Do not commit on the free allowance alone if an integrated inbox is essential. If nobody can own configuration and the pilot, resolve that before moving your customer list. The three-user allowance is a true edge on that one dimension; it does not make Zoho the automatic best free CRM overall.
 
-**Pipedrive pros**
+## Close: for calling-heavy sales
 
-- Outbound and follow-up sales
-- Reps who own a number
-- Visual deal stages
+Close exists for a sales motion built on calls, texts, and emails handled inside one system. Its **Essentials** tier at $35 per user per month annually or $49 monthly includes unlimited contacts and leads, built-in forms, a centralized inbox, and native calling and SMS. The communication tools earn Close a place for teams that want calling, SMS, and email in their CRM evaluation. Tool access and usage charges are separate parts of the purchase.
 
-**Pipedrive cons**
+Budget for usage, too. Close says calling and SMS charges are passed through at cost, with most outbound calls around $0.02 per minute and phone numbers from about $1 per month. Rates vary. A subscription-only budget therefore leaves out a variable part of the bill. It is not a claim that rivals cannot call; several of them document calling paths too. Our reason to shortlist Close is the documented combination of team communication tools and a named upgrade path for workflows and the power dialer.
 
-- You need marketing email
-- You want a free tier
-- You need a help desk
+The tier gate is sharp. Essentials omits workflows; automated workflows, the power dialer, and bulk email land on **Growth** at $99 per user per month annually or $109 monthly. If your calling team requires Close's native automated workflows, budget for Growth. The jump from $35 to $99 per seat deserves a check against the tasks your team will use.
 
-No lasting free plan; a time-limited trial of the paid product, with no card needed to start it. [Read our full Pipedrive review](/pipedrive-review) or <a href="https://www.pipedrive.com" rel="nofollow sponsored noopener" target="_blank">visit pipedrive.com</a>.
+For sellers who spend their day on the phone, the documented call, SMS, and pipeline tools make Close worth evaluating. If calling is incidental to your sale, or you cannot budget variable usage on top of the Growth jump for automation, start elsewhere. Check the current <a href="https://close.com/pricing" rel="nofollow sponsored noopener">Close pricing</a> page before assuming a flat number.
 
-## 3. Close: best for inside sales teams
+## What the usable plan actually costs
 
-Close made the list for one specific shape of team: the kind that sells on the phone. Calling, SMS and email sequences are built into the CRM rather than bolted on through a dialer integration, so the call happens where the record lives and the logging is not a separate habit.
+Entry prices and task prices are different things. The table below uses the entry and workflow tiers that change these buying decisions. The rows describe different capability bundles, not equivalent products. Figures are US dollars from live public pricing pages accessed October 16, 2026, and exclude tax, optional add-ons, implementation work, and usage, except for the required HubSpot onboarding shown explicitly.
 
-For a team doing real outbound volume, that removes the failure point that kills most CRM rollouts — the gap between doing the work and recording it.
+<!-- media:cost -->
 
-Best for inside sales and outbound teams who dial every day and want fewer tools in the loop. It is priced as a premium per-seat product with no free plan, which is the trade for having the phone system inside the CRM.
+| Named tier | Annual route, per seat/mo | Monthly route, per seat/mo | Three seats, annual bill | Three seats, 12 monthly payments |
+| --- | --- | --- | --- | --- |
+| Pipedrive Lite | $14 | $24 | $504 | $864 |
+| Pipedrive Growth | $39 | $49 | $1,404 | $1,764 |
+| Zoho Standard | $14 | $20 | $504 | $720 |
+| Close Essentials | $35 | $49 | $1,260 | $1,764 |
+| Close Growth | $99 | $109 | $3,564 | $3,924 |
+| HubSpot Sales Hub Professional | $90 | $100, annual commitment | $3,240 + $1,500 onboarding = **$4,740 first year** | **$5,100 first year** |
 
-**Close pros**
+The annual bill multiplies three seats by the annual per-seat monthly equivalent by twelve months. That per-seat figure is a monthly equivalent, not a promise of monthly billing. The final column totals twelve monthly payments to show a year of subscription cost; it does not establish cancellation rights. HubSpot Professional explicitly retains an annual commitment on its monthly-payment route. These are worked examples, not checkout quotes. We have not independently verified that three paid seats are permitted on each tier, so confirm that at purchase.
 
-- Inside sales teams
-- Daily outbound calling
-- Fewer tools in the loop
+Pipedrive Lite and Zoho Standard tie at $14 per seat on base price alone, but that does not make them equivalent products. Close Growth costs more than double Essentials; check whether the power dialer and automated workflows justify that step for your team.
 
-**Close cons**
+Seats are the quiet multiplier in every comparison. A per-seat price you judged affordable as a solo buyer triples on a three-person team, so calculate the team bill before choosing. Do not assume a promotion is the renewal price: HubSpot's discounted Starter display is conditional, and we did not capture its eligibility, duration, or renewal terms. Extras such as calling minutes, AI credits, telephony numbers, or additional hubs can shift the real cost outside the subscription, so check the items relevant to your planned use.
 
-- Inbound or self-serve sales
-- Selling over email and chat
+To turn these worked examples into your own first-year estimate, use our [CRM cost calculator](/crm-cost-calculator). You can adjust the number of seats, payment route, upfront fees, and monthly team extras, then replace the presets with the quote you receive. The first-year formula is seats × monthly equivalent × 12 + upfront fees + monthly team extras × 12. It is a local worksheet built for this guide, not a vendor checkout page, and it keeps no entries. Confirm seat minimums and usage estimates with the vendor before relying on the result.
 
-No free plan; a time-limited trial of the full product so you can test the dialer against your own list. [Read our full Close review](/close-review) or <a href="https://close.com" rel="nofollow sponsored noopener" target="_blank">visit close.com</a>.
+<!-- crm-calculator -->
 
-## 4. monday CRM: best for existing monday.com teams
+## Before you move your full customer list
 
-monday CRM is on this list with an honest condition attached: it is the right answer mainly if your team already runs on monday.com. Then the sales pipeline becomes another board in the tool everyone already opens, with the same automations, views and permissions you have already learned.
+A contact export does not by itself establish that you can move the communication history attached to those contacts.
 
-That shared-surface advantage is real and it is the reason it beats a second, better CRM for these teams. One login, one place where work lives, no arguing about which tool holds the truth about a customer.
+Run this five-task pilot on a small, permitted sample before importing your real customer base. One person should own it, and you should write the required tier next to each task. You can use our [sample contacts CSV](/downloads/crm-trial-sample-contacts.csv) for the import task: five fictional rows, four unique email identities, one repeated email/contact with a different note, and two contacts at the same fictional company. This is a generic mapping sample, not a certified native import format; check its columns against your chosen importer. The `.invalid` addresses cannot test delivery, so never use this file to send messages.
 
-Best for teams already on monday.com for projects who want sales tracked next to delivery. It is a paid product per seat, with a trial rather than a lasting free tier.
+Our [blank scorecard CSV](/downloads/crm-trial-scorecard.csv) records the plan you checked, the seat permission and billing commitment, the first-year quote, your five task results, and any associations missing from an export. Blank cells mean you have not tested that item yet, not that it failed.
 
-**monday CRM pros**
+This worksheet is a proposal for your evaluation; we have not performed it as a product test.
 
-- Existing monday.com teams
-- Sales next to delivery
-- One login for work
+1. **Import a handful of contacts including one deliberate duplicate**, then confirm the duplicate rule and that fields map to the right owner. The sample CSV above includes a repeated email with a different note and two contacts at one company so you can see how the importer handles each.
+2. **Create a deal with a stage, value, owner, and dated next action**, then have a second intended user find that deal and the next action from their own login.
+3. **Connect your real inbox and check the calendar connection you need**. Confirm a sample message attaches to the right person and deal, and that any required calendar event appears where your team expects it. Use a separate permitted inbox sample for this step, not the fictional addresses. Record which tier or add-on this required; tracking an email open is not the same as having the conversation synced to the record.
+4. **Trigger one required follow-up on a stage change**, and note whether it creates an internal task, sends a customer email, or only sends a notification. Record the automation quota your plan actually gives you.
+5. **Export the sample records** and locate the contact, deal, note, communication activity, and attachment. Note what requires a separate file or an API, and whether the destination system can re-import the associations.
 
-**monday CRM cons**
+### Why import is three separate checks
 
-- Not already on monday.com
-- Judged purely as a CRM
+The first task involves decisions about both people and companies. During our October 16, 2026 research, we inspected Close's public guided onboarding demo and followed its spreadsheet-import path. This is a vendor-authored product tour, not a logged-in test — no data was imported. But the demo isolates three distinct questions a buyer should test in any CRM before trusting an import.
 
-No lasting free plan for the CRM; a time-limited trial lets you build boards and test the pipeline before paying. [Read our full monday CRM review](/monday-crm-review) or <a href="https://monday.com" rel="nofollow sponsored noopener" target="_blank">visit monday.com</a>.
+**Field mapping** asks which column from your file becomes which field in the CRM. The vendor demo shows a mapping screen where columns are assigned to CRM fields, with unmapped or flagged fields visible.
 
-## How to choose
+<!-- media:mapping -->
 
-1. **Decide whether you want a pipeline or a system of record.** If your day is deals and follow-ups, start with Pipedrive. If you want one customer record that marketing and support will share later, start with HubSpot CRM.
-2. **Be honest about how you sell.** Teams that live on the phone should look at Close, because the dialer sits inside the record. If your sales are inbound or handled over email, you do not need to pay for that.
-3. **Check what you already run on.** If projects already live on monday.com, monday CRM is worth a look for the shared login alone. If they do not, skip it and judge the other three on their merits.
-4. **Put real contacts in for a month.** Use the free plan or trial with live leads, not a demo dataset. The test is whether the pipeline is still accurate at the end of the month without anyone chasing.
-5. **Read the tier above the one you will start on.** The features that make a CRM pleasant often sit one plan up. Know what you will be paying for before the free tier runs out of road.
+**Grouping contacts into a company** is a different question. If three rows in your file describe people at the same company, does the CRM create one company record with three contacts attached, or three unrelated leads? In the Close demo, three spreadsheet rows are grouped into one Lead. That is a modeling decision, not an error check.
+
+**Matching existing records** is the third check. When an imported record matches one already in your CRM, what does the importer compare, and what happens to the existing information? The Close demo presents add-missing-info, replace-data, and skip choices for a matching Lead. Test the comparison rule separately from how contacts are grouped into a company.
+
+<!-- media:duplicates -->
+
+None of this proves Close's deduplication works better than another product's, and the demo does not show an executed import. Use it as a checklist: test field mapping, company grouping, and duplicate matching separately before importing the real customer list. You can see the same structure in the [official Close onboarding guide](https://help.close.com/getting-started/onboarding-checklist-start-here) we followed.
+
+The export instructions show why the fifth task matters. [Pipedrive's export](https://support.pipedrive.com/en/article/exporting-data-from-pipedrive) keeps activities, notes, and files in separate exports, and Google Drive files are excluded from the global export. [HubSpot's record export](https://knowledge.hubspot.com/import-and-export/export-records) carries property values and selected associations but routes activities through separate processes. [Close's export documentation](https://help.close.com/account-management/exporting-data) describes JSON as the built-in format for exporting all activity types, including emails, calls, SMS, and notes. These export instructions do not by themselves prove that the destination will re-import the whole picture intact. That is why the fifth task has two halves: the file you can pull out and the structure a new system can take in.
+
+If you cannot complete the five tasks on the trial's terms, or the follow-up automation you need is not in the tier you can afford, you have found the boundary before the expensive part.
+
+## Your next step: one branch, then a pilot
+
+Choose one trial from the situation table, then write down the exact plan, number of working users, payment schedule, commitment, and required extras. Ask for the quote against those assumptions before importing your real history.
+
+Use the five-task pilot as the decision: can the intended users find the next action and communication history, can you afford the plan that makes it work, and can you retrieve the data you need? If an essential task fails, check whether a configuration change or a paid tier fixes it before committing.
+
+If a shared spreadsheet still covers your current workload (no dated deal follow-up, no second person who needs the history, and sales that complete through self-serve checkout), keeping it is a valid outcome. Our [guide to outgrowing the contact spreadsheet](/outgrowing-the-contact-spreadsheet) can help you recognize the moment that changes. A CRM you do not need is not a bargain; it is another subscription.
+
+## How we researched this guide
+
+We selected these four for distinct buying situations and compared the same factors: required tier, team cost, communication tools, and data export. This is a researched shortlist, not a survey of the entire CRM market or a scored ranking. Products outside it have not been shown to be inferior.
+
+This guide is based on primary vendor documentation and live US pricing pages, accessed October 16, 2026. We also inspected a vendor-authored public guided import demo from Close that date when building the pilot section above. We have not used product trial accounts or performed actual imports, inbox connections, exports, or timed tasks for this comparison, so we do not score "easiest" or "fastest." Our [method page](/how-we-pick) explains how we choose, and our [About page](/about) covers authorship and corrections.
+
+### Affiliate disclosure
+
+If you buy through links on this page, we may earn a commission. That never affects which products make the list or what we say about them — our [full disclosure](/disclosure) explains the arrangement.

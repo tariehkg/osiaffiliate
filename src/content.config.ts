@@ -23,7 +23,7 @@ const authors = defineCollection({
 });
 
 export const articleTypes = ['review', 'best', 'alternatives', 'pricing', 'comparison', 'guide'] as const;
-export const categoryIds = ['crm', 'email', 'sites', 'pm', 'seo'] as const;
+export const categoryIds = ['crm', 'email', 'sites', 'pm', 'home'] as const;
 
 const criterion = z.object({
   label: z.string(),
@@ -73,9 +73,13 @@ const product = z.object({
  */
 const articles = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
-  schema: () =>
+  schema: ({ image }) =>
     z.object({
       title: z.string(),
+      seoTitle: z.string().optional(),
+      presentation: z.enum(['standard', 'narrative']).default('standard'),
+      shortlist: z.array(z.object({ name: z.string(), url: z.string().url() })).default([]),
+      media: z.array(z.object({ id: z.string(), src: image(), alt: z.string(), caption: z.string().optional(), eager: z.boolean().default(false) })).default([]),
       description: z.string(),
       type: z.enum(articleTypes),
       category: z.enum(categoryIds).optional(),

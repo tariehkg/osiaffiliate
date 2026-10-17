@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import EmailComparisonChecker from '../components/EmailComparisonChecker.astro';
+import Prose from '../components/Prose.astro';
+import { breadcrumbLd } from '../components/seo';
+---
+<Layout title="GetResponse vs AWeber Cost & Send Checker — OSI Affiliate" description="Compare current paid-plan costs using separate billable counts. Check send and feature limits, enter compatible quotes and download a comparison pilot worksheet." path="/getresponse-aweber-checker" jsonld={[breadcrumbLd([{label: 'Home', href: '/'}, {label: 'Email marketing software', href: '/email-marketing-software'}, {label: 'GetResponse vs AWeber checker', href: '/getresponse-aweber-checker'}])]}>
+  <CategoryStrip current="email" />
+  <main id="main">
+    <PageHead title="Compare GetResponse and AWeber for your list" lede="Choose the plans you are considering, check your send budget and required features, then estimate the costs separately." />
+    <div class="wrap pb-16">
+      <EmailComparisonChecker id="email-pilot" headingLevel={2} />
+      <Prose>
+        <h2>Use the result to plan a fair pilot</h2>
+        <p>The tool uses US public paid-plan prices and scoped limits checked on 16 October 2026. It checks selected requirements and known price bands, not every product capability. A quote changes the arithmetic, not a plan's documented entitlements. Blank pilot results do not represent completed account tests.</p>
+        <p>Read our <a href="/getresponse-vs-aweber">GetResponse vs AWeber comparison</a> for current automation, free-plan and billing differences. You can also <a href="/downloads/email-comparison-pilot-worksheet.csv">download the blank pilot worksheet</a> without the interactive tool.</p>
+        <p>Verify <a href="https://www.getresponse.com/pricing" rel="nofollow sponsored noopener">GetResponse pricing</a> and <a href="https://www.aweber.com/pricing.htm" rel="nofollow sponsored noopener">AWeber pricing</a> and the exact terms of your quote before buying.</p>
+      </Prose>
+    </div>
+  </main>
+</Layout>

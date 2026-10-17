@@ -60,6 +60,25 @@ const indexJson = JSON.stringify(index).replace(/</g, '\\u003c');
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-site-verification" content="z3sOKjosxV9w4Y6JysStRhYNRwQsHZP77DUrGc-yyNQ" />
+    {import.meta.env.PROD && !noindex && (
+      <>
+        <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-2QE9GYR6HR"></script>
+        <script is:inline>
+          if (['www.osiaffiliate.com', 'osiaffiliate.com'].includes(window.location.hostname)) {
+            window.dataLayer = window.dataLayer || [];
+            // Keep Google's queue format: each command is an Arguments object.
+            // eslint-disable-next-line prefer-rest-params
+            function gtag() { window.dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', 'G-2QE9GYR6HR', {
+              allow_google_signals: false,
+              allow_ad_personalization_signals: false,
+            });
+          }
+        </script>
+      </>
+    )}
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

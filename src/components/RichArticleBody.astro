@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import CrmCostCalculator from './CrmCostCalculator.astro';
+import ActiveCampaignPlanChecker from './ActiveCampaignPlanChecker.astro';
+import EmailComparisonChecker from './EmailComparisonChecker.astro';
+
+interface Media {
+  id: string;
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  eager: boolean;
+}
+interface Props { html: string; media: Media[]; tableLabels?: string[]; }
+const { html, media, tableLabels = [] } = Astro.props;
+if (!html) throw new Error('RichArticleBody requires the complete rendered Markdown article.');
+const parts = html.split(/(<!--\s*(?:media:[a-z-]+|crm-calculator|activecampaign-checker|email-comparison-checker)\s*-->)/g);
+let tableNumber = 0;
+const readableTables = (value: string) => value.replace(/<table\b([^>]*)>/g, (_match, attributes) => {
+  tableNumber += 1;
+  const label = (tableLabels[tableNumber - 1] ?? `Article comparison table ${tableNumber}`).replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
+  return `<div class="article-table-scroll" role="region" tabindex="0" aria-label="${label}"><table${attributes}>`;
+}).replace(/<\/table>/g, '</table></div>');
+---
+
+{parts.map((part) => {
+  if (/^<!--\s*crm-calculator\s*-->$/.test(part)) return <CrmCostCalculator />;
+  if (/^<!--\s*activecampaign-checker\s*-->$/.test(part)) return <ActiveCampaignPlanChecker />;
+  if (/^<!--\s*email-comparison-checker\s*-->$/.test(part)) return <EmailComparisonChecker />;
+  const match = part.match(/^<!--\s*media:([a-z-]+)\s*-->$/);
+  if (match) {
+    const image = media.find((m) => m.id === match[1]);
+    if (!image) throw new Error(`Unknown article media slot: ${match[1]}`);
+    return (
+      <figure class="my-7">
+        <Image
+          src={image.src} alt={image.alt}
+          width={image.src.width} height={image.src.height} quality={80}
+          widths={[400, 640, 832, 1280, 1664].filter((width) => width <= image.src.width)}
+          sizes="(min-width: 1280px) 832px, (min-width: 1024px) calc(100vw - 24rem), calc(100vw - 2.5rem)"
+          loading={image.eager ? 'eager' : 'lazy'} fetchpriority={image.eager ? 'high' : 'auto'}
+          decoding={image.eager ? 'sync' : 'async'} class="!mt-0 h-auto w-full rounded border border-brand-muted/20"
+        />
+        {image.caption && <figcaption class="mt-3 text-sm leading-relaxed text-brand-muted">{image.caption}</figcaption>}
+      </figure>
+    );
+  }
+  return <Fragment set:html={readableTables(part)} />;
+})}
+
+<style>
+  :global(.article-table-scroll) {
+    max-width: 100%;
+    overflow-x: auto;
+    margin-block: 1.25rem;
+    border-radius: 3px;
+  }
+  :global(.article-table-scroll:focus-visible) {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 3px;
+  }
+  :global(.article-table-scroll table) { min-width: 42rem; margin-top: 0; }
+</style>

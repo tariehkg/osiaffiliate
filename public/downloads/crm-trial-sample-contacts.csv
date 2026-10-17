@@ -1,0 +1,6 @@
+Company,First Name,Last Name,Email,Lead Status,Source,Notes
+Example Bakery,Avery,Stone,avery@example.invalid,New,Website,Fictional training record; do not send messages
+Example Bakery,Morgan,Reed,morgan@example.invalid,New,Referral,Second contact at same fictional company
+Example Repairs,Casey,Lane,casey@example.invalid,Qualified,Website,Fictional training record
+Example Studio,Riley,Brooks,riley@example.invalid,Proposal,Referral,Fictional training record
+Example Bakery,Avery,Stone,avery@example.invalid,New,Website,Deliberate duplicate of row 1; test duplicate handling

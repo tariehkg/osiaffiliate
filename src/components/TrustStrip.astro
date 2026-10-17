@@ -19,8 +19,8 @@ interface Props {
 const { articles, authors } = Astro.props;
 
 const stats = [
-  { n: ofType(articles, 'review').length, label: 'tools reviewed and scored' },
-  { n: 5, label: 'criteria scored on every tool' },
+  { n: ofType(articles, 'review').length, label: 'tools reviewed' },
+  { n: ofType(articles, 'pricing').length, label: 'pricing guides' },
   { n: categories.length, label: 'software categories covered' },
   { n: ofType(articles, 'comparison').length + ofType(articles, 'alternatives').length, label: 'head-to-heads and alternatives lists' },
 ];
@@ -31,13 +31,12 @@ const stats = [
     <div class="ts-copy">
       <h2 id="ts-h">Reviewed by staff, not by a crowd.</h2>
       <p>
-        Every review on this site is written by a member of our desk who signed up for the tool,
-        ran it against the same five criteria, and wrote down what they found. No reader ratings,
-        no vendor-supplied copy, and the reasons to skip a tool get the same weight as the reasons
-        to buy it.
+        Our reviews focus on who a tool fits, what it costs, and the reasons to skip it.
+        We explain the evidence behind our recommendations, from documented plan limits to
+        product observations. We do not publish reader ratings or let vendors buy recommendations.
       </p>
       <p class="ts-links">
-        <a href="/how-we-pick" class="tlink">How we test and score</a>
+        <a href="/how-we-pick" class="tlink">How we research and review</a>
         <a href="/about" class="tlink">Meet the team</a>
       </p>
 

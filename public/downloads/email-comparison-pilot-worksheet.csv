@@ -1,0 +1,11 @@
+Section,Item,Assumption or estimate,Observed result,Pass / fail / not tested
+Pilot,Exact paid tier and date,Record actual package and entitlement; trial access is not proof,,Not tested
+Pilot,Billable contacts,"Check list memberships, statuses, billing window and invoice separately",,Not tested
+Pilot,Send budget,Count newsletters and automation emails; verify automatic upgrades or extension charges,,Not tested
+Pilot,Representative workflow,Reproduce same condition/exit on eligible tiers; record actual outputs,,Not tested
+Pilot,Email A/B route,"Distinguish broadcast variants, behavior branches and random allocation",,Not tested
+Pilot,Branding / forms / pages,"Check actual email badge, page publication and saved-segment limits",,Not tested
+Pilot,Subscriber import,Use permitted fictional data; preserve suppression and consent; avoid duplicate welcomes,,Not tested
+Pilot,Webinar / course route,"Confirm connector, hosting capacity, fees and actual quote",,Not tested
+Pilot,Export / switch,"Compare fields, tags, notes and suppression before closing old account",,Not tested
+Notes,Evidence,Blank pilot worksheet. No product tests have been completed by filling or downloading this file. Record each product separately.,,

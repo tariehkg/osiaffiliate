@@ -29,6 +29,9 @@ import ProvisionalNote from '../components/ProvisionalNote.astro';
 import Faq from '../components/Faq.astro';
 import SearchBox from '../components/SearchBox.astro';
 import Prose from '../components/Prose.astro';
+import CrmCostCalculator from '../components/CrmCostCalculator.astro';
+import ActiveCampaignPlanChecker from '../components/ActiveCampaignPlanChecker.astro';
+import EmailComparisonChecker from '../components/EmailComparisonChecker.astro';
 import { getArticles, byId, ofType, typeLabel } from '../components/articles';
 
 /**
@@ -59,6 +62,7 @@ const sections = [
   { name: 'BestOfSite', file: 'src/components/BestOfSite.astro', note: '"Start here": one column of links per category plus guides. Homepage only.' },
   { name: 'TrustStrip', file: 'src/components/TrustStrip.astro', note: 'The inverted staff-and-counts section. Homepage only.' },
   { name: 'Sidebar', file: 'src/components/Sidebar.astro', note: 'The right column: search, HelpBox, top-scored tools, categories, guides, plus a slot. Article pages, hubs and indexes.' },
+  { name: 'RichArticleBody', file: 'src/components/RichArticleBody.astro', note: 'Complete rendered Markdown with explicit media slots, responsive Astro Image figures and optional inline buyer tools. Used by narrative articles.' },
   { name: 'ArticlePage', file: 'src/components/ArticlePage.astro', note: 'The template every article renders through, ordering the structured blocks per article type.' },
   { name: 'CategoryHubPage', file: 'src/components/CategoryHubPage.astro', note: 'The template each of the five hub pages passes its category id to.' },
   { name: 'PageHead', file: 'src/components/PageHead.astro', note: 'Title, lede, note and optional breadcrumb for the site-wide pages. It heads this page.' },
@@ -76,6 +80,18 @@ const sections = [
     />
 
     <div class="wrap ds-body">
+      <section class="ds-sec">
+        <h2>EmailComparisonChecker</h2>
+        <code>src/components/EmailComparisonChecker.astro</code>
+        <p class="ds-note">Separate billable counts, current paid-plan pricing, scoped feature/send warnings and a downloadable comparison pilot worksheet.</p>
+        <EmailComparisonChecker id="ds-email-comparison" headingLevel={3} />
+      </section>
+      <section class="ds-sec">
+        <h2>ActiveCampaignPlanChecker</h2>
+        <code>src/components/ActiveCampaignPlanChecker.astro</code>
+        <p class="ds-note">Workflow feature gates, separate user-quote uncertainty, annual account cost examples and a downloadable pilot worksheet.</p>
+        <ActiveCampaignPlanChecker id="ds-ac-plan" headingLevel={3} />
+      </section>
       <section class="ds-sec">
         <h2>Page-level components</h2>
         <p class="ds-note">These compose whole pages or regions and are described rather than rendered twice.</p>
@@ -133,6 +149,13 @@ const sections = [
       </section>
 
       <section class="ds-sec">
+        <h2>CrmCostCalculator</h2>
+        <code>src/components/CrmCostCalculator.astro</code>
+        <p class="ds-note">The same interactive cost worksheet used inline and on the standalone calculator page.</p>
+        <CrmCostCalculator id="ds-crm-cost" />
+      </section>
+
+      <section class="ds-sec">
         <h2>DisclosureNote, ProvisionalNote, HelpBox</h2>
         <code>src/components/DisclosureNote.astro</code> <code>src/components/ProvisionalNote.astro</code> <code>src/components/HelpBox.astro</code>
         <div class="ds-stack">
@@ -181,11 +204,11 @@ const sections = [
                 </label>
                 <label>
                   Fact
-                  <input id="tm-note" type="text" value="4 tools tested and compared" maxlength="60" />
+                  <input id="tm-note" type="text" value="4 tools compared" maxlength="60" />
                 </label>
               </div>
               <div id="tm-preview" class="ds-maker-preview">
-                <CoverTile title="Best CRM" note="4 tools tested and compared" />
+                <CoverTile title="Best CRM" note="4 tools compared" />
               </div>
             </div>
           </section>

@@ -6,7 +6,7 @@ category: email
 author: reviews-desk
 pubDate: 2026-08-28
 tags:
-  - "Email Marketing & Automation"
+  - "Marketing & Automation"
   - "Review"
   - "AWeber"
 product:
@@ -87,9 +87,9 @@ AWeber is on this list for being deliberately unambitious. It has been sending e
 
 It also still answers the phone. Reachable human support is a thin-looking advantage right up until a send goes wrong, and among the tools we looked at AWeber is the one that treats it as a product feature rather than a cost centre.
 
-- **Newsletters and small lists.** Newsletters and small lists is where AWeber earns its place on our Email Marketing & Automation shortlist.
-- **Non-technical senders.** Non-technical senders is where AWeber earns its place on our Email Marketing & Automation shortlist.
-- **Reachable human support.** Reachable human support is where AWeber earns its place on our Email Marketing & Automation shortlist.
+- **Newsletters and small lists.** Newsletters and small lists is where AWeber earns its place on our Marketing & Automation shortlist.
+- **Non-technical senders.** Non-technical senders is where AWeber earns its place on our Marketing & Automation shortlist.
+- **Reachable human support.** Reachable human support is where AWeber earns its place on our Marketing & Automation shortlist.
 
 ## Where it falls short
 
@@ -106,4 +106,4 @@ A lasting free plan for a small list that includes sending, sign-up forms, a lan
 - **[GetResponse](/getresponse-review)** — email plus landing pages and funnels in one account. Free plan available.
 - **[ActiveCampaign](/activecampaign-review)** — the deepest automation builder of the three. Free trial, then paid by contacts.
 
-See the full [Email Marketing & Automation shortlist](/email-marketing-software) for how they compare side by side.
+See the full [Marketing & Automation shortlist](/email-marketing-software) for how they compare side by side.

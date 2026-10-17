@@ -1,6 +1,6 @@
 ---
 title: "2 best website builders for small business in 2026 (tested and compared)"
-description: "Two website and funnel builders shortlisted by our editors for small businesses, with a reason to skip each. Readers rate both picks."
+description: "Two website and funnel builders shortlisted by our editors for small businesses, with a reason to skip each. Both picks have a full staff review."
 type: best
 category: sites
 author: reviews-desk
@@ -34,7 +34,7 @@ faqs:
     a: "On Systeme.io, a working funnel can be live in a day if the offer and the copy exist. A Webflow site takes as long as the design does, and the tool is rarely the bottleneck. Write the words first; every builder is faster when the content is ready."
 ---
 
-This page is for a small-business owner or solo operator deciding what to build the site, or the funnel, on. There are only two picks, chosen by our editors, because the two jobs they do barely overlap, and each one carries a reason to skip it. Readers rate both, so you can see how they hold up for people doing your kind of work.
+This page is for a small-business owner or solo operator deciding what to build the site, or the funnel, on. There are only two picks, chosen by our editors, because the two jobs they do barely overlap, and each one carries a reason to skip it. Both have a full staff review, so you can see how they hold up for people doing your kind of work.
 
 ## What is website builder software?
 

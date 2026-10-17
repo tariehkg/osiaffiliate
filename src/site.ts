@@ -5,9 +5,9 @@
  */
 export const SITE_URL = 'https://www.osiaffiliate.com';
 export const SITE_NAME = 'OSI Affiliate';
-export const SITE_TAGLINE = 'Business software, reviewed by staff who actually use it';
+export const SITE_TAGLINE = 'Business software, researched and compared';
 export const SITE_DESCRIPTION =
-  'Independent reviews, shortlists and comparisons of business software for solopreneurs and small teams. Every tool is tested and scored by our staff, and we say plainly which links pay us.';
+  'Independent reviews, shortlists and comparisons of business software for solopreneurs and small teams. We explain our evidence, pricing and tradeoffs, and identify affiliate links.';
 
 /**
  * The editor scores in the seed reviews were set before the staff testing

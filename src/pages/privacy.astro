@@ -6,29 +6,41 @@ import Doc from '../components/Doc.astro';
 
 /**
  * Privacy, written for what the site actually is: static pages with no
- * accounts, no forms and no analytics script of its own. If any of that
- * changes, this page changes in the same commit.
+ * accounts or forms, with Google Analytics for audience measurement.
+ * Keep this page in step with the tracking in the shared Layout.
  */
 ---
 
 <Layout
   title="Privacy — OSI Affiliate"
-  description="What OSI Affiliate collects about visitors (very little), what the hosting provider logs, and what happens when you follow a vendor link."
+  description="How OSI Affiliate uses Google Analytics, what the hosting provider logs, and what happens when you follow a vendor link."
   path="/privacy"
 >
   <CategoryStrip />
   <main id="main">
     <PageHead
       title="Privacy"
-      lede="This site is a set of static pages. There are no accounts, no comment forms and no newsletter, so there is very little to tell you, and all of it is below."
+      lede="This site is a set of static pages with no accounts, comment forms or newsletter. We use Google Analytics to understand visits and how readers use the site. Here is what that involves."
     />
 
     <Doc>
       <section>
         <h2>What we collect</h2>
         <p>
-          Nothing directly. The site sets no cookies of its own and runs no analytics script of its
-          own. The search box works inside your browser and sends nothing to us.
+          We use Google Analytics to measure page views, visits, traffic sources and interactions
+          such as scrolling and clicks on links to other sites. Google Analytics uses cookies to
+          distinguish browsers and visits, and receives information such as the pages visited,
+          referring site, browser and device details. We review reports to improve the site.
+        </p>
+        <p>
+          Our Analytics tag disables Google signals and advertising personalization. We do not
+          send names or email addresses to Analytics. The search box works inside your browser;
+          its search text is not sent to us by the search feature.
+        </p>
+        <p>
+          See <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">how Google uses information from sites that use its services</a>.
+          You can block Analytics with browser privacy tools or use{' '}
+          <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">Google's Analytics opt-out browser add-on</a>.
         </p>
       </section>
 

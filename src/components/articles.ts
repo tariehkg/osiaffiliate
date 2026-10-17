@@ -15,7 +15,7 @@ export type ArticleType = Article['data']['type'];
 /** Published articles only, newest first. */
 export async function getArticles(): Promise<Article[]> {
   const all = await getCollection('articles', ({ data }) => data.draft !== true);
-  return all.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return all.sort((a, b) => (b.data.updatedDate ?? b.data.pubDate).valueOf() - (a.data.updatedDate ?? a.data.pubDate).valueOf());
 }
 
 export async function getAuthors(): Promise<Author[]> {
@@ -123,7 +123,7 @@ export function buildSearchIndex(list: Article[]): IndexEntry[] {
     t: c.name,
     u: c.hub,
     k: 'hub',
-    x: [c.short, `best ${c.short}`, `${c.short} software`],
+    x: [c.short, `best ${c.short}`, `${c.short} software`, ...(c.aliases ?? [])],
   }));
   const items: IndexEntry[] = list.map((a) => ({
     t: a.data.title,

@@ -1,0 +1,130 @@
+---
+import Button from './Button.astro';
+import { crmCostPlans } from '../data/crm-cost-plans';
+
+interface Props { id?: string; headingLevel?: 2 | 3; }
+const { id = 'crm-cost', headingLevel = 3 } = Astro.props;
+const Heading = headingLevel === 2 ? 'h2' : 'h3';
+const field = (name: string) => `${id}-${name}`;
+---
+
+<section data-crm-calculator class="my-8 min-w-0 rounded border border-brand-muted/30 bg-brand-bg p-5 sm:p-6" aria-labelledby={field('heading')}>
+  <Heading id={field('heading')} class="!mt-0 !text-2xl">Estimate your team’s CRM cost</Heading>
+  <p class="!mt-3 !text-sm text-brand-text/75">Use a documented US plan example or your own quote. Check the total before importing your customer history.</p>
+  <div class="mt-5 grid min-w-0 gap-6 min-[44rem]:grid-cols-2">
+    <form class="min-w-0" novalidate>
+      <fieldset class="min-w-0">
+        <legend class="sr-only">Build a first-year cost estimate</legend>
+        <label for={field('plan')} class="block text-sm font-semibold">Plan example</label>
+        <select id={field('plan')} name="plan" class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary">
+          {crmCostPlans.map((plan) => <option value={plan.id}>{plan.name}</option>)}
+          <option value="custom">My own quote</option>
+        </select>
+        <p class="!mt-2 !text-xs text-brand-muted">Public rates checked 16 October 2026. Different plans have different capabilities.</p>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <div>
+            <label for={field('seats')} class="block text-sm font-semibold">Paid seats</label>
+            <input id={field('seats')} name="seats" type="number" min="1" max="100000" step="1" value="3" required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary" />
+          </div>
+          <div>
+            <label for={field('billing')} class="block text-sm font-semibold">Payment route</label>
+            <select id={field('billing')} name="billing" class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary">
+              <option value="annual">Annual payment</option><option value="monthly">Monthly payments</option>
+            </select>
+          </div>
+        </div>
+        <label for={field('rate')} class="mt-4 block text-sm font-semibold">Per seat / month equivalent (USD)</label>
+        <input id={field('rate')} name="rate" type="number" min="0" max="10000000" step="0.01" value="39" required class="mt-2 w-full rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary" />
+        <p class="!mt-2 !text-xs text-brand-muted">For an annual quote, divide the yearly per-seat price by 12. You can edit this rate.</p>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <div>
+            <label for={field('upfront')} class="block text-sm font-semibold">Upfront fees (USD)</label>
+            <input id={field('upfront')} name="upfront" type="number" min="0" max="100000000" step="0.01" value="0" required class="mt-2 w-full rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary" />
+          </div>
+          <div>
+            <label for={field('extras')} class="block text-sm font-semibold">Team extras / month (USD)</label>
+            <input id={field('extras')} name="extras" type="number" min="0" max="100000000" step="0.01" value="0" required class="mt-2 w-full rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary" />
+          </div>
+        </div>
+        <p class="!mt-2 !text-xs text-brand-muted">Add team-wide calling, SMS, numbers or other quoted costs. Zero is a starting input, not a promise that extras are free.</p>
+        <p data-error role="alert" class="!my-3 min-h-5 !text-sm font-semibold"></p>
+        <Button type="button" variant="line" class="crm-export">Download estimate</Button>
+      </fieldset>
+    </form>
+    <div class="min-w-0 self-start rounded border border-brand-muted/30 bg-brand-surface p-5">
+      <p class="!mt-0 !text-sm font-semibold">Estimated first-year total</p>
+      <output data-total aria-live="polite" class="mt-2 block break-words font-heading text-4xl font-bold tracking-tight text-brand-primary">$1,404.00</output>
+      <dl class="mt-5 text-sm">
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>12 months of seats</dt><dd data-subscription class="font-semibold">$1,404.00</dd></div>
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>Upfront fees</dt><dd data-upfront class="font-semibold">$0.00</dd></div>
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>12 months of team extras</dt><dd data-extras class="font-semibold">$0.00</dd></div>
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>Later year, same rates and usage</dt><dd data-renewal class="font-semibold">$1,404.00</dd></div>
+      </dl>
+      <p data-commitment class="!mt-3 !text-sm">Annual payment: the monthly figure is an equivalent. Confirm the contract and renewal terms in your quote.</p>
+      <p class="!mt-4 border-l-2 border-brand-accent pl-3 !text-sm">An estimate, not a checkout quote. Confirm the permitted seat count. Tax, implementation, future price changes and unentered extras are excluded. Monthly payments do not establish cancellation rights.</p>
+    </div>
+  </div>
+  <p class="!mt-6 !text-xs text-brand-muted">First year = seats × monthly equivalent × 12 + upfront fees + monthly team extras × 12. The later-year estimate omits the initial fee and assumes unchanged rates and usage. Entries stay in your browser; download a CSV to keep them.</p>
+  <noscript><p>JavaScript is needed for live estimates. You can use the formula above with your quoted figures.</p></noscript>
+</section>
+
+<script>
+  import { crmCostPlans } from '../data/crm-cost-plans';
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-crm-calculator]')) {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const input = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+    const plan = input('plan');
+    const billing = input('billing');
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const write = (name: string, value: string) => { root.querySelector<HTMLElement>(`[data-${name}]`)!.textContent = value; };
+    const numeric = ['seats', 'rate', 'upfront', 'extras'];
+    const values = () => Object.fromEntries(numeric.map((name) => [name, Number(input(name).value)]));
+    const valid = () => numeric.every((name) => input(name).value !== '' && input(name).validity.valid);
+
+    function recalculate() {
+      const ok = valid();
+      const v = values();
+      const seats = v.seats * v.rate * 12;
+      const extras = v.extras * 12;
+      write('error', ok ? '' : 'Enter a whole seat count of at least 1 and non-negative dollar amounts.');
+      for (const [name, amount] of Object.entries({ total: seats + v.upfront + extras, subscription: seats, upfront: v.upfront, extras, renewal: seats + extras })) {
+        write(name, ok ? money.format(amount) : '—');
+      }
+      write('commitment', billing.value === 'annual'
+        ? 'Annual payment: the monthly figure is an equivalent. Confirm the contract and renewal terms in your quote.'
+        : plan.value === 'hubspot-pro'
+          ? 'HubSpot Professional: monthly payments still require an annual commitment. This is not a cancel-anytime price.'
+          : 'Monthly payments: this totals 12 payments. Confirm the actual commitment; payment frequency alone does not establish cancellation rights.');
+    }
+
+    function applyPlan() {
+      const chosen = crmCostPlans.find((p) => p.id === plan.value);
+      if (chosen) {
+        input('rate').value = String(chosen[billing.value === 'annual' ? 'annual' : 'monthly']);
+        input('upfront').value = String(chosen.upfront);
+      }
+      recalculate();
+    }
+    plan.addEventListener('change', applyPlan);
+    billing.addEventListener('change', applyPlan);
+    for (const name of numeric) input(name).addEventListener('input', recalculate);
+    form.addEventListener('submit', (event) => event.preventDefault());
+    root.querySelector('.crm-export')!.addEventListener('click', () => {
+      if (!valid()) { recalculate(); form.reportValidity(); return; }
+      const v = values();
+      const selected = crmCostPlans.find((p) => p.id === plan.value)?.name ?? 'My own quote';
+      const rows = [
+        ['Plan', 'Paid seats', 'Payment route', 'Per-seat monthly equivalent USD', 'Upfront fees USD', 'Team extras per month USD', 'First-year estimate USD', 'Later-year estimate USD'],
+        [selected, v.seats, billing.value, v.rate, v.upfront, v.extras, (v.seats * v.rate * 12 + v.upfront + v.extras * 12).toFixed(2), (v.seats * v.rate * 12 + v.extras * 12).toFixed(2)],
+        ['Estimate only. Confirm seat eligibility, contract, renewal, tax and all extras. Public examples checked 2026-10-16.'],
+      ];
+      const csv = rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = 'osi-crm-cost-estimate.csv'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+    recalculate();
+  }
+</script>

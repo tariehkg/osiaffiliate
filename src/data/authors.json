@@ -3,7 +3,7 @@
     "id": "reviews-desk",
     "name": "OSI Affiliate Reviews Desk",
     "role": "Editorial team",
-    "bio": "The staff desk behind every review, shortlist and comparison on this site. We sign up for the tools ourselves, read the pricing page rather than the press release, and say plainly which links pay us. Where a finding rests on documentation rather than our own daily use, the page says so.",
+    "bio": "Business-software reviews, comparisons and buying guides for small teams. We compare vendor documentation and pricing, explain the limits of our evidence, and identify affiliate links. Each guide states whether it includes account testing, public demos or documentation research.",
     "avatar": "../assets/images/authors/osi-affiliate.svg",
     "placeholder": false,
     "links": []

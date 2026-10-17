@@ -29,7 +29,7 @@ switch (d.type) {
     note = d.product?.score !== undefined ? "Editor's score" : (d.product?.plan ?? '');
     break;
   case 'best':
-    note = `${d.picks.length} tools tested and compared`;
+    note = `${d.shortlist.length || d.picks.length} tools compared`;
     break;
   case 'alternatives':
     note = `${d.picks.length} alternatives compared`;

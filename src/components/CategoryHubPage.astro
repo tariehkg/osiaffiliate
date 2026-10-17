@@ -32,8 +32,10 @@ const compare = [...ofType(mine, 'comparison'), ...ofType(mine, 'alternatives'),
 const guides = ofType(mine, 'guide');
 const faqs = best?.data.faqs.slice(0, 5) ?? [];
 
-const title = `${cat.name} software: reviews, shortlist and comparisons`;
-const description = `Every ${cat.noun.replace(/^an? /, '')} we have reviewed and scored, the shortlist for a small business, and the head-to-head comparisons and pricing guides for the category.`;
+const title = best ? `${cat.name} software: reviews, shortlist and comparisons` : `${cat.name} software: staff reviews`;
+const description = best
+  ? `Every ${cat.noun.replace(/^an? /, '')} we have reviewed, the shortlist for a small business, and the head-to-head comparisons and pricing guides for the category.`
+  : `Every ${cat.noun.replace(/^an? /, '')} we have reviewed so far, scored by our editorial team for a solopreneur or a small business, with the shortlist and comparisons to follow.`;
 
 const jsonld = [
   breadcrumbLd([{ label: 'Home', href: '/' }, { label: cat.name, href: cat.hub }]),
@@ -51,8 +53,10 @@ const jsonld = [
         <p class="hub-kicker">{cat.name}</p>
         <h1 class="hub-h">{cat.question}</h1>
         <p class="hub-lede">
-          {reviews.length} {cat.plain} tools reviewed and scored by our staff, one shortlist for a
-          solopreneur or a small team, and the comparisons that decide between them.
+          {reviews.length} {cat.plain} {reviews.length === 1 ? 'tool' : 'tools'} reviewed by our editorial team,{' '}
+          {best
+            ? 'one shortlist for a solopreneur or a small team, and the comparisons that decide between them.'
+            : 'written for a solopreneur or a small team, with more reviews and a shortlist on the way.'}
         </p>
         <DisclosureNote />
         <div class="hub-prov"><ProvisionalNote /></div>

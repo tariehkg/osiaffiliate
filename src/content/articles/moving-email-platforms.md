@@ -5,7 +5,7 @@ pubDate: 2026-09-15
 author: reviews-desk
 type: guide
 tags:
-  - Email marketing
+  - Marketing & Automation
   - Switching tools
 draft: false
 category: email

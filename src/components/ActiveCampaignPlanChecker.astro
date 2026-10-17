@@ -1,0 +1,104 @@
+---
+import Button from './Button.astro';
+interface Props { id?: string; headingLevel?: 2 | 3; }
+const { id = 'ac-plan', headingLevel = 3 } = Astro.props;
+const field = (name: string) => `${id}-${name}`;
+const Heading = headingLevel === 2 ? 'h2' : 'h3';
+---
+<section data-ac-checker class="my-8 min-w-0 rounded border border-brand-muted/30 bg-brand-bg p-5 sm:p-6" aria-labelledby={field('heading')}>
+  <Heading id={field('heading')} class="!mt-0 !text-2xl">Which ActiveCampaign plan fits your workflow?</Heading>
+  <p class="!mt-3 !text-sm">Check a documented feature floor, contact capacity and send budget before starting a pilot. This worksheet does not replace a vendor quote.</p>
+  <div class="mt-5 grid min-w-0 gap-6 min-[60rem]:grid-cols-2">
+    <form class="min-w-0" novalidate>
+      <fieldset class="min-w-0">
+        <legend class="sr-only">Your workflow requirements</legend>
+        <label for={field('contacts')} class="block text-sm font-semibold">Contact capacity example</label>
+        <select id={field('contacts')} name="contacts" class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 text-sm focus-visible:outline-2 focus-visible:outline-brand-primary">
+          <option value="1000">1,000 contacts</option><option value="2500">2,500 contacts</option><option value="5000">5,000 contacts</option>
+        </select>
+        <p class="!mt-2 !text-xs text-brand-muted">For new accounts, list status does not by itself remove a contact from billing. Deduplicate your real list and confirm its count with ActiveCampaign.</p>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <div><label for={field('users')} class="block text-sm font-semibold">Users needing access</label><input id={field('users')} name="users" type="number" min="1" max="1000" step="1" value="1" required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-brand-primary" /></div>
+          <div><label for={field('actions')} class="block text-sm font-semibold">Actions in one automation</label><input id={field('actions')} name="actions" type="number" min="1" max="1000" step="1" value="6" required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-brand-primary" /></div>
+        </div>
+        <p class="!mt-2 !text-xs text-brand-muted">Count the workflow’s actions, not just its emails. Use the vendor’s counting rules for your actual build.</p>
+        <div class="mt-4 grid gap-3 text-sm">
+          <label class="flex items-start gap-3"><input name="branches" type="checkbox" checked class="mt-1 size-4 shrink-0 accent-brand-primary" /><span>If/Else branches</span></label>
+          <label class="flex items-start gap-3"><input name="advanced" type="checkbox" class="mt-1 size-4 shrink-0 accent-brand-primary" /><span>Automation A/B testing, predictive sending or conditional content</span></label>
+          <label class="flex items-start gap-3"><input name="crm" type="checkbox" class="mt-1 size-4 shrink-0 accent-brand-primary" /><span>Deals and pipelines through Enhanced CRM</span></label>
+        </div>
+        <label for={field('sends')} class="mt-4 block text-sm font-semibold">Planned email sends per month</label>
+        <input id={field('sends')} name="sends" type="number" min="0" max="1000000000" step="1" value="8000" required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-brand-primary" />
+        <p class="!mt-2 !text-xs text-brand-muted">Include broadcast and automation sends. Three emails to 1,000 people means 3,000 sends.</p>
+        <details class="mt-4 rounded border border-brand-muted/30 p-3 text-sm">
+          <summary class="cursor-pointer font-semibold">Add your quote and extra costs</summary>
+          <label for={field('quote')} class="mt-4 block font-semibold">Quoted whole-account monthly equivalent (USD)</label><input id={field('quote')} name="quote" type="number" min="0" max="10000000" step="0.01" placeholder="Optional; replaces public example" class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-brand-primary" />
+          <p class="!mt-2 !text-xs text-brand-muted">Use the total account quote, not a per-contact rate. An annual quote divided by 12 is a monthly equivalent.</p>
+          <label for={field('extras')} class="mt-4 block font-semibold">Extra monthly costs (USD)</label><input id={field('extras')} name="extras" type="number" min="0" max="10000000" step="0.01" value="0" required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-brand-primary" />
+          <label for={field('upfront')} class="mt-4 block font-semibold">One-time setup costs (USD)</label><input id={field('upfront')} name="upfront" type="number" min="0" max="10000000" step="0.01" value="0" required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-brand-primary" />
+        </details>
+        <p data-ac-error role="alert" class="!my-3 min-h-5 !text-sm font-semibold"></p>
+        <Button type="button" variant="line" class="ac-export">Download pilot worksheet</Button>
+      </fieldset>
+    </form>
+    <div class="min-w-0 self-start rounded border border-brand-muted/30 bg-brand-surface p-5" aria-live="polite">
+      <p class="!mt-0 !text-sm font-semibold">Workflow feature floor</p>
+      <output data-ac-plan class="mt-2 block break-words font-heading text-3xl font-bold tracking-tight text-brand-primary">Plus</output>
+      <p data-ac-reason class="!mt-3 !text-sm">Branching or more than five actions moves this example beyond Starter.</p>
+      <dl class="mt-5 text-sm">
+        <div class="flex flex-wrap justify-between gap-2 border-t border-brand-muted/25 py-3"><dt>First year: plan + entered costs</dt><dd data-ac-year class="font-semibold">$588.00</dd></div>
+        <div class="flex flex-wrap justify-between gap-2 border-t border-brand-muted/25 py-3"><dt>Later year, same entered costs</dt><dd data-ac-ongoing class="font-semibold">$588.00</dd></div>
+        <div class="flex flex-wrap justify-between gap-2 border-t border-brand-muted/25 py-3"><dt>Monthly email allowance</dt><dd data-ac-allowance class="font-semibold">10,000 sends</dd></div>
+      </dl>
+      <p data-ac-send-note class="!mt-3 !text-sm">Your forecast fits this example’s send allowance.</p>
+      <p data-ac-user-note class="!mt-3 !text-sm"></p>
+      <p data-ac-crm-note class="!mt-3 !text-sm"></p>
+      <p data-ac-price-note class="!mt-4 border-l-2 border-brand-accent pl-3 !text-sm">US Email pricing checked 16 October 2026. Public examples are monthly equivalents billed annually.</p>
+      <p class="!mt-3 !text-xs text-brand-muted">Features beyond those selected, integrations, seats beyond the standard allowance, SMS, WhatsApp, AI extras, tax and implementation may change your quote. This is a feature check, not an automatic purchase recommendation.</p>
+    </div>
+  </div>
+  <p class="!mt-6 !text-xs text-brand-muted">First year = whole-account monthly equivalent ×12 + monthly extras ×12 + setup costs. The later-year estimate omits setup costs. Public examples cover only the three contact bands shown. Entries stay in this browser; the CSV includes your assumptions and blank pilot checks, not completed test results.</p>
+  <noscript><p>JavaScript is needed for the checker. Use the article’s plan table and <a href="/downloads/activecampaign-pilot-checklist.csv">download the blank pilot checklist</a> instead.</p></noscript>
+</section>
+<script>
+  import { activeCampaignPlan } from '../data/activecampaign-plan-rules';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-ac-checker]')) {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+    const write = (name: string, value: string) => { root.querySelector<HTMLElement>(`[data-ac-${name}]`)!.textContent = value; };
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const count = new Intl.NumberFormat('en-US');
+    function input() {
+      return { contacts:Number(field('contacts').value),users:Number(field('users').value),actions:Number(field('actions').value),sends:Number(field('sends').value),branches:field('branches').checked,advanced:field('advanced').checked,crm:field('crm').checked,quote:field('quote').value===''?null:Number(field('quote').value),extras:Number(field('extras').value),upfront:Number(field('upfront').value) };
+    }
+    function compute() {
+      const required=['users','actions','sends','extras','upfront'];
+      if (required.some((name)=>field(name).value==='' || !field(name).validity.valid) || !field('quote').validity.valid) return { valid:false as const };
+      return activeCampaignPlan(input());
+    }
+    function iUserCount() { return field('users').value; }
+    function update() {
+      const result=compute();
+      write('error', result.valid?'':'Use whole counts within the displayed limits and non-negative USD amounts with at most two decimal places.');
+      if (!result.valid) { for(const name of ['plan','year','ongoing','allowance']) write(name,'—'); for(const name of ['reason','send-note','user-note','crm-note','price-note']) write(name,''); return; }
+      write('plan',result.plan);
+      write('reason',result.plan==='Pro'?'Your advanced email/automation requirement needs Pro under these documented feature gates.':result.plan==='Plus'?'Branching, more than five actions or Enhanced CRM moves this workflow beyond Starter.':'No selected upgrade features and no more than five actions fits Starter’s documented workflow limits.');
+      write('user-note',result.needsUserQuote?`This feature tier includes ${result.includedUsers} user(s), below your ${iUserCount()} requested. Extra users cost more; Starter permits at most one purchased extra user. Ask for a compatible plan/user quote. Entering a quote does not establish plan eligibility.`:`This feature tier includes ${result.includedUsers} user(s), covering the count entered. Confirm permissions and any additional users with the vendor.`);
+      write('year',result.year===null?'Quote required':money.format(result.year));
+      write('ongoing',result.ongoing===null?'Quote required':money.format(result.ongoing));
+      write('allowance',result.allowance===null?'Confirm in quote':`${count.format(result.allowance)} sends`);
+      write('send-note',result.over===null?'Confirm the contact capacity and email allowance in your quote.':result.over?'Your forecast exceeds this plan/contact example’s email allowance. Ask about a larger band or additional capacity; the checker does not assume a free overage.':'Your forecast fits this example’s email allowance. This does not establish inbox placement or permission to email these contacts.');
+      write('crm-note',result.crmExtra?'Enhanced CRM is an additional purchase, not included in the public Email plan price. Enter its quoted cost above; confirm the specific Pipelines or Sales Engagement package.':'');
+      write('price-note',result.monthly===null?'Extra users require a quote; the public base rate is not a complete estimate for your requirements. Enter a compatible whole-account quote if you have one.':`${money.format(result.monthly)} per month equivalent from ${result.rateSource}. Public US Email examples were checked 16 October 2026 and billed annually. Confirm actual payment, renewal and add-on terms.`);
+    }
+    form.addEventListener('input',update); form.addEventListener('change',update); form.addEventListener('submit',(e)=>e.preventDefault());
+    root.querySelector('.ac-export')!.addEventListener('click',()=>{
+      const result=compute(); if(!result.valid) {update();form.reportValidity();return;}
+      const i=input();
+      const rows: (string|number)[][]=[['Section','Check','Expected or assumption','Observed result','Pass / fail / not tested'],['Inputs','Contact capacity',i.contacts,'',''],['Inputs','Users',i.users,'',''],['Inputs','Actions in one automation',i.actions,'',''],['Inputs','If/Else',String(i.branches),'',''],['Inputs','Advanced email / automation',String(i.advanced),'',''],['Inputs','Enhanced CRM',String(i.crm),'',''],['Inputs','Planned monthly sends',i.sends,'',''],['Inputs','Quoted whole-account monthly equivalent USD',i.quote===null?'Not supplied':i.quote,'',''],['Inputs','Extra monthly costs USD',i.extras,'',''],['Inputs','One-time setup costs USD',i.upfront,'',''],['Estimate','Public base monthly equivalent USD',result.publicRate??'Unknown','',''],['Estimate','Rate source',result.monthly===null?'Quote required':result.rateSource,'',''],['Estimate','Billing basis','Public rates billed annually; confirm payment and renewal terms for a custom quote','',''],['Estimate','Workflow feature floor',result.plan,'',''],['Estimate','Included users at feature floor',result.includedUsers,'',''],['Estimate','Additional users needing a quote',result.extraUsers,'',''],['Estimate','Monthly email allowance',result.allowance??'Confirm in quote','',''],['Estimate','First year USD',result.year?.toFixed(2)??'Quote required','',''],['Estimate','Later year USD',result.ongoing?.toFixed(2)??'Quote required','',''],['Pilot','Account, date and exact paid plan','Record actual entitlements; trial access is not proof of paid-tier access','',''],['Pilot','Import permitted test data','Check fields, list status and billing count; no customer data in this worksheet','',''],['Pilot','Sender authentication','Verify domain authentication and a permitted test inbox before sending','',''],['Pilot','Workflow branches and exit','Observe each path, re-entry and unsubscribe handling on the intended paid tier','',''],['Pilot','AI source and destination fields','Verify chosen input field, output field and incorrect / neutral result handling','',''],['Pilot','Send and contact limits','Confirm current caps and what happens at each limit','',''],['Pilot','Export / cancellation','Check exported fields, associations, suppression records and contract terms','',''],['Notes','User allowance',result.needsUserQuote?'Requested users exceed standard included allowance. Confirm a compatible plan and extra-user quote; Starter permits at most one purchased extra user.':'Confirm user permissions and any quote changes.','',''],['Notes','Enhanced CRM',i.crm?'Additional purchase; unentered add-on costs are excluded. Confirm Pipelines / Sales Engagement entitlement.':'Not selected; this does not certify all other add-ons are included.','',''],['Notes','Send capacity',result.over?'Forecast exceeds shown allowance; request compatible capacity quote.':'Send allowance is a documented plan example, not proof of deliverability or account entitlements.','',''],['Notes','Evidence scope','Blank observed cells are not completed tests. Rates checked 2026-10-16; excludes unentered costs.','','']];
+      const csv=rows.map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\r\n');
+      const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); const a=document.createElement('a');a.href=url;a.download='activecampaign-pilot-worksheet.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    });
+    update();
+  }
+</script>
