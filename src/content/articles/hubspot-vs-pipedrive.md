@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "HubSpot vs Pipedrive: which one to pick in 2026"
 description: "HubSpot CRM and Pipedrive compared on free tier, pipeline focus, marketing breadth, pricing model and lock-in — with a straight answer about which one to pick."
 type: comparison

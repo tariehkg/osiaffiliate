@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Pipedrive review: features, pricing and who it is for (2026)"
 description: "Our Pipedrive review: A pipeline-first CRM that opens on your deals and keeps asking one question: what is the next action, and when. Pros, cons, pricing shape, who should skip it, and the score."
 type: review

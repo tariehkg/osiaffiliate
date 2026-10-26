@@ -1,0 +1,84 @@
+---
+import Button from './Button.astro';
+import { softwareBudgetPlans, type BudgetCategory } from '../data/software-budgets';
+interface Props { category:BudgetCategory; id?:string; headingLevel?:2|3; }
+const {category,id=`software-budget-${Astro.props.category}`,headingLevel=3}=Astro.props;
+const Heading=headingLevel===2?'h2':'h3';
+const label={sites:'website builder',pm:'project management',email:'email marketing'}[category];
+const plans=softwareBudgetPlans.filter(p=>p.category===category);
+const field=(name:string)=>`${id}-${name}`;
+const control='mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary';
+const aid={sites:'website-builder',pm:'project-management',email:'email-marketing'}[category];
+---
+<section data-software-budget data-category={category} class="my-8 min-w-0 rounded border border-brand-muted/30 bg-brand-bg p-5 sm:p-6" aria-labelledby={field('heading')}>
+  <Heading id={field('heading')} class="!mt-0 !text-2xl">Estimate your {label} budget</Heading>
+  <p class="!mt-3 !text-sm">Start with a documented plan or your own quote. An unknown price or an ineligible usage band stays unknown.</p>
+  <div class="mt-5 grid min-w-0 gap-6 min-[44rem]:grid-cols-2">
+    <form class="min-w-0" novalidate>
+      <fieldset class="min-w-0"><legend class="sr-only">Configuration and complete costs</legend>
+        <label for={field('plan')} class="block text-sm font-semibold">Plan example</label>
+        <select id={field('plan')} name="plan" class={control}>{plans.map(p=><option value={p.id}>{p.name}</option>)}<option value="custom">My own quote</option></select>
+        <p data-plan-note class="!mt-2 !text-xs text-brand-muted"></p>
+        <label for={field('billing')} class="mt-4 block text-sm font-semibold">Payment route</label>
+        <select id={field('billing')} name="billing" class={control}><option value="annual">Annual payment</option><option value="monthly">Monthly payments</option></select>
+        <p class="!mt-2 !text-xs text-brand-muted">{category === 'sites' ? 'Hostinger examples always use the stated 48-month upfront offer. ' : ''}A payment frequency does not establish cancellation rights.</p>
+        <div class:list={['mt-4',{'hidden':category==='email'}]}>
+          <label for={field('units')} class="block text-sm font-semibold">{category==='pm'?'Paid users, including billable guests':'Websites / custom domains'}</label>
+          <input id={field('units')} name="units" type="number" min="1" max="100000" step="1" value={category==='pm'?5:1} required class={control}/>
+        </div>
+        <div class:list={['mt-4 grid grid-cols-2 gap-3',{'hidden':category!=='email'}]}>
+          <div><label for={field('contacts')} class="block text-sm font-semibold">Billable contacts / active profiles</label><input id={field('contacts')} name="contacts" type="number" min="0" max="1000000000" step="1" value={category==='email'?1000:0} required class={control}/></div>
+          <div><label for={field('sends')} class="block text-sm font-semibold">Emails each month</label><input id={field('sends')} name="sends" type="number" min="0" max="1000000000" step="1" value={category==='email'?4500:0} required class={control}/></div>
+        </div>
+        <fieldset data-quote-fields hidden class="mt-4 min-w-0"><legend class="text-sm font-semibold">Your quote</legend>
+          <label for={field('quote')} class="mt-2 block text-sm">Monthly equivalent (USD)</label><input id={field('quote')} name="quote" type="number" min="0" max="100000000" step="0.01" class={control} placeholder="Enter the actual quoted rate"/>
+          <label for={field('quote-basis')} class="mt-3 block text-sm">Quoted price basis</label><select id={field('quote-basis')} name="quoteBasis" class={control}><option value="bundle">Whole account / configuration</option>{category !== 'email' && <option value="seat">Per paid user or website</option>}</select>
+          <p class="!mt-2 !text-xs text-brand-muted">For an annual total, divide by 12. Your quote overrides arithmetic only; confirm usage and feature eligibility separately.</p>
+        </fieldset>
+        <label for={field('setup')} class="mt-4 block text-sm font-semibold">One-time setup / migration (USD)</label><input id={field('setup')} name="setup" type="number" min="0" max="100000000" step="0.01" value="0" required class={control}/>
+        <label for={field('monthly-extras')} class="mt-4 block text-sm font-semibold">Other monthly costs (USD)</label><input id={field('monthly-extras')} name="monthlyExtras" type="number" min="0" max="100000000" step="0.01" value="0" required class={control}/>
+        <label for={field('annual-extras')} class="mt-4 block text-sm font-semibold">Other annual costs (USD)</label><input id={field('annual-extras')} name="annualExtras" type="number" min="0" max="100000000" step="0.01" value="0" required class={control}/>
+        <p class="!mt-2 !text-xs text-brand-muted">Include required domains, apps, email, AI, payment fees and support. Zero is a starting input, not evidence that an extra is free.</p>
+        <p data-error role="alert" class="!my-3 min-h-5 !text-sm font-semibold"></p>
+        <Button type="button" variant="line" class="budget-export">Download estimate CSV</Button>
+      </fieldset>
+    </form>
+    <div class="min-w-0 self-start rounded border border-brand-muted/30 bg-brand-surface p-5">
+      <p class="!mt-0 !text-sm font-semibold">First-year cash budget</p><output data-total aria-live="polite" class="mt-2 block break-words font-heading text-4xl font-bold tracking-tight text-brand-primary">Checking configuration…</output>
+      <dl class="mt-5 text-sm">
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>Subscription cash in year one</dt><dd data-subscription class="font-semibold"></dd></div>
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>Subscription payment due</dt><dd data-due class="font-semibold"></dd></div>
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>12-month subscription allocation</dt><dd data-allocation class="font-semibold"></dd></div>
+        <div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>Later annual budget at shown rates</dt><dd data-renewal class="font-semibold"></dd></div>
+      </dl>
+      <p data-commitment class="!mt-3 !text-sm"></p>
+      <p class="!mt-4 border-l-2 border-brand-accent pl-3 !text-sm">Estimate only. No automatic cheapest winner. Confirm the eligible plan, billing band, commitment and renewal. Tax, future price changes and unentered costs are excluded.</p>
+    </div>
+  </div>
+  <p class="!mt-5 !text-xs text-brand-muted">Public examples checked 18 October 2026. First-year cash = subscription payments due in the first 12 months + setup + 12 × monthly extras + annual extras. {category === 'sites' ? 'A 48-month offer is prepaid in full; its renewal estimate applies after that term. ' : ''}Later-year estimates assume unchanged rates and omit setup. Entries stay in this browser.</p>
+  <p class="!mt-3 !text-sm"><a href={`/downloads/${aid}-evaluation.csv`}>Download the blank evaluation worksheet</a> to verify requirements and record your own pilot.</p>
+  <noscript><p>Use the formula above with your written quote. The evaluation worksheet is available without JavaScript.</p></noscript>
+  <pre data-csv-preview hidden aria-hidden="true"></pre>
+</section>
+<script>
+ import {softwareBudgetPlans,computeSoftwareBudget,softwareBudgetCsv,type BudgetInput} from '../data/software-budgets';
+ const money=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'});
+ for(const root of document.querySelectorAll<HTMLElement>('[data-software-budget]')){
+  const form=root.querySelector<HTMLFormElement>('form')!;
+  const input=(name:string)=>form.elements.namedItem(name) as HTMLInputElement|HTMLSelectElement;
+  const write=(name:string,value:string)=>{root.querySelector<HTMLElement>(`[data-${name}]`)!.textContent=value;};
+  const values=():BudgetInput=>({planId:input('plan').value,billing:input('billing').value,units:Number(input('units').value||NaN),contacts:Number(input('contacts').value===''?NaN:input('contacts').value),sends:Number(input('sends').value===''?NaN:input('sends').value),quote:input('quote').value===''?null:Number(input('quote').value),quoteBasis:input('quoteBasis').value,setup:Number(input('setup').value===''?NaN:input('setup').value),monthlyExtras:Number(input('monthlyExtras').value===''?NaN:input('monthlyExtras').value),annualExtras:Number(input('annualExtras').value===''?NaN:input('annualExtras').value)});
+  function update(){const v=values(),p=softwareBudgetPlans.find(x=>x.id===v.planId),r=computeSoftwareBudget(v);
+   root.querySelector<HTMLElement>('[data-quote-fields]')!.hidden=!!p;
+   write('plan-note',p?.note??'Use the complete eligible configuration from your written quote. Usage and plan gates require separate confirmation.');
+   write('error',r.warnings.join(' '));
+   for(const [k,a] of Object.entries({total:r.firstYear,subscription:r.subscription,due:r.subscriptionDue,allocation:r.allocation,renewal:r.ongoing}))write(k,a===null?'Unknown / ineligible':money.format(a));
+   write('commitment',p?.prepaid?`This example prepays ${p.prepaid.months} months. The renewal estimate applies after that initial term, not in year two. Domain and mailbox renewal may be separate.`:v.billing==='annual'?'Annual payment: the displayed monthly rate is an equivalent. Confirm the annual checkout amount and renewal; estimates from rounded monthly equivalents may differ.':'Monthly payments: this totals 12 payments. Confirm the commitment and cancellation terms.');
+   write('csv-preview',softwareBudgetCsv(v));root.querySelector<HTMLButtonElement>('.budget-export')!.disabled=!r.valid;
+  }
+  for(const control of form.querySelectorAll('input,select')){control.addEventListener('input',update);control.addEventListener('change',update);}
+  form.addEventListener('submit',e=>e.preventDefault());
+  root.querySelector('.budget-export')!.addEventListener('click',()=>{const v=values();if(!computeSoftwareBudget(v).valid){update();return;}const url=URL.createObjectURL(new Blob([softwareBudgetCsv(v)],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`osi-${root.dataset.category}-budget.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+  update();
+ }
+</script>

@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import FieldServiceCostCalculator from '../components/FieldServiceCostCalculator.astro';
+import Prose from '../components/Prose.astro';
+import {breadcrumbLd} from '../components/seo';
+---
+<Layout title="Field Service Software Cost Calculator — OSI Affiliate" description="Estimate first-year field service software costs, with bundled users, free-plan caps, quotes, accounting, payment fees and a CSV download." path="/field-service-cost-calculator" jsonld={[breadcrumbLd([{label:'Home',href:'/'},{label:'Home Services',href:'/home-services-software'},{label:'Field Service Software Cost Calculator',href:'/field-service-cost-calculator'}])]}>
+ <CategoryStrip current="home" /><main id="main"><PageHead title="Field Service Software Cost Calculator" lede="Price the configuration you actually need. Keep unknown quotes and unverified features visible." /><div class="wrap pb-16"><FieldServiceCostCalculator id="field-service-cost-calculator" mode="all" headingLevel={2} /><Prose><h2>Check the plan before the price</h2><p>Read our <a href="/best-field-service-management-software-small-business">field service buying guide</a> for the conditions behind these examples. Public rates were checked 18 October 2026 for US buyers. QuickBooks, implementation and payment processing can add separate bills.</p><p>There is no automatic cheapest winner. The calculator checks stated user and completed-Work limits; a custom amount does not verify an integration or entitlement. Annual calculations from displayed monthly equivalents remain estimates. <a href="/home-services-software">Browse all home services guides</a>.</p></Prose></div></main>
+</Layout>

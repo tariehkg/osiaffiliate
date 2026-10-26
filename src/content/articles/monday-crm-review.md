@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "monday CRM review: features, pricing and who it is for (2026)"
 description: "Our monday CRM review: Sales boards for teams already running on monday.com, so the pipeline lives in the tool everyone already opens each morning. Pros, cons, pricing shape, who should skip it, and the score."
 type: review

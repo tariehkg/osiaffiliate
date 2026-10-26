@@ -1,0 +1,79 @@
+---
+import Button from './Button.astro';
+import { servicePlans } from '../data/field-service-cost';
+interface Props { id?: string; mode?: 'all'|'free'; headingLevel?: 2|3; }
+const {id='service-cost',mode='all',headingLevel=3}=Astro.props;
+const Heading=headingLevel===2?'h2':'h3'; const fid=(s:string)=>`${id}-${s}`;
+const plans=mode==='free'?servicePlans.filter(p=>p.free||['fieldvibe-pro','fieldvibe-crews','connecteam-basic','custom'].includes(p.id)):servicePlans;
+const fields=[
+ ['users','Users to cover',1,1,100000,1],['work','Completed Work items / month',20,0,1000000,1],
+ ['rate','Whole-team subscription / month (USD)',mode==='free'?0:49,0,10000000,0.01],['setup','One-time setup / migration (USD)',0,0,100000000,0.01],
+ ['extras','Other monthly add-ons (USD)',0,0,10000000,0.01],['books','Separate accounting / invoice tools per month (USD)',0,0,10000000,0.01],
+ ['volume','Card sales / month (USD)',0,0,100000000,0.01],['transactions','Card transactions / month',0,0,10000000,1],
+ ['percent','Your card percentage fee',0,0,100,0.001],['flat','Your fixed fee per transaction (USD)',0,0,100000,0.01],
+ ['minutes','Optional manual work / week (minutes)',0,0,10080,1],['labor','Value of that work / hour (USD)',0,0,100000,0.01],
+] as const;
+---
+<section data-service-calculator class="my-8 min-w-0 rounded border border-brand-muted/30 bg-brand-bg p-5 sm:p-6" aria-labelledby={fid('heading')}>
+ <Heading id={fid('heading')} class="!mt-0 !text-2xl">{mode==='free'?'What does your free setup really cost?':'Estimate your field service software cost'}</Heading>
+ <p class="!mt-3 !text-sm">US examples checked 18 October 2026. Different packages do different jobs. This calculates your selected configuration, with no automatic cheapest-product verdict.</p>
+ <div class="mt-5 grid min-w-0 gap-6 min-[52rem]:grid-cols-2">
+  <form class="min-w-0" novalidate>
+   <label for={fid('plan')} class="block text-sm font-semibold">Plan example</label>
+   <select id={fid('plan')} name="plan" class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg p-3 text-sm">{plans.map(p=><option value={p.id}>{p.name}</option>)}</select>
+   <label for={fid('billing')} class="mt-4 block text-sm font-semibold">Payment route</label>
+   <select id={fid('billing')} name="billing" class="mt-2 w-full rounded border border-brand-muted/50 bg-brand-bg p-3 text-sm"><option value="monthly">Monthly — no annual rate assumed</option><option value="committed">Monthly — 12-month commitment</option><option value="annual">Prepaid annual — monthly equivalent</option></select>
+   <div class="mt-4 grid grid-cols-1 gap-4 min-[30rem]:grid-cols-2">{fields.map(([name,label,value,min,max,step])=><div class="min-w-0"><label for={fid(name)} class="block text-sm font-semibold">{label}</label><input id={fid(name)} name={name} value={value} type="number" min={min} max={max} step={step} required class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg p-3" /></div>)}</div>
+   <label class="mt-4 flex items-start gap-3 text-sm"><input name="invoicing" type="checkbox" class="mt-1 shrink-0" /> I need customer quotes and invoices inside this plan</label>
+   <p class="!mt-3 !text-xs text-brand-muted">For Connecteam’s free limit, include active and archived users. Zero fees are starting inputs, not verified free processing. Enter your own processor and extra-tool costs. A quote rate must be for the whole team; seat counts never multiply a bundled price.</p>
+   <p data-error role="alert" class="!my-3 min-h-5 !text-sm font-semibold"></p>
+   <Button variant="line" class="service-export">Download estimate CSV</Button>
+   <a data-estimate-link hidden download="osi-field-service-estimate.csv" class="text-sm text-brand-primary underline">Download this estimate again</a>
+  </form>
+  <div class="min-w-0 self-start rounded border border-brand-muted/30 bg-brand-surface p-5">
+   <p class="!mt-0 !text-sm font-semibold">Estimated first-year cash cost</p><output data-total aria-live="polite" class="mt-2 block break-words font-heading text-4xl font-bold tracking-tight text-brand-primary">{mode==='free'?'$0.00':'$588.00'}</output>
+   <dl class="mt-4 text-sm">{[['subscription','12 months of subscription'],['extras','12 months of extras and other tools'],['processing','12 months of entered payment fees'],['setup','One-time setup'],['renewal','Later year, same rates and usage'],['labor','Optional annual manual-work value'],['combined','Cash plus optional manual-work value']].map(([name,label])=><div class="flex justify-between gap-3 border-t border-brand-muted/25 py-3"><dt>{label}</dt><dd data-field={name} class="shrink-0 font-semibold">—</dd></div>)}</dl>
+   <p data-plan-note class="!mt-4 !text-sm">Choose a plan and confirm its actual limits before buying.</p><p data-commitment class="!mt-3 !text-sm"></p>
+   <p class="!mt-4 !text-xs text-brand-muted">Annual results are calculated estimates from monthly equivalents, not checkout invoices. Taxes, future price changes and unentered costs are excluded. Labor is an optional hypothetical, not a measured saving.</p>
+   <a data-source class="mt-3 inline-block text-sm text-brand-primary underline" href={plans[0].source}>Verify this plan at the official source</a>
+  </div>
+ </div>
+ <p class="!mt-5 !text-xs text-brand-muted">First year = 12 × (whole-team monthly rate + monthly extras + other tools + card volume × fee % ÷ 100 + card transactions × fixed fee) + one-time setup. Later year omits setup. Optional labor = minutes per week ÷ 60 × 52 × hourly value. Inputs stay in this browser and are not transmitted.</p>
+ <noscript><p>Use the formula above and the article’s dated price table. Live calculations need JavaScript. <a href="/downloads/home-service-evaluation.csv">Download the static evaluation worksheet</a>.</p></noscript>
+</section>
+<script>
+ import {servicePlans,serviceEstimate,type ServiceValues} from '../data/field-service-cost';
+ const names=['users','work','rate','setup','extras','books','volume','transactions','percent','flat','minutes','labor'] as const;
+ for(const root of document.querySelectorAll<HTMLElement>('[data-service-calculator]')){
+  const form=root.querySelector<HTMLFormElement>('form')!;
+  const input=(name:string)=>form.elements.namedItem(name) as HTMLInputElement|HTMLSelectElement;
+  const selected=()=>servicePlans.find(p=>p.id===input('plan').value)!;
+  const exportButton=root.querySelector<HTMLButtonElement>('.service-export')!;
+  const money=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'});
+  const write=(name:string,value:string)=>{root.querySelector<HTMLElement>(`[data-${name}]`)!.textContent=value;};
+  let lastValid=false;
+  function recalculate(){
+   root.querySelector<HTMLAnchorElement>('[data-estimate-link]')!.hidden=true;
+   const p=selected();const v=Object.fromEntries(names.map(n=>[n,Number(input(n).value)])) as ServiceValues;
+   const bad=names.some(n=>input(n).value===''||!input(n).validity.valid||!Number.isFinite(v[n]));
+   const reasons:string[]=[];
+   if(bad)reasons.push('Complete every number with a valid non-negative amount; users and counts must be whole numbers.');
+   if(p.users!==null&&v.users>p.users)reasons.push(`This bundle covers at most ${p.users} users. Choose an eligible bundle or enter a confirmed custom quote.`);
+   if(p.work!==undefined&&v.work>p.work)reasons.push(`Launch allows ${p.work} completed Work items per month. Paid pricing needs confirmation; no free-plan overage is assumed.`);
+   if((input('invoicing') as HTMLInputElement).checked&&!p.invoicing)reasons.push('Customer quotes and invoices inside this plan are not established. Choose an eligible paid plan or price a separate tool.');
+   if(input('billing').value!=='monthly'&&p[input('billing').value==='annual'?'annual':'committed']===undefined&&p.id!=='custom'&&p.monthly!==null)reasons.push('This payment route was not verified for this preset. Select monthly or use a written custom quote.');
+   const est=serviceEstimate(v);lastValid=reasons.length===0;write('error',reasons.join(' '));write('total',lastValid?money.format(est.total):'—');
+   for(const [key,value] of Object.entries(est)){if(key==='total')continue;root.querySelector<HTMLElement>(`[data-field="${key}"]`)!.textContent=lastValid?money.format(value):'—';}
+   write('plan-note',p.note);write('commitment',input('billing').value==='annual'?'Prepaid annual: calculated from a monthly equivalent. Confirm invoice, refund and renewal terms.':input('billing').value==='committed'?'12-month minimum commitment paid monthly. Payment timing does not create a monthly cancellation right.':'Monthly example: 12 payments are estimated. Confirm contract and cancellation rights in your quote.');
+   const source=root.querySelector<HTMLAnchorElement>('[data-source]')!;source.hidden=!p.source;source.href=p.source;
+   exportButton.disabled=!lastValid;
+   return {v,est,p};
+  }
+  function applyPlan(){const p=selected();const route=input('billing').value;let rate=route==='annual'?p.annual:route==='committed'?p.committed:p.monthly;if(rate!==null&&rate!==undefined&&p.extraUser!==undefined)rate+=Math.max(0,Number(input('users').value)-30)*p.extraUser;input('rate').value=rate===undefined||rate===null?'':String(rate);(input('rate') as HTMLInputElement).readOnly=p.monthly!==null;recalculate();}
+  input('plan').addEventListener('change',applyPlan);input('billing').addEventListener('change',applyPlan);
+  input('users').addEventListener('input',()=>{const p=selected();if(p.extraUser!==undefined)input('rate').value=String((p.monthly??0)+Math.max(0,Number(input('users').value)-30)*p.extraUser);});
+  for(const name of names)input(name).addEventListener('input',recalculate);input('invoicing').addEventListener('change',recalculate);form.addEventListener('submit',e=>e.preventDefault());
+  exportButton.addEventListener('click',()=>{const {v,est,p}=recalculate();if(!lastValid)return;const rows:unknown[][]=[['OSI Affiliate field service cost estimate','Rate date','2026-10-18'],['Plan',p.name],['Payment route',input('billing').value],['Needs in-plan quoting/invoicing',(input('invoicing') as HTMLInputElement).checked]];for(const n of names)rows.push([n,v[n]]);for(const [k,val] of Object.entries(est))rows.push([k,val.toFixed(2)]);rows.push(['Plan limitation',p.note],['Observed pilot results',''],['Note','USD estimate, not an invoice or tested feature entitlement; tax and unentered costs excluded.']);const csv=rows.map(r=>r.map(c=>`"${String(c).replaceAll('"','""')}"`).join(',')).join('\r\n');const a=root.querySelector<HTMLAnchorElement>('[data-estimate-link]')!;a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.hidden=false;a.click();});
+  applyPlan();
+ }
+</script>

@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "2 best Notion alternatives in 2026 (tested and compared)"
 description: "Looking for a Notion alternative? 2 project management tools from our shortlist compared on what they do differently, who they suit, and how they charge."
 type: alternatives

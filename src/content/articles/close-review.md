@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Close review: features, pricing and who it is for (2026)"
 description: "Our Close review: A CRM with calling, SMS and email sequences built in, made for small teams that sell by picking up the phone. Pros, cons, pricing shape, who should skip it, and the score."
 type: review

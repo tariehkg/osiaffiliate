@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "3 best HubSpot CRM alternatives in 2026 (tested and compared)"
 description: "Looking for a HubSpot CRM alternative? 3 CRM tools from our shortlist compared on what they do differently, who they suit, and how they charge."
 type: alternatives

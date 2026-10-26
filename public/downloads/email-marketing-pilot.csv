@@ -1,0 +1,6 @@
+"Synthetic scenarios only — not real customer data, completed imports or observed product tests"
+Scenario ID,Fictional record,Task,Expected check,Observed result
+SYN-EMAIL-01,Synthetic opted-in seed,Import only permitted fictional/seed data,"Check field, consent and segment mapping",
+SYN-EMAIL-02,Synthetic suppressed seed,Map an opted-out seed without sending,Confirm it remains excluded,
+SYN-EMAIL-03,Synthetic welcome path,Use authorized draft/test mode only,"Check entry, wait, branch and exit",
+SYN-EMAIL-04,Synthetic export,Export permitted test records,"Verify tags, suppression and useful fields",

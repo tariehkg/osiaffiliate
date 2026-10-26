@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Notion review: features, pricing and who it is for (2026)"
 description: "Our Notion review: Docs and databases in the same place, with no opinion about how you work, for teams willing to design the system once. Pros, cons, pricing shape, who should skip it, and the score."
 type: review

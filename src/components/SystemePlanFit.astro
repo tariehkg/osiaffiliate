@@ -1,0 +1,27 @@
+---
+import Button from './Button.astro';
+import {systemeFields} from '../data/systeme-plan-fit';
+interface Props {id?:string;headingLevel?:2|3;}
+const {id='systeme-fit',headingLevel=3}=Astro.props;const Heading=headingLevel===2?'h2':'h3';
+const labels={contacts:'Contacts',funnels:'Sales funnels',steps:'Total funnel steps',courses:'Courses',rules:'Automation rules',workflows:'Workflows',domains:'Custom domains',students:'Students',webinars:'Evergreen webinars'};
+const defaults={contacts:1500,funnels:2,steps:8,courses:1,rules:2,workflows:1,domains:1,students:100,webinars:0};
+---
+<section data-systeme-fit class="my-8 min-w-0 rounded border border-brand-muted/30 bg-brand-bg p-5 sm:p-6" aria-labelledby={`${id}-heading`}>
+ <Heading id={`${id}-heading`} class="!mt-0 !text-2xl">Find your documented Systeme.io plan fit</Heading>
+ <p class="!mt-3 !text-sm">Enter your actual requirements. The first plan that fits every listed limit appears below. A small contact list can still need a paid plan.</p>
+ <form novalidate class="mt-5"><fieldset class="grid min-w-0 grid-cols-2 gap-4 sm:grid-cols-3"><legend class="sr-only">Your capacity requirements</legend>{systemeFields.map(f=><div class="min-w-0"><label for={`${id}-${f}`} class="block text-sm font-semibold">{labels[f]}</label><input id={`${id}-${f}`} name={f} type="number" min="0" max="1000000000" step="1" required value={defaults[f]} class="mt-2 w-full min-w-0 rounded border border-brand-muted/50 bg-brand-bg px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"/></div>)}</fieldset></form>
+ <div class="mt-5 min-w-0 rounded border border-brand-muted/30 bg-brand-surface p-5"><p class="!mt-0 !text-sm font-semibold">Lowest documented capacity fit</p><output data-plan aria-live="polite" class="mt-2 block break-words font-heading text-3xl font-bold text-brand-primary">Checking requirements…</output><p data-cost class="!mt-3 !text-sm"></p><p data-reason role="status" class="!mt-3 !text-sm"></p><p class="!mt-4 border-l-2 border-brand-accent pl-3 !text-sm">Capacity fit is not a purchase recommendation. Check tags, email campaigns, other features, access and actual workflow behavior. “Unlimited” applies to these listed fields, not every product limit.</p></div>
+ <div class="mt-4"><Button type="button" variant="line" class="systeme-export">Download plan-fit CSV</Button></div>
+ <p class="!mt-5 !text-xs text-brand-muted">Monthly USD prices checked 18 October 2026: Free $0, Startup $17, Webinar $47, Unlimited $97. Yearly examples total 12 monthly payments; they are not annual-contract quotes. The advertised annual offer needs a current checkout quote. Domain registration, tax, processor and other-tool costs are separate. Entries stay in your browser.</p>
+ <p class="!mt-3 !text-sm"><a href="/downloads/systeme-plan-check.csv">Use the blank requirements and quote checklist</a>.</p>
+ <noscript><p>Use the article’s plan-limit table and check each requirement. The static checklist works without JavaScript.</p></noscript><pre data-csv-preview hidden aria-hidden="true"></pre>
+</section>
+<script>
+ import {systemeFields,systemePlanFit,systemeFitCsv,type SystemeNeeds} from '../data/systeme-plan-fit';
+ for(const root of document.querySelectorAll<HTMLElement>('[data-systeme-fit]')){
+  const form=root.querySelector<HTMLFormElement>('form')!;const values=()=>Object.fromEntries(systemeFields.map(f=>{const value=(form.elements.namedItem(f) as HTMLInputElement).value;return [f,value===''?NaN:Number(value)];})) as SystemeNeeds;
+  const write=(key:string,value:string)=>{root.querySelector<HTMLElement>(`[data-${key}]`)!.textContent=value;};
+  function update(){const needs=values(),r=systemePlanFit(needs);write('plan',r.plan?.name??'Check your entries');write('cost',r.plan?`$${r.plan.monthly}/month; $${r.plan.monthly*12} for 12 monthly payments, before other costs.`:'');write('reason',r.reason);write('csv-preview',systemeFitCsv(needs));root.querySelector<HTMLButtonElement>('.systeme-export')!.disabled=!r.valid;}
+  form.addEventListener('input',update);form.addEventListener('change',update);form.addEventListener('submit',e=>e.preventDefault());root.querySelector('.systeme-export')!.addEventListener('click',()=>{const needs=values();if(!systemePlanFit(needs).valid){update();return;}const url=URL.createObjectURL(new Blob([systemeFitCsv(needs)],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='osi-systeme-plan-fit.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});update();
+ }
+</script>

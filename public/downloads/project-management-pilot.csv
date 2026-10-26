@@ -1,0 +1,6 @@
+"Synthetic scenarios only — not real customer data, completed imports or observed product tests"
+Scenario ID,Fictional record,Task,Expected check,Observed result
+SYN-PM-01,Fictional launch brief,Assign owner and due date,Owner sees correct task and document,
+SYN-PM-02,Fictional dependent task,Delay a prerequisite,Check dependency and notification behavior,
+SYN-PM-03,Fictional client review,Use a permitted test guest role,Confirm no access to internal project material,
+SYN-PM-04,Fictional project export,Export a sample task and context,"Confirm useful fields, links, files and comments",

@@ -1,0 +1,6 @@
+"Synthetic scenarios only — not real customer data, completed imports or observed product tests"
+Scenario ID,Fictional record,Task,Expected check,Observed result
+SYN-SITE-01,Synthetic service page,Create one service page and a repeating case-study item,"Check fields, navigation and phone layout",
+SYN-SITE-02,Synthetic form submission,Use an authorized isolated form test,Verify recipient and thank-you state,
+SYN-SITE-03,Synthetic URL move,Map /old-service to /new-service,"Verify redirect, canonical and retained content",
+SYN-SITE-04,Synthetic exit,Export a sample content record,Identify fields and functions that need rebuilding,

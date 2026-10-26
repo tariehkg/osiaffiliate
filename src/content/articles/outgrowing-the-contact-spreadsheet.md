@@ -1,4 +1,5 @@
 ---
+draft: true
 title: The contact spreadsheet works until it quietly doesn't
 description: Most small businesses run their first year of sales from a spreadsheet or an address book, and that is fine. Here are the signs it has stopped being fine, and what a CRM actually fixes.
 pubDate: 2026-08-22
@@ -7,7 +8,6 @@ type: guide
 tags:
   - CRM
   - Switching tools
-draft: false
 category: crm
 ---
 

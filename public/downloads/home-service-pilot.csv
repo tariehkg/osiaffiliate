@@ -1,0 +1,6 @@
+Fictional scenario only — no real customer data or completed product import
+Scenario ID,Customer label,Service,Visit / transaction scenario,Expected check,Observed result
+DEMO-001,Synthetic customer A,Maintenance visit,Quote 2 items then schedule,Amounts and customer match,
+DEMO-002,Synthetic customer B,Recurring cleaning,Reschedule one repeat visit,Future visits and notifications correct,
+DEMO-003,Synthetic customer A,Maintenance visit,Invoice 100 / record 30 payment,Open balance 70 before fees and tax; simulated only,
+DEMO-004,Synthetic customer C,Repair,Export a synthetic client/job,Required fields available and usable,

@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "HubSpot CRM pricing explained (2026): what is free, what you pay for"
 description: "How HubSpot CRM pricing actually works: the free tier, how the paid tiers are structured, what pushes the bill up, and whether the plan a small business buys is worth it."
 type: pricing

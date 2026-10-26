@@ -4,6 +4,9 @@ import type { ImageMetadata } from 'astro';
 import CrmCostCalculator from './CrmCostCalculator.astro';
 import ActiveCampaignPlanChecker from './ActiveCampaignPlanChecker.astro';
 import EmailComparisonChecker from './EmailComparisonChecker.astro';
+import FieldServiceCostCalculator from './FieldServiceCostCalculator.astro';
+import SoftwareBudgetCalculator from './SoftwareBudgetCalculator.astro';
+import SystemePlanFit from './SystemePlanFit.astro';
 
 interface Media {
   id: string;
@@ -12,10 +15,10 @@ interface Media {
   caption?: string;
   eager: boolean;
 }
-interface Props { html: string; media: Media[]; tableLabels?: string[]; }
-const { html, media, tableLabels = [] } = Astro.props;
+interface Props { html: string; media: Media[]; tableLabels?: string[]; serviceCostMode?: 'all'|'free'; }
+const { html, media, tableLabels = [], serviceCostMode = 'all' } = Astro.props;
 if (!html) throw new Error('RichArticleBody requires the complete rendered Markdown article.');
-const parts = html.split(/(<!--\s*(?:media:[a-z-]+|crm-calculator|activecampaign-checker|email-comparison-checker)\s*-->)/g);
+const parts = html.split(/(<!--\s*(?:media:[a-z-]+|crm-calculator|activecampaign-checker|email-comparison-checker|service-cost-calculator|software-budget:(?:sites|pm|email)|systeme-plan-fit)\s*-->)/g);
 let tableNumber = 0;
 const readableTables = (value: string) => value.replace(/<table\b([^>]*)>/g, (_match, attributes) => {
   tableNumber += 1;
@@ -28,6 +31,10 @@ const readableTables = (value: string) => value.replace(/<table\b([^>]*)>/g, (_m
   if (/^<!--\s*crm-calculator\s*-->$/.test(part)) return <CrmCostCalculator />;
   if (/^<!--\s*activecampaign-checker\s*-->$/.test(part)) return <ActiveCampaignPlanChecker />;
   if (/^<!--\s*email-comparison-checker\s*-->$/.test(part)) return <EmailComparisonChecker />;
+  if (/^<!--\s*service-cost-calculator\s*-->$/.test(part)) return <FieldServiceCostCalculator mode={serviceCostMode} />;
+  if (/^<!--\s*systeme-plan-fit\s*-->$/.test(part)) return <SystemePlanFit />;
+  const budget = part.match(/^<!--\s*software-budget:(sites|pm|email)\s*-->$/);
+  if (budget) return <SoftwareBudgetCalculator category={budget[1] as 'sites' | 'pm' | 'email'} />;
   const match = part.match(/^<!--\s*media:([a-z-]+)\s*-->$/);
   if (match) {
     const image = media.find((m) => m.id === match[1]);

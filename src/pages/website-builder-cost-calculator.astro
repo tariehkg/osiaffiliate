@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import Prose from '../components/Prose.astro';
+import SoftwareBudgetCalculator from '../components/SoftwareBudgetCalculator.astro';
+import {breadcrumbLd} from '../components/seo';
+---
+<Layout title="Website Builder Cost Calculator — OSI Affiliate" description="Estimate first-year software cash costs using documented plans or your own quote. Check usage bands, billing commitments, extras and renewal before paying." path="/website-builder-cost-calculator" jsonld={[breadcrumbLd([{label:'Home',href:'/'},{label:'Software guides',href:'/website-builders'},{label:'Website Builder Cost Calculator',href:'/website-builder-cost-calculator'}])]}>
+<CategoryStrip current="sites"/><main id="main"><PageHead title="Website Builder Cost Calculator" lede="Use the eligible configuration and its full bill. An unknown quote stays unknown."/><div class="wrap pb-16"><SoftwareBudgetCalculator category="sites" id="website-builder-cost-calculator" headingLevel={2}/><Prose><h2>Check the buying guide</h2><p>Our <a href="/best-website-builders">software buying guide</a> explains the plan limits, tradeoffs and evaluation steps behind these examples. Rates were checked 18 October 2026. No quote verifies product fit by itself.</p><p><a href="/website-builders">Browse the category’s reviews and comparisons</a>.</p></Prose></div></main></Layout>

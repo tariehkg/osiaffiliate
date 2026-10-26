@@ -31,6 +31,8 @@ const reviews = topRated(all, cat.id);
 const compare = [...ofType(mine, 'comparison'), ...ofType(mine, 'alternatives'), ...ofType(mine, 'pricing')];
 const guides = ofType(mine, 'guide');
 const faqs = best?.data.faqs.slice(0, 5) ?? [];
+const expandedGuide = ['sites', 'pm', 'email'].includes(cat.id) && best?.data.shortlist.length;
+const guideCount = best?.data.shortlist.length ?? 0;
 
 const title = best ? `${cat.name} software: reviews, shortlist and comparisons` : `${cat.name} software: staff reviews`;
 const description = best
@@ -53,10 +55,11 @@ const jsonld = [
         <p class="hub-kicker">{cat.name}</p>
         <h1 class="hub-h">{cat.question}</h1>
         <p class="hub-lede">
+          {expandedGuide ? <>Start with {guideCount} options compared in our buying guide, then explore {reviews.length} full reviews, pricing guides and comparisons for your next decision.</> : <>
           {reviews.length} {cat.plain} {reviews.length === 1 ? 'tool' : 'tools'} reviewed by our editorial team,{' '}
           {best
             ? 'one shortlist for a solopreneur or a small team, and the comparisons that decide between them.'
-            : 'written for a solopreneur or a small team, with more reviews and a shortlist on the way.'}
+            : 'written for a solopreneur or a small team, with more reviews and a shortlist on the way.'}</>}
         </p>
         <DisclosureNote />
         <div class="hub-prov"><ProvisionalNote /></div>

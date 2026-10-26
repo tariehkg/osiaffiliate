@@ -32,6 +32,9 @@ import Prose from '../components/Prose.astro';
 import CrmCostCalculator from '../components/CrmCostCalculator.astro';
 import ActiveCampaignPlanChecker from '../components/ActiveCampaignPlanChecker.astro';
 import EmailComparisonChecker from '../components/EmailComparisonChecker.astro';
+import FieldServiceCostCalculator from '../components/FieldServiceCostCalculator.astro';
+import SoftwareBudgetCalculator from '../components/SoftwareBudgetCalculator.astro';
+import SystemePlanFit from '../components/SystemePlanFit.astro';
 import { getArticles, byId, ofType, typeLabel } from '../components/articles';
 
 /**
@@ -81,6 +84,18 @@ const sections = [
 
     <div class="wrap ds-body">
       <section class="ds-sec">
+        <h2>SoftwareBudgetCalculator</h2>
+        <code>src/components/SoftwareBudgetCalculator.astro</code>
+        <p>Category-specific website, project-management and email budgets with verified bands, quote unknowns and local CSV output.</p>
+        <SoftwareBudgetCalculator category="sites" id="ds-software-budget" headingLevel={3} />
+        <h2>SystemePlanFit</h2>
+        <code>src/components/SystemePlanFit.astro</code>
+        <p>Capacity-based plan selection with transparent limits and a blank-result worksheet.</p>
+        <SystemePlanFit id="ds-systeme-fit" headingLevel={3} />
+        <h2>FieldServiceCostCalculator</h2>
+        <code>src/components/FieldServiceCostCalculator.astro</code>
+        <p>Whole-team bundles, free-plan eligibility and quoted field-service costs; local inputs and CSV.</p>
+        <FieldServiceCostCalculator id="ds-field-service" headingLevel={3} />
         <h2>EmailComparisonChecker</h2>
         <code>src/components/EmailComparisonChecker.astro</code>
         <p class="ds-note">Separate billable counts, current paid-plan pricing, scoped feature/send warnings and a downloadable comparison pilot worksheet.</p>

@@ -1,0 +1,11 @@
+OSI Affiliate blank integration pilot — use a permitted sandbox or accountant-supervised isolated test; back up before cutover
+Vendor,Plan,QBO or Desktop edition/year,New / legacy connector,Record / event,Expected direction / trigger,Source / date,Observed destination / amount,Duplicate?,Pass / fail,Repair / follow-up
+,,,,Customer and duplicate matching,,,,,,
+,,,,Invoice with 2 items and tax,,,,,,
+,,,,Partial payment and open balance,,,,,,
+,,,,Edit after first sync,,,,,,
+,,,,Refund / credit / payout / fee,,,,,,
+,,,,Recurring job vs invoice creation,,,,,,
+,,,,Disconnect/reconnect and export,,,,,,
+,,,,Products/services account and tax mapping,,,,,,
+,,,,Approved timesheet / employee and payroll mapping,,,,,,

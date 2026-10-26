@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Systeme.io vs Webflow: which one to pick in 2026"
 description: "Systeme.io and Webflow compared on design control, bundled email and checkout, CMS structure, who has to operate them, and cost — with a straight answer about which job each one is for."
 type: comparison

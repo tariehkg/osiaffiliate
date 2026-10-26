@@ -38,7 +38,7 @@ The practical distinction is **email tracking versus full email sync**. Tracking
 
 Try Pipedrive when you have a defined sale with stages, more than one person touches a deal, and the next action matters more than a broader customer platform.
 
-If an ongoing subscription is out of the question, start with one of the documented free allowances below. If marketing and support are part of the purchase, compare the broader platform and its full quote rather than treating this sales subscription as that budget. If you are weighing Pipedrive against HubSpot specifically, our [HubSpot vs Pipedrive comparison](/hubspot-vs-pipedrive) walks through that platform choice in more detail.
+If an ongoing subscription is out of the question, start with one of the documented free allowances below. If marketing and support are part of the purchase, compare the broader platform and its full quote rather than treating this sales subscription as that budget.
 
 ## HubSpot: for a small shared customer platform
 
@@ -46,7 +46,7 @@ HubSpot's appeal is the single record that can carry sales, marketing, and suppo
 
 A third user exceeds the documented free allowance. Automation needs a separate check against the exact action you want to perform. HubSpot's Starter tier does include workflows, but they are restricted: the live <a href="https://www.hubspot.com/pricing/sales" rel="nofollow sponsored noopener">Sales Hub pricing</a> comparison shows Starter capped at 50 workflows with limited triggers and actions, versus 300 fully customizable workflows on Professional. It is not "no automation"; it is a narrower set of rules that may or may not cover your process.
 
-The paid path matters here more than the free one. Sales Hub Professional lists at $90 per seat per month with annual billing, or $100 per month paid monthly under an annual commitment, plus a required one-time $1,500 onboarding fee. That is a different purchase from a lean sales tool, and moving to Professional needs its own budget decision. Starter also displays promotional offers of $7 per seat per month with annual billing or $10 with monthly billing, next to a $20 reference price. Eligibility, duration, and renewal terms were not captured, so we do not treat either offer as a standard rate. Our [HubSpot pricing explainer](/hubspot-crm-pricing) covers the seat and hub structure in more depth.
+The paid path matters here more than the free one. Sales Hub Professional lists at $90 per seat per month with annual billing, or $100 per month paid monthly under an annual commitment, plus a required one-time $1,500 onboarding fee. That is a different purchase from a lean sales tool, and moving to Professional needs its own budget decision. Starter also displays promotional offers of $7 per seat per month with annual billing or $10 with monthly billing, next to a $20 reference price. Eligibility, duration, and renewal terms were not captured, so we do not treat either offer as a standard rate.
 
 HubSpot is worth evaluating when you want departments to share one customer record. Its free allowance gives up to two users a way to begin that evaluation.
 
@@ -139,7 +139,7 @@ Choose one trial from the situation table, then write down the exact plan, numbe
 
 Use the five-task pilot as the decision: can the intended users find the next action and communication history, can you afford the plan that makes it work, and can you retrieve the data you need? If an essential task fails, check whether a configuration change or a paid tier fixes it before committing.
 
-If a shared spreadsheet still covers your current workload (no dated deal follow-up, no second person who needs the history, and sales that complete through self-serve checkout), keeping it is a valid outcome. Our [guide to outgrowing the contact spreadsheet](/outgrowing-the-contact-spreadsheet) can help you recognize the moment that changes. A CRM you do not need is not a bargain; it is another subscription.
+If a shared spreadsheet still covers your current workload (no dated deal follow-up, no second person who needs the history, and sales that complete through self-serve checkout), keeping it is a valid outcome. A CRM you do not need is not a bargain; it is another subscription.
 
 ## How we researched this guide
 

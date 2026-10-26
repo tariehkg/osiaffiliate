@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "HubSpot CRM review: features, pricing and who it is for (2026)"
 description: "Our HubSpot CRM review: The broadest free CRM for a small business, and the one that grows into marketing and support without a migration. Pros, cons, pricing shape, who should skip it, and the score."
 type: review

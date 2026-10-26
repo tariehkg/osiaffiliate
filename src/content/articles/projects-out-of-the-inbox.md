@@ -1,4 +1,5 @@
 ---
+draft: true
 title: When to stop running projects from your inbox
 description: Email, sticky notes and a good memory will run a surprising amount of work. Here is how to tell when they have stopped, and how to pick a project tool you will actually keep using.
 pubDate: 2026-07-29
@@ -7,7 +8,6 @@ type: guide
 tags:
   - Project management
   - Small teams
-draft: false
 category: pm
 ---
 

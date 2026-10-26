@@ -1,0 +1,9 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CategoryStrip from '../components/CategoryStrip.astro';
+import PageHead from '../components/PageHead.astro';
+import Prose from '../components/Prose.astro';
+import SystemePlanFit from '../components/SystemePlanFit.astro';
+import {breadcrumbLd} from '../components/seo';
+---
+<Layout title="Systeme.io Plan Fit Checker — OSI Affiliate" description="Check contacts, funnels, steps, courses, automation rules, workflows, domains, students and evergreen webinars against current Systeme.io monthly plans." path="/systeme-plan-checker" jsonld={[breadcrumbLd([{label:'Home',href:'/'},{label:'Website builders',href:'/website-builders'},{label:'Systeme.io Plan Fit Checker',href:'/systeme-plan-checker'}])]}><CategoryStrip current="sites"/><main id="main"><PageHead title="Systeme.io plan fit checker" lede="Your first binding limit matters more than contact count alone."/><div class="wrap pb-16"><SystemePlanFit id="systeme-plan-checker" headingLevel={2}/><Prose><h2>Price the whole setup</h2><p>Read the <a href="/systeme-io-pricing">Systeme.io pricing guide</a> for current limits, monthly totals, annual-quote uncertainty and costs outside the subscription. The <a href="/systeme-io-review">Systeme.io review</a> explains who the platform fits and what to test before you move.</p></Prose></div></main></Layout>

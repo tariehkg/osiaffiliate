@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "Asana review: features, pricing and who it is for (2026)"
 description: "Our Asana review: Opinionated project and task structure that works the obvious way on day one, for teams who would rather inherit a process. Pros, cons, pricing shape, who should skip it, and the score."
 type: review

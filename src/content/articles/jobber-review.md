@@ -114,3 +114,12 @@ We have not run a live business through Jobber for a season, so treat the judgem
 ## Jobber alternatives
 
 Jobber is the first tool in our home services category, and the alternatives are being reviewed now. Until they are published, see the <a href="/home-services-software">home services hub</a> for every review in the category as it lands.
+
+
+## Compare Jobber and plan your next step
+
+- [Jobber vs Housecall Pro](/jobber-vs-housecall-pro)
+- [Jobber vs ServiceTitan](/jobber-vs-servicetitan)
+- [Field service software that integrates with QuickBooks](/field-service-software-quickbooks)
+- [Field service software shortlist for small business](/best-field-service-management-software-small-business)
+- [Permanent free field service software options](/free-field-service-management-software)

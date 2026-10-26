@@ -224,7 +224,7 @@ const related = (cat ? inCategory(articles, cat.id) : articles).filter((a) => a.
           </div>}
 
           <Prose class="art-prose">
-            {isNarrative ? <RichArticleBody html={article.rendered?.html ?? ''} media={d.media} tableLabels={article.id === 'getresponse-vs-aweber' ? ['GetResponse and AWeber plan capabilities', 'GetResponse and AWeber comparable plan pricing'] : d.category === 'crm' ? ['CRM shortlist comparison', 'CRM team cost comparison'] : d.type === 'review' ? [`${d.product?.name ?? 'Software'} plan capabilities`, `${d.product?.name ?? 'Software'} pricing examples`] : []} /> : <Content />}
+            {isNarrative ? <RichArticleBody serviceCostMode={article.id === 'free-field-service-management-software' ? 'free' : 'all'} html={article.rendered?.html ?? ''} media={d.media} tableLabels={article.id === 'getresponse-vs-aweber' ? ['GetResponse and AWeber plan capabilities', 'GetResponse and AWeber comparable plan pricing'] : d.category === 'crm' ? ['CRM shortlist comparison', 'CRM team cost comparison'] : d.type === 'review' ? [`${d.product?.name ?? 'Software'} plan capabilities`, `${d.product?.name ?? 'Software'} pricing examples`] : []} /> : <Content />}
           </Prose>
 
           {d.faqs.length > 0 && <div class="art-faq"><Faq faqs={d.faqs} /></div>}

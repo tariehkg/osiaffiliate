@@ -363,3 +363,13 @@ Unscored narrative reviews use the same responsive-media body as researched guid
 ## Head-to-head email comparison tool (16 October 2026)
 
 `EmailComparisonChecker.astro` extends the paper/surface buyer-tool pattern with the shared Button and existing tokens. Separate billable counts, manually selected plans and feature/send warnings prevent a cheap but ineligible plan from becoming an automatic winner. The same browser-local rules drive the article, `/getresponse-aweber-checker` and the exported CSV. GetResponse annual estimates remain distinct from AWeber published annual totals. A static pilot worksheet works without JavaScript. Branded conceptual art and captioned public pricing/help screenshots use optimized Astro Image; the narrative comparison suppresses inherited scored blocks.
+
+
+## Home services articles and cost tools (18 October 2026)
+
+Narrative articles retain the organizational OSI Affiliate byline and category breadcrumb. Original native-vector explanatory diagrams exported as PNG, and accurately labelled public vendor-page captures, use the existing responsive Astro Image media slots. Feed covers retain CoverTile. FieldServiceCostCalculator.astro reuses the CRM calculator’s paper/surface and shared Button pattern, with field-service bundles, free-plan eligibility checks, unknown written quotes, payment fees, optional labor and local CSV export. It appears inline in the two roundups and at /field-service-cost-calculator and /free-field-service-cost-calculator. No palette or fonts were added.
+
+
+## Research-led article rewrites and budget tools (18 October 2026)
+
+Website, project-management and email roundups use researched product counts, original explanatory diagrams, attributed public vendor captures, accessible comparison tables and browser-local budget tools. SoftwareBudgetCalculator preserves contact/send-band limits, fixed seat bundles, explicit annual totals, unknown quotes and multi-year upfront hosting commitments. SystemePlanFit checks nine documented capacity fields without implying every feature is eligible. Both reuse existing paper/surface panels, brand tokens and Button. CSV exports run only on a visitor click; authoring QA inspects the same CSV builders without opening downloads. Narrative reviews omit unsupported scores and label documentation-based evidence honestly.

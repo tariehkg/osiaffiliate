@@ -121,3 +121,16 @@ skill first. This ensures distinctive, high-quality design — not generic AI ou
 
 Run `npm run lint:fix` to auto-fix, then `npm run lint` to confirm no errors — do this before
 reporting done.
+
+
+## Article delivery preferences
+
+For authorized editorial work, use one writer for research, drafting, self-editing, humanizing and factual, editorial, SEO and final technical checks. Do not commission separate reviewer agents, independent review passes or mandatory owner prose review unless explicitly requested. Use the OSI editorial profile and its friendly, direct-reader voice. Select roundup size from current intent, research and useful depth, with no fixed product-count limit.
+
+Keep authoring and QA quiet: generate and inspect assets programmatically; do not automatically open files or trigger browser downloads, CSV save dialogs or desktop asset popups. Preserve useful visitor-initiated downloads and verify their generated contents and links without invoking an interactive download where possible. Deliver a final live-results report when the authorized work is complete. This does not suppress required platform/security approvals, change spending authority, or excuse source verification, truthful testing claims, credential safeguards or build/live QA.
+
+
+## Reader-useful images and direct table links
+
+- Never publish screenshots of the publishing site itself (including OSI Affiliate or I Love Oviedo), publication-proof captures, staging previews, QA screenshots or desktop/browser chrome as article imagery. Keep delivery/build/live proof private in QA records. Do not satisfy image quotas with branded text-only recap graphics that merely repeat a shortlist, comparison table or checklist; use native accessible text/tables and retain only images that teach something additional. This overrides any blanket requirement for a conceptual hero or second image when it would create filler. Preserve genuine, useful vendor/product evidence and original explanatory visuals; never fabricate product screenshots or replace removed filler with different filler.
+- In every comparison, recommendation and cost table, link each identifiable product/provider/builder name directly to its verified official relevant website or product page. Make the product name itself the anchor, including repeated rows, cells and later tables. Cost/plan tables may use the verified official pricing page; link unambiguous plan names in headers/first-column labels where useful, not numerical values or generic allowance cells. Verify the destination and redirect; never guess deep anchors or affiliate URLs, use raw URLs or 'click here' anchors, or substitute an internal review for direct vendor access. Preserve useful contextual internal review links separately. Apply the same rule to named local providers in I Love Oviedo tables, using their actual official sites rather than imposing software structure. Audit all rendered tables and images before publication and on the live page.

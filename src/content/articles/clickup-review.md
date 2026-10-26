@@ -1,4 +1,5 @@
 ---
+draft: true
 title: "ClickUp review: features, pricing and who it is for (2026)"
 description: "Our ClickUp review: The most features per seat of any tool on the shortlist, provided someone on the team is willing to own the configuration. Pros, cons, pricing shape, who should skip it, and the score."
 type: review
